@@ -19,7 +19,7 @@ WHeatmap <- function(
 
   ## tick label on x-axis
   xticklabels = NULL,
-  xticklabel.side = 'bottom',
+  xticklabel.side = 'b',
   xticklabel.fontsize = 16,
   xticklabel.rotat = 90,
   xticklabel.pad = 0.005,
@@ -47,6 +47,13 @@ WHeatmap <- function(
   invisible(lapply(names(as.list(match.call()))[-1], function (nm) {
     hm[[nm]] <<- get(nm)
   }))
+
+  ## allow auto-adjust of dimensions
+  hm$nr <- nrow(data)
+  hm$nc <- ncol(data)
+  if (class(hm$dim)=='function') {
+    hm$dim <- hm$dim(hm)
+  }
 
   ## map to colors
   if (continuous)
@@ -89,6 +96,17 @@ CalcTextRanges.WHeatmap <- function(hm) {
         rownames(hm$data), function(t) text.width(t, hm$yticklabel.fontsize))) + hm$yticklabel.pad
     }
   }
+
+  if (!is.null(hm$xticklabels)) {
+    if (hm$xticklabel.side=='b') {
+      rg$bottom <- rg$bottom - max(sapply(
+        rownames(hm$data), function(t) text.width(t, hm$yticklabel.fontsize))) - hm$xticklabel.pad
+    } else {
+      rg$top <- rg$top + max(sapply(
+        rownames(hm$data), function(t) text.width(t, hm$yticklabel.fontsize))) + hm$xticklabel.pad
+    }
+  }
+
   rg
 }
 
@@ -116,6 +134,27 @@ WPlot.WHeatmap <- function(hm) {
             gp=do.call('gpar', c(list(fill=hm$cm$colors), hm$gp)), just=c('left','bottom'))
   upViewport()
 
+  ## x tick labels
+  if (!is.null(hm$xticklabels)) {
+    labels <- colnames(hm$data)
+      x.mid <- (seq_len(nc)-0.5)/nc
+    if (hm$xticklabel.side == 'b') {
+      .text.just = 'top'
+      .text.y = 1
+      .text.rot = -90
+      .vpy = hm$dim[2] - hm$xticklabel.pad
+    } else {
+      .text.just = 'bottom'
+      .text.y = 0
+      .text.rot = 90
+      .vpy = hm$dim[2] + hm$dim[4] + hm$xticklabel.pad
+    }
+    pushViewport(viewport(x=unit(hm$dim[1], 'npc'), y=unit(.vpy, 'npc'),
+                          width=unit(hm$dim[3],'npc'), height=max(sapply(labels, stringWidth)), just=c('left', .text.just)))
+    grid.text(labels, x=x.mid, y=unit(.text.y,'npc'), just=c('left', 'center'), rot=.text.rot, gp=gpar(fontsize=hm$yticklabel.fontsize))
+    upViewport()
+  }
+
   ## y tick labels
   if (!is.null(hm$yticklabels)) {
     labels <- rownames(hm$data)
@@ -129,7 +168,6 @@ WPlot.WHeatmap <- function(hm) {
       .text.x = 0
       .vpx = hm$dim[1] + hm$dim[3] + hm$yticklabel.pad
     }
-
     pushViewport(viewport(x=unit(.vpx, 'npc'), y=unit(hm$dim[2], 'npc'),
                           width=max(sapply(labels, stringWidth)), height=unit(hm$dim[4],'npc'), just=c(.text.just,'bottom')))
     grid.text(labels, x=unit(.text.x,'npc'), y=y.mid, just=c(.text.just,'center'), gp=gpar(fontsize=hm$yticklabel.fontsize))

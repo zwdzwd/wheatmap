@@ -1,51 +1,59 @@
 
 #' WDendrogram class
-#' 
+#'
 #' WDendrogram class
-#' 
+#'
 #' @param clust hclust object
 #' @param dim plotting dimension
 #' @param facing direction of the dendrogram plot
 #' @param name name of the dendrogram plot
 #' @return an object of class WDendrogram
 #' @export
-WDendrogram <- function(clust, dim=c(0,0,1,1), 
+WDendrogram <- function(clust, dim=c(0,0,1,1),
                         facing=c("bottom", "top", "left", "right"), name=NULL) {
-  dd <- list(clust=clust, facing=facing, dim=dim)
+
+  dd <- list(clust=clust, facing=facing, nr=1, nc=1)
+
+  ## allow auto-adjust of dimensions
+  if (class(dim)=='function')
+    dd$dim <- dim(dd)
+  else
+    dd$dim <- dim
+
   class(dd) <- c('WDendrogram')
   dd
 }
 
 #' WPlot
-#' 
+#'
 #' WPlot
-#' 
+#'
 #' @export
 WPlot.WDendrogram <- function(dend) {
   pushViewport(viewport(x=unit(dend$dim[1],'npc'), y=unit(dend$dim[2],'npc'),
-                        width=unit(dend$dim[3],'npc'), height=unit(dend$dim[4],'npc'), 
+                        width=unit(dend$dim[3],'npc'), height=unit(dend$dim[4],'npc'),
                         just=c('left','bottom'), name=dend$name, gp=gpar(col='black')))
   grid.dendrogram(as.dendrogram(dend$clust), facing=dend$facing)
   upViewport()
 }
 
 #' Calculate Text Ranges
-#' 
+#'
 #' Calculate Text Ranges
-#' 
+#'
 #' @export
 CalcTextRanges.WDendrogram <- function(dd) {
   list(left=dd$dim[1], bottom=dd$dim[2], top=dd$dim[2]+dd$dim[4], right=dd$dim[1]+dd$dim[3])
 }
 
 #' Draw dendrogram under grid system
-#' 
+#'
 #' The dendrogram can be renderred. A viewport is created which contains the dendrogram.
-#' 
+#'
 #' -order should leaves of dendrogram be put in the normal order (1, ..., n) or reverse order (n, ..., 1)?
 #' -... pass to `grid::viewport` which contains the dendrogram.
-#' 
-#' 
+#'
+#'
 #' This function only plots the dendrogram without adding labels. The leaves of the dendrogram
 #' locates at unit(c(0.5, 1.5, ...(n-0.5))/n, "npc").
 #'
@@ -55,16 +63,16 @@ CalcTextRanges.WDendrogram <- function(dd) {
 #' @import grid
 #' @source adapted from the ComplexHeatmap package authored by Zuguang Gu <z.gu@dkfz.de>
 #' @export
-grid.dendrogram = function(dend, facing = c("bottom", "top", "left", "right"), 
+grid.dendrogram = function(dend, facing = c("bottom", "top", "left", "right"),
                            max_height = NULL, order = c("normal", "reverse"), ...) {
-  
+
   library(grid)
   facing = match.arg(facing)[1]
-  
+
   if(is.null(max_height)) {
     max_height = attr(dend, "height")
   }
-  
+
   is.leaf = function(object) {
     leaf = attr(object, "leaf")
     if(is.null(leaf)) {
@@ -73,32 +81,32 @@ grid.dendrogram = function(dend, facing = c("bottom", "top", "left", "right"),
       leaf
     }
   }
-  
+
   draw.d = function(dend, max_height, facing = "bottom", order = "normal", max_width = 0, env = NULL) {
     leaf = attr(dend, "leaf")
     d1 = dend[[1]]  # child tree 1
     d2 = dend[[2]]  # child tree 2
     height = attr(dend, "height")
     midpoint = attr(dend, "midpoint")
-    
+
     if(is.leaf(d1)) {
       x1 = x[as.character(attr(d1, "label"))]
     } else {
       x1 = attr(d1, "midpoint") + x[as.character(labels(d1))[1]]
     }
     y1 = attr(d1, "height")
-    
+
     if(is.leaf(d2)) {
       x2 = x[as.character(attr(d2, "label"))]
     } else {
       x2 = attr(d2, "midpoint") + x[as.character(labels(d2))[1]]
     }
     y2 = attr(d2, "height")
-    
+
     # graphic parameters for current branch
     edge_gp1 = as.list(attr(d1, "edgePar"))
     edge_gp2 = as.list(attr(d2, "edgePar"))
-    
+
     if(is.null(env)) {
       begin = TRUE
       env = new.env()
@@ -113,7 +121,7 @@ grid.dendrogram = function(dend, facing = c("bottom", "top", "left", "right"),
     } else {
       begin = FALSE
     }
-    
+
     for(gp_name in c("col", "lwd", "lty")) {
       if(is.null(edge_gp1[[gp_name]])) {
         env[[gp_name]] = c(env[[gp_name]], rep(get.gpar(gp_name)[[gp_name]], 2))
@@ -126,8 +134,8 @@ grid.dendrogram = function(dend, facing = c("bottom", "top", "left", "right"),
         env[[gp_name]] = c(env[[gp_name]], rep(edge_gp2[[gp_name]], 2))
       }
     }
-    
-    
+
+
     ## plot the connection line
     if(order == "normal") {
       if(facing == "bottom") {
@@ -181,20 +189,20 @@ grid.dendrogram = function(dend, facing = c("bottom", "top", "left", "right"),
     if(!is.leaf(d2)) {
       draw.d(d2, max_height, facing, order, max_width, env = env)
     }
-    
+
     if(begin) {
       grid.segments(env$x0, env$y0, env$x1, env$y1, default.units = "native", gp = gpar(col = env$col, lty = env$lty, lwd = env$lwd))
     }
   }
-  
+
   labels = as.character(labels(dend))
   x = seq_along(labels) - 0.5 # leaves are places at x = 0.5, 1.5, ..., n - 0.5
-  
+
   names(x) = labels
   n = length(labels)
-  
+
   order = match.arg(order)[1]
-  
+
   if(facing %in% c("top", "bottom")) {
     pushViewport(viewport(xscale = c(0, n), yscale = c(0, max_height), ...))
     draw.d(dend, max_height, facing, order, max_width = n)

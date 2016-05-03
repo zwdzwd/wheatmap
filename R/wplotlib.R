@@ -61,10 +61,25 @@ WPlot.list <- function(obs, mar=c(0.03,0.03,0.03,0.03)) {
 #' Generate dimension top of another object
 #'
 #' @param x an object with dimension
-#' @return a dimension on top of x
+#' @param height the height of the new object (when NULL, set to proportional to data)
+#' @return a dimension generator on top of x
 #' @export
-TopOf <- function(x, height, pad=0.01) {
-  c(x$dim[1], x$dim[2]+pad+x$dim[4], x$dim[3], height)
+TopOf <- function(x, height=NULL, pad=0.01, min.ratio=0.02) {
+  force(x)
+  force(height)
+  force(pad)
+  force(min.ratio)
+  function(y) {
+    if (is.null(height)) {
+      .height <- 1/x$nr*y$nr
+      .height <- max(min.ratio, .height)
+      .height <- min(1/min.ratio, .height)
+      .height <- .height * x$dim[4]
+    } else {
+      .height <- height
+    }
+    c(x$dim[1], x$dim[2]+pad+x$dim[4], x$dim[3], .height)
+  }
 }
 
 #' Beneath
@@ -72,10 +87,25 @@ TopOf <- function(x, height, pad=0.01) {
 #' Generate dimension beneath another object
 #'
 #' @param x an object with dimension
-#' @return a dimension beneath x
+#' @param height the height of the new object (when NULL set proportional to the data)
+#' @return a dimension generator beneath x
 #' @export
-Beneath <- function(x, height, pad=0.01) {
-  c(x$dim[1], x$dim[2]-pad-height, x$dim[3], height)
+Beneath <- function(x, height=NULL, pad=0.01, min.ratio=0.02) {
+  force(x)
+  force(height)
+  force(pad)
+  force(min.ratio)
+  function(y) {
+    if (is.null(height)) {
+      .height <- 1/x$nr*y$nr
+      .height <- max(min.ratio, .height)
+      .height <- min(1/min.ratio, .height)
+      .height <- .height * x$dim[4]
+    } else {
+      .height <- height
+    }
+    c(x$dim[1], x$dim[2]-pad-.height, x$dim[3], .height)
+  }
 }
 
 #' LeftOf
@@ -83,10 +113,25 @@ Beneath <- function(x, height, pad=0.01) {
 #' Generate dimension to the left of another object
 #'
 #' @param x an object with dimension
+#' @param width the width of the new object (when NULL, set proportional to data)
 #' @return a dimension to the left of x
 #' @export
-LeftOf <- function(x, width, pad=0.01) {
-  c(x$dim[1]-pad-width, x$dim[2], width, x$dim[4])
+LeftOf <- function(x, width=NULL, pad=0.01, min.ratio=0.02) {
+  force(x)
+  force(width)
+  force(pad)
+  force(min.ratio)
+  function(y) {
+    if (is.null(width)) {
+      .width <- 1/x$nc*y$nc
+      .width <- max(min.ratio, .width)
+      .width <- min(1/min.ratio, .width)
+      .width <- .width * x$dim[3]
+    } else {
+      .width <- width
+    }
+    c(x$dim[1]-pad-.width, x$dim[2], .width, x$dim[4])
+  }
 }
 
 #' RightOf
@@ -96,8 +141,22 @@ LeftOf <- function(x, width, pad=0.01) {
 #' @param x an object with dimension
 #' @return a dimension to the right of x
 #' @export
-RightOf <- function(x, width, pad=0.01) {
-  c(x$dim[1]+pad+x$dim[3], x$dim[2], width, x$dim[4])
+RightOf <- function(x, width=NULL, pad=0.01, min.ratio=0.02) {
+  force(x)
+  force(width)
+  force(pad)
+  force(min.ratio)
+  function(y) {
+    if (is.null(width)) {
+      .width <- 1/x$nc*y$nc
+      .width <- max(min.ratio, .width)
+      .width <- min(1/min.ratio, .width)
+      .width <- .width * x$dim[3]
+    } else {
+      .width <- width
+    }
+    c(x$dim[1]+pad+x$dim[3], x$dim[2], .width, x$dim[4])
+  }
 }
 
 
