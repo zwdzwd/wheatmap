@@ -6,7 +6,6 @@
 #' @examples
 #' x <- WHeatmap(matrix(rnorm(16),nrow=4))
 #' CalcTextRanges(x)
-#' 
 #' @export
 CalcTextRanges <- function(x) {
   UseMethod('CalcTextRanges', x)

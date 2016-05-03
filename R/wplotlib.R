@@ -4,8 +4,6 @@
 #' 
 #' @param hm an object of class WHeatmap
 #' @return \code{NULL}
-#' @method WPlot
-#' @S3method WPlot
 #' @export
 WPlot <- function(x, ...) {
   UseMethod('WPlot', x)
@@ -15,8 +13,8 @@ WPlot <- function(x, ...) {
 #' 
 #' WPlot
 #' 
-#' @method WPlot
-#' @S3method WPlot
+#' @import grid
+#' @export
 WPlot.list <- function(obs, mar=c(0.03,0.03,0.03,0.03)) {
   
   mar.bottom = mar[1]
@@ -42,6 +40,7 @@ WPlot.list <- function(obs, mar=c(0.03,0.03,0.03,0.03)) {
   
   ## cat(mar.bottom, '\t', mar.left, '\t', mar.top, '\t', mar.right, '\n')
   
+  library(grid)
   grid.newpage()
   for(ob in obs) {
     ## scale object
@@ -51,7 +50,7 @@ WPlot.list <- function(obs, mar=c(0.03,0.03,0.03,0.03)) {
     ob$dim[4] <- ob$dim[4] * (1-mar.top-mar.bottom) / height
     
     ## plot
-    wplot(ob)
+    WPlot(ob)
   }
 }
 

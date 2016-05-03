@@ -7,6 +7,8 @@
 #' @param dim plotting dimension
 #' @param facing direction of the dendrogram plot
 #' @param name name of the dendrogram plot
+#' @return an object of class WDendrogram
+#' @export
 WDendrogram <- function(clust, dim=c(0,0,1,1), 
                         facing=c("bottom", "top", "left", "right"), name=NULL) {
   dd <- list(clust=clust, facing=facing, dim=dim)
@@ -18,8 +20,7 @@ WDendrogram <- function(clust, dim=c(0,0,1,1),
 #' 
 #' WPlot
 #' 
-#' @method WPlot
-#' @S3method WPlot
+#' @export
 WPlot.WDendrogram <- function(dend) {
   pushViewport(viewport(x=unit(dend$dim[1],'npc'), y=unit(dend$dim[2],'npc'),
                         width=unit(dend$dim[3],'npc'), height=unit(dend$dim[4],'npc'), 
@@ -32,8 +33,6 @@ WPlot.WDendrogram <- function(dend) {
 #' 
 #' Calculate Text Ranges
 #' 
-#' @method CalcTextRanges WDendrogram
-#' @S3method CalcTextRanges WDendrogram
 #' @export
 CalcTextRanges.WDendrogram <- function(dd) {
   list(left=dd$dim[1], bottom=dd$dim[2], top=dd$dim[2]+dd$dim[4], right=dd$dim[1]+dd$dim[3])
@@ -51,14 +50,15 @@ CalcTextRanges.WDendrogram <- function(dd) {
 #' locates at unit(c(0.5, 1.5, ...(n-0.5))/n, "npc").
 #'
 #' @param dend a stats::dendrogram object.
-#' @facing facing of the dendrogram.
-#' @max_height maximum height of the dendrogram.
-#' 
+#' @param facing facing of the dendrogram.
+#' @param max_height maximum height of the dendrogram.
+#' @import grid
 #' @source adapted from the ComplexHeatmap package authored by Zuguang Gu <z.gu@dkfz.de>
 #' @export
 grid.dendrogram = function(dend, facing = c("bottom", "top", "left", "right"), 
                            max_height = NULL, order = c("normal", "reverse"), ...) {
   
+  library(grid)
   facing = match.arg(facing)[1]
   
   if(is.null(max_height)) {

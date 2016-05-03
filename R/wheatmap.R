@@ -10,6 +10,7 @@
 #' @param name name of the plot
 #' @export
 WHeatmap <- function(
+  
   data=NULL, dim=c(0,0,1,1), name=NULL, continuous=TRUE,
   cmp = CMPar(), # colormapping parameters
 
@@ -62,7 +63,6 @@ WHeatmap <- function(
 #' Calculate dimension of object with text
 #' 
 #' @method CalcTextRanges WHeatmap
-#' @S3method CalcTextRanges WHeatmap
 #' @export
 CalcTextRanges.WHeatmap <- function(hm) {
   rg = list()
@@ -98,13 +98,14 @@ CalcTextRanges.WHeatmap <- function(hm) {
 #' 
 #' @param hm an object of class WHeatmap
 #' @return \code{NULL}
-#' @method WPlot
-#' @S3method WPlot
+#' @import grid
 #' @export
 WPlot.WHeatmap <- function(hm) {
   pushViewport(viewport(x=unit(hm$dim[1],'npc'), y=unit(hm$dim[2],'npc'),
                        width=unit(hm$dim[3],'npc'), height=unit(hm$dim[4],'npc'), 
                        just=c('left','bottom'), name=hm$name))
+  library(grid)
+  
   nc = ncol(hm$data)
   nr = nrow(hm$data)
   x = (seq_len(nc)-1)/nc
@@ -194,8 +195,10 @@ column.cluster <- function(mat, hc.method='ward.D2') {
 #' @param at input matrix
 #' @param hc.method method to use in hclust
 #' @return a list of clustered row, column and matrix
+#' @import stats
 #' @export
 both.cluster <- function(mat, hc.method='ward.D2') {
+  library(stats)
   d.row <- dist(mat)
   d.column <- dist(t(mat))
   r <- list()

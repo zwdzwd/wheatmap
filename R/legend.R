@@ -4,7 +4,7 @@
 #' 
 #' @param x WHeatmap object
 #' @param orientation horizontal ('h') or vertical ('v') legend
-#' @param label.fontsize
+#' @param label.fontsize label fontsize
 #' @param n.stops number of stops in computing continuous legend
 #' @return an object of class WLegend
 #' @export

@@ -115,6 +115,8 @@ MapToContinuousColors <- function(data, cmp=CMPar()) {
 #' @param data numeric vector
 #' @param cmp an color map parameter object of class CMPar
 #' @return an object of ColorMap
+#' @import RColorBrewer
+#' @import colorspace
 #' @export
 MapToDiscreteColors <- function(data, cmp=CMPar()) {
   
@@ -126,12 +128,12 @@ MapToDiscreteColors <- function(data, cmp=CMPar()) {
     return(cm)
   }
   
+  library(RColorBrewer)
+  library(colorspace)
   alphabet <- as.character(unique(as.vector(data)))
   if (!is.null(brewer.name) && length(alphabet)<=brewer.pal.info[brewer.name,'maxcolors']) {
-    library(RColorBrewer)
     mapped.colors <- brewer.pal(length(alphabet), brewer.name)
   } else {
-    library(colorspace)
     mapped.colors <- get(colorspace.name)(length(alphabet))
   }
   
