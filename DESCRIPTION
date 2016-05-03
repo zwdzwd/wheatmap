@@ -3,7 +3,7 @@ Type: Package
 Title: WHeatmap
 Version: 0.1.0
 Author: Wanding Zhou
-Maintainer: Who to complain to <zhouwanding@gmail.com>
+Maintainer: Wanding Zhou <zhouwanding@gmail.com>
 Description: Plot heatmap in a sequential manner.
 License: MIT license
 LazyData: TRUE
