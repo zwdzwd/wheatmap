@@ -1,2 +1,3 @@
-# wplotlib
-working plot library
+# Wheatmap
+
+Easy plot complex heatmap in a sequential order.
