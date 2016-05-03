@@ -15,19 +15,19 @@ WHeatmap <- function(
   cmp = CMPar(), # colormapping parameters
 
   ## titles
-  title = NULL, title.fontsize=16, title.pad=0.005, title.side='l',
+  title = NULL, title.fontsize=12, title.pad=0.005, title.side='l',
 
   ## tick label on x-axis
   xticklabels = NULL,
   xticklabel.side = 'b',
-  xticklabel.fontsize = 16,
+  xticklabel.fontsize = 12,
   xticklabel.rotat = 90,
   xticklabel.pad = 0.005,
 
   ## tick label on y-axis
   yticklabels = NULL,
   yticklabel.side = 'l',
-  yticklabel.fontsize = 16,
+  yticklabel.fontsize = 12,
   yticklabel.pad = 0.005,
 
   ## alpha
