@@ -1,8 +1,8 @@
 
 #' WHeatmap object
-#' 
+#'
 #' Create a heatmap
-#' 
+#'
 #' @param data data matrix
 #' @param dim plotting dimension c(left, bottom, width, height)
 #' @param continuous whether the data is on continuous scale
@@ -10,13 +10,13 @@
 #' @param name name of the plot
 #' @export
 WHeatmap <- function(
-  
+
   data=NULL, dim=c(0,0,1,1), name=NULL, continuous=TRUE,
   cmp = CMPar(), # colormapping parameters
 
   ## titles
   title = NULL, title.fontsize=16, title.pad=0.005, title.side='l',
-  
+
   ## tick label on x-axis
   xticklabels = NULL,
   xticklabel.side = 'bottom',
@@ -32,36 +32,36 @@ WHeatmap <- function(
 
   ## alpha
   alpha = 1,
-  
+
   ## graph parameters
   gp = NULL) {
 
   hm <- lapply(formals(), eval)
-  
+
   ## graph parameters
   hm$gp <- list()
   hm$gp$col <- 'white'
   hm$gp$lty <- 'blank'
   lapply(names(gp), function(x) {hm$gp[[x]] <<- gp[[x]]})
-  
+
   invisible(lapply(names(as.list(match.call()))[-1], function (nm) {
     hm[[nm]] <<- get(nm)
   }))
-  
+
   ## map to colors
   if (continuous)
     hm$cm <- MapToContinuousColors(hm$data, cmp=hm$cmp)
   else
     hm$cm <- MapToDiscreteColors(hm$data, cmp=hm$cmp)
-  
+
   class(hm) <- 'WHeatmap'
   hm
 }
 
 #' Calculate Text Ranges
-#' 
+#'
 #' Calculate dimension of object with text
-#' 
+#'
 #' @method CalcTextRanges WHeatmap
 #' @export
 CalcTextRanges.WHeatmap <- function(hm) {
@@ -71,7 +71,7 @@ CalcTextRanges.WHeatmap <- function(hm) {
   rg$bottom <- hm$dim[2]
   rg$top <- rg$bottom + hm$dim[4]
   rg$right <- rg$left + hm$dim[3]
-  
+
   if (!is.null(hm$title)) {
     if (hm$title.side=='l') {
       rg$left <- rg$left - text.width(hm$title, hm$title.fontsize) - hm$title.pad
@@ -79,11 +79,11 @@ CalcTextRanges.WHeatmap <- function(hm) {
       rg$right <- rg$right + text.width(hm$title, hm$title.fontsize) + hm$title.pad
     }
   }
-  
+
   if (!is.null(hm$yticklabels)) {
     if (hm$yticklabel.side=='l') {
-      rg$left <- rg$left + max(sapply(
-        rownames(hm$data), function(t) text.width(t, hm$yticklabel.fontsize))) + hm$yticklabel.pad
+      rg$left <- rg$left - max(sapply(
+        rownames(hm$data), function(t) text.width(t, hm$yticklabel.fontsize))) - hm$yticklabel.pad
     } else {
       rg$right <- rg$right + max(sapply(
         rownames(hm$data), function(t) text.width(t, hm$yticklabel.fontsize))) + hm$yticklabel.pad
@@ -93,19 +93,19 @@ CalcTextRanges.WHeatmap <- function(hm) {
 }
 
 #' WPlot WHeatmap
-#' 
+#'
 #' WPlot WHeatmap
-#' 
+#'
 #' @param hm an object of class WHeatmap
 #' @return \code{NULL}
 #' @import grid
 #' @export
 WPlot.WHeatmap <- function(hm) {
   pushViewport(viewport(x=unit(hm$dim[1],'npc'), y=unit(hm$dim[2],'npc'),
-                       width=unit(hm$dim[3],'npc'), height=unit(hm$dim[4],'npc'), 
+                       width=unit(hm$dim[3],'npc'), height=unit(hm$dim[4],'npc'),
                        just=c('left','bottom'), name=hm$name))
   library(grid)
-  
+
   nc = ncol(hm$data)
   nr = nrow(hm$data)
   x = (seq_len(nc)-1)/nc
@@ -115,7 +115,7 @@ WPlot.WHeatmap <- function(hm) {
             width=unit(1/nc, 'npc'), height=unit(1/nr, 'npc'),
             gp=do.call('gpar', c(list(fill=hm$cm$colors), hm$gp)), just=c('left','bottom'))
   upViewport()
-  
+
   ## y tick labels
   if (!is.null(hm$yticklabels)) {
     labels <- rownames(hm$data)
@@ -135,7 +135,7 @@ WPlot.WHeatmap <- function(hm) {
     grid.text(labels, x=unit(.text.x,'npc'), y=y.mid, just=c(.text.just,'center'), gp=gpar(fontsize=hm$yticklabel.fontsize))
     upViewport()
   }
-  
+
   ## titles
   if (!is.null(hm$title)) {
     if (hm$title.side == 'l') {
@@ -155,9 +155,9 @@ WPlot.WHeatmap <- function(hm) {
 }
 
 #' row cluster a matrix
-#' 
+#'
 #' row cluster a matrix
-#' 
+#'
 #' @param mat input matrix
 #' @param hc.method method to use in hclust
 #' @return a list of clustered row, column and matrix
@@ -172,9 +172,9 @@ row.cluster <- function(mat, hc.method='ward.D2') {
 }
 
 #' column cluster a matrix
-#' 
+#'
 #' column cluster a matrix
-#' 
+#'
 #' @param mat input matrix
 #' @param hc.method method to use in hclust
 #' @return a list of clustered row, column and matrix
@@ -189,9 +189,9 @@ column.cluster <- function(mat, hc.method='ward.D2') {
 }
 
 #' row- and column-cluster a matrix
-#' 
+#'
 #' row- and column-cluster a matrix
-#' 
+#'
 #' @param at input matrix
 #' @param hc.method method to use in hclust
 #' @return a list of clustered row, column and matrix
