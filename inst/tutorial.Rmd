@@ -1,6 +1,6 @@
 ---
 title: "tutorial of wheatmap"
-output: html_document
+output: pdf_document
 ---
 
 This is a tutorial on the usage of wheatmap for generating complex heatmaps in a procedure way.
