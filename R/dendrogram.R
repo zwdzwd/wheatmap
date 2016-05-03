@@ -1,4 +1,44 @@
 
+#' WDendrogram class
+#' 
+#' WDendrogram class
+#' 
+#' @param clust hclust object
+#' @param dim plotting dimension
+#' @param facing direction of the dendrogram plot
+#' @param name name of the dendrogram plot
+WDendrogram <- function(clust, dim=c(0,0,1,1), 
+                        facing=c("bottom", "top", "left", "right"), name=NULL) {
+  dd <- list(clust=clust, facing=facing, dim=dim)
+  class(dd) <- c('WDendrogram')
+  dd
+}
+
+#' WPlot
+#' 
+#' WPlot
+#' 
+#' @method WPlot
+#' @S3method WPlot
+WPlot.WDendrogram <- function(dend) {
+  pushViewport(viewport(x=unit(dend$dim[1],'npc'), y=unit(dend$dim[2],'npc'),
+                        width=unit(dend$dim[3],'npc'), height=unit(dend$dim[4],'npc'), 
+                        just=c('left','bottom'), name=dend$name, gp=gpar(col='black')))
+  grid.dendrogram(as.dendrogram(dend$clust), facing=dend$facing)
+  upViewport()
+}
+
+#' Calculate Text Ranges
+#' 
+#' Calculate Text Ranges
+#' 
+#' @method CalcTextRanges WDendrogram
+#' @S3method CalcTextRanges WDendrogram
+#' @export
+CalcTextRanges.WDendrogram <- function(dd) {
+  list(left=dd$dim[1], bottom=dd$dim[2], top=dd$dim[2]+dd$dim[4], right=dd$dim[1]+dd$dim[3])
+}
+
 #' Draw dendrogram under grid system
 #' 
 #' The dendrogram can be renderred. A viewport is created which contains the dendrogram.
@@ -88,32 +128,24 @@ grid.dendrogram = function(dend, facing = c("bottom", "top", "left", "right"),
     }
     
     
-    # plot the connection line
+    ## plot the connection line
     if(order == "normal") {
       if(facing == "bottom") {
-        # grid.lines(c(x1, x1, (x1+x2)/2), c(y1, height, height), default.units = "native", gp = edge_gp1)
-        # grid.lines(c(x2, x2, (x1+x2)/2), c(y2, height, height), default.units = "native", gp = edge_gp2)
         env$x0 = c(env$x0, c(x1, x1, x2, x2))
         env$y0 = c(env$y0, c(y1, height, y2, height))
         env$x1 = c(env$x1, c(x1, (x1+x2)/2, x2, (x1+x2)/2))
         env$y1 = c(env$y1, c(height, height, height, height))
       } else if(facing == "top") {
-        # grid.lines(c(x1, x1, (x1+x2)/2), max_height - c(y1, height, height), default.units = "native", gp = edge_gp1)
-        # grid.lines(c(x2, x2, (x1+x2)/2), max_height - c(y2, height, height), default.units = "native", gp = edge_gp2)
         env$x0 = c(env$x0, c(x1, x1, x2, x2))
         env$y0 = c(env$y0, max_height - c(y1, height, y2, height))
         env$x1 = c(env$x1, c(x1, (x1+x2)/2, x2, (x1+x2)/2))
         env$y1 = c(env$y1, max_height - c(height, height, height, height))
       } else if(facing == "right") {
-        # grid.lines(max_height - c(y1, height, height), c(x1, x1, (x1+x2)/2), default.units = "native", gp = edge_gp1)
-        # grid.lines(max_height - c(y2, height, height), c(x2, x2, (x1+x2)/2), default.units = "native", gp = edge_gp2)
         env$x0 = c(env$x0, max_height - c(y1, height, y2, height))
         env$y0 = c(env$y0, c(x1, x1, x2, x2))
         env$x1 = c(env$x1, max_height - c(height, height, height, height))
         env$y1 = c(env$y1, c(x1, (x1+x2)/2, x2, (x1+x2)/2))
       } else if(facing == "left") {
-        # grid.lines(c(y1, height, height), c(x1, x1, (x1+x2)/2), default.units = "native", gp = edge_gp1)
-        # grid.lines(c(y2, height, height), c(x2, x2, (x1+x2)/2), default.units = "native", gp = edge_gp2)
         env$x0 = c(env$x0, c(y1, height, y2, height))
         env$y0 = c(env$y0, c(x1, x1, x2, x2))
         env$x1 = c(env$x1, c(height, height, height, height))
@@ -121,36 +153,28 @@ grid.dendrogram = function(dend, facing = c("bottom", "top", "left", "right"),
       }
     } else {
       if(facing == "bottom") {
-        # grid.lines(max_width - c(x1, x1, (x1+x2)/2), c(y1, height, height), default.units = "native", gp = edge_gp1)
-        # grid.lines(max_width - c(x2, x2, (x1+x2)/2), c(y2, height, height), default.units = "native", gp = edge_gp2)
         env$x0 = c(env$x0, max_width - c(x1, x1, x2, x2))
         env$y0 = c(env$y0, c(y1, height, y2, height))
         env$x1 = c(env$x1, max_width - c(x1, (x1+x2)/2, x2, (x1+x2)/2))
         env$y1 = c(env$y1, c(height, height, height, height))
       } else if(facing == "top") {
-        # grid.lines(max_width - c(x1, x1, (x1+x2)/2), max_height - c(y1, height, height), default.units = "native", gp = edge_gp1)
-        # grid.lines(max_width - c(x2, x2, (x1+x2)/2), max_height - c(y2, height, height), default.units = "native", gp = edge_gp2)
         env$x0 = c(env$x0, max_width - c(x1, x1, x2, x2))
         env$y0 = c(env$y0, max_height - c(y1, height, y2, height))
         env$x1 = c(env$x1, max_width - c(x1, (x1+x2)/2, x2, (x1+x2)/2))
         env$y1 = c(env$y1, max_height - c(height, height, height, height))
       } else if(facing == "right") {
-        # grid.lines(max_height - c(y1, height, height), max_width - c(x1, x1, (x1+x2)/2), default.units = "native", gp = edge_gp1)
-        # grid.lines(max_height - c(y2, height, height), max_width - c(x2, x2, (x1+x2)/2), default.units = "native", gp = edge_gp2)
         env$x0 = c(env$x0, max_height - c(y1, height, y2, height))
         env$y0 = c(env$y0, max_width - c(x1, x1, x2, x2))
         env$x1 = c(env$x1, max_height - c(height, height, height, height))
         env$y1 = c(env$y1, max_width - c(x1, (x1+x2)/2, x2, (x1+x2)/2))
       } else if(facing == "left") {
-        # grid.lines(c(y1, height, height), max_width - c(x1, x1, (x1+x2)/2), default.units = "native", gp = edge_gp1)
-        # grid.lines(c(y2, height, height), max_width - c(x2, x2, (x1+x2)/2), default.units = "native", gp = edge_gp2)
         env$x0 = c(env$x0, c(y1, height, y2, height))
         env$y0 = c(env$y0, max_width - c(x1, x1, x2, x2))
         env$x1 = c(env$x1, c(height, height, height, height))
         env$y1 = c(env$y1, max_width - c(x1, (x1+x2)/2, x2, (x1+x2)/2))
       }
     }
-    # do it recursively
+    ## do it recursively
     if(!is.leaf(d1)) {
       draw.d(d1, max_height, facing, order, max_width, env = env)
     }

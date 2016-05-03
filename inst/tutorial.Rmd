@@ -1,0 +1,37 @@
+---
+title: "tutorial of wheatmap"
+output: html_document
+---
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+summary(cars)
+
+# matrix.data <- cbind(matrix(rnorm(20),nrow=4), 5+matrix(rnorm(8),nrow=4))
+# row.bar.data <- c(1,2,3,1)
+# column.bar.data <- c(1:6,6)
+# dimnames(a) <- list(c('w','x','y','z'), c('a','b','c','d','e','f','g'))
+# 
+# r.both <- both.cluster(matrix.data)
+# row.bar.data <- row.bar.data[r.both$row.clust$order]
+# column.bar.data <- column.bar.data[r.both$column.clust$order]
+# 
+# wplot(list(
+#   WHeatmap(r.both$mat, dim=c(0.1,0.1,0.8,0.8)),
+#   WCbar(row.bar.data, 'v', dim=c(0.01,0.1,0.08,0.8), continuous=FALSE),
+#   WCbar(column.bar.data, continuous=FALSE, orientation='h', dim=c(0.1,0.91,0.8,0.08)),
+#   WDendrogram(r.both$row.clust, facing='right', dim=c(-0.1,0.1,0.1,0.8)),
+#   WDendrogram(r.both$column.clust, facing='bottom', dim=c(0.1,1.0,0.8,0.1))
+# ))
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
