@@ -1,20 +1,31 @@
-#' WCbar
-#' 
-#' a color bar
-#' 
+#' WColorBarV
+#'
+#' a vertical color bar
+#'
 #' @param data numeric vector
-#' @param orientation horizontal ('h') or vertical ('v') color bar
-#' @return an object of class WCbar
+#' @return an object of class WColorBarV
 #' @export
-WCbar <- function(data, orientation='h', ...) {
-  if (orientation=='h') { # horizontal
-    cb = WHeatmap(matrix(data, nrow=1), ...)
-    cb$orientation <- 'h'
-  } else { # vertical
-    cb = WHeatmap(matrix(data), ...)
-    cb$orientation <- 'v'
-  }
+WColorBarV <- function(data, ...) {
+  cb = WHeatmap(matrix(data), ...)
+  cb$orientation <- 'v'
   cb$cmp$cmap <- NULL
   class(cb) <- c(class(cb), 'WCbar')
   cb
 }
+
+#' WColorBarH
+#'
+#' a horizontal color bar
+#'
+#' @param data numeric vector
+#' @return an object of class WColorBarH
+#' @export
+WColorBarH <- function(data, ...) {
+  cb = WHeatmap(matrix(data, nrow=1), ...)
+  cb$orientation <- 'h'
+  cb$cmp$cmap <- NULL
+  class(cb) <- c(class(cb), 'WCbar')
+  cb
+}
+
+

@@ -62,6 +62,8 @@ WPlot.list <- function(obs, mar=c(0.03,0.03,0.03,0.03)) {
 #'
 #' @param x an object with dimension
 #' @param height the height of the new object (when NULL, set to proportional to data)
+#' @param pad padding between the target and current
+#' @param min.ratio minimum ratio of dimensions when auto-scale
 #' @return a dimension generator on top of x
 #' @export
 TopOf <- function(x, height=NULL, pad=0.01, min.ratio=0.02) {
@@ -88,6 +90,8 @@ TopOf <- function(x, height=NULL, pad=0.01, min.ratio=0.02) {
 #'
 #' @param x an object with dimension
 #' @param height the height of the new object (when NULL set proportional to the data)
+#' @param pad padding between the target and current
+#' @param min.ratio minimum ratio of dimensions when auto-scale
 #' @return a dimension generator beneath x
 #' @export
 Beneath <- function(x, height=NULL, pad=0.01, min.ratio=0.02) {
@@ -114,6 +118,8 @@ Beneath <- function(x, height=NULL, pad=0.01, min.ratio=0.02) {
 #'
 #' @param x an object with dimension
 #' @param width the width of the new object (when NULL, set proportional to data)
+#' @param pad padding between the target and current
+#' @param min.ratio minimum ratio of dimensions when auto-scale
 #' @return a dimension to the left of x
 #' @export
 LeftOf <- function(x, width=NULL, pad=0.01, min.ratio=0.02) {
@@ -139,6 +145,9 @@ LeftOf <- function(x, width=NULL, pad=0.01, min.ratio=0.02) {
 #' Generate dimension to the right of another object
 #'
 #' @param x an object with dimension
+#' @param width the width of the new object (when NULL, set proportional to data)
+#' @param pad padding between the target and current
+#' @param min.ratio minimum ratio of dimensions when auto-scale
 #' @return a dimension to the right of x
 #' @export
 RightOf <- function(x, width=NULL, pad=0.01, min.ratio=0.02) {
@@ -158,5 +167,41 @@ RightOf <- function(x, width=NULL, pad=0.01, min.ratio=0.02) {
     c(x$dim[1]+pad+x$dim[3], x$dim[2], .width, x$dim[4])
   }
 }
+
+#' Class WObject
+#'
+#' Class WObject
+#'
+#' @param dim dimension
+#' @param nr number of rows
+#' @param nc number of columns
+#' @return an object of class WObject
+#' @export
+WObject <- function(dim=NULL, nr=NULL, nc=NULL) {
+  o <- list(nc=nc, nr=nr, dim=dim)
+  o
+}
+
+#' Row-bind plotting objects
+#'
+#' Row-bind plotting objects
+#'
+#' @param ... plotting objects
+#' @return an object of class WObject
+#' @export
+RBind <- function(..., nr=NULL) {
+  obs <- list(...)
+  if (is.null(nr))
+    nr <- min(sapply(obs, function(o) o$nr))
+  nc <- sum(sapply(obs, function(o) o$nc))
+  dim <- c(0,0,0,0)
+  dim[1] <- min(sapply(obs, function(o) o$dim[1]))
+  dim[2] <- min(sapply(obs, function(o) o$dim[2]))
+  dim[3] <- max(sapply(obs, function(o) o$dim[1]+o$dim[3]))-dim[1]
+  dim[4] <- max(sapply(obs, function(o) o$dim[2]+o$dim[4]))-dim[2]
+  WObject(dim=dim, nc=nc, nr=nr)
+}
+
+
 
 
