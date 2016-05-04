@@ -22,33 +22,33 @@ WPlot.list <- function(obs, mar=c(0.03,0.03,0.03,0.03)) {
   mar.top = mar[3]
   mar.right = mar[4]
 
-  left <- min(sapply(obs, function(x) x$dim[1]))
-  right <- max(sapply(obs, function(x) x$dim[1]+x$dim[3]))
-  bottom <- min(sapply(obs, function(x) x$dim[2]))
-  top <- max(sapply(obs, function(x) x$dim[2]+x$dim[4]))
+  left <- min(sapply(obs, function(x) x$dm$left))
+  right <- max(sapply(obs, function(x) x$dm$left+x$dm$width))
+  bottom <- min(sapply(obs, function(x) x$dm$bottom))
+  top <- max(sapply(obs, function(x) x$dm$bottom+x$dm$height))
   width <- right-left
   height <- top-bottom
 
   ## cat(bottom, '\t', left, '\t', top, '\t', right, '\n')
 
   ## resize margin to accomodate texts/labels
-  text.dims <- lapply(obs, CalcTextRanges)
-  mar.bottom <- mar.bottom + bottom - min(sapply(text.dims, function(x) x$bottom))
-  mar.left <- mar.left + left - min(sapply(text.dims, function(x) x$left))
-  mar.top <- mar.top + max(sapply(text.dims, function(x) x$top)) - top
-  mar.right <- mar.right + max(sapply(text.dims, function(x) x$right)) - right
+  text.dms <- lapply(obs, CalcTextRanges)
+  mar.bottom <- mar.bottom + bottom - min(sapply(text.dms, function(x) x$bottom))
+  mar.left <- mar.left + left - min(sapply(text.dms, function(x) x$left))
+  mar.top <- mar.top + max(sapply(text.dms, function(x) x$top)) - top
+  mar.right <- mar.right + max(sapply(text.dms, function(x) x$right)) - right
 
-  ## cat(str(text.dims),'\n')
+  ## cat(str(text.dms),'\n')
   ## cat(mar.bottom, '\t', mar.left, '\t', mar.top, '\t', mar.right, '\n')
 
   library(grid)
   grid.newpage()
   for(ob in obs) {
     ## scale object
-    ob$dim[1] <- mar.left + (ob$dim[1]-left) * (1-mar.left-mar.right) / width
-    ob$dim[2] <- mar.bottom + (ob$dim[2]-bottom) * (1-mar.top-mar.bottom) / height
-    ob$dim[3] <- ob$dim[3] * (1-mar.left-mar.right) / width
-    ob$dim[4] <- ob$dim[4] * (1-mar.top-mar.bottom) / height
+    ob$dm$left <- mar.left + (ob$dm$left-left) * (1-mar.left-mar.right) / width
+    ob$dm$bottom <- mar.bottom + (ob$dm$bottom-bottom) * (1-mar.top-mar.bottom) / height
+    ob$dm$width <- ob$dm$width * (1-mar.left-mar.right) / width
+    ob$dm$height <- ob$dm$height * (1-mar.top-mar.bottom) / height
 
     ## plot
     WPlot(ob)
@@ -71,16 +71,16 @@ TopOf <- function(x, height=NULL, pad=0.01, min.ratio=0.02) {
   force(height)
   force(pad)
   force(min.ratio)
-  function(y) {
+  function(nr, nc) {
     if (is.null(height)) {
-      .height <- 1/x$nr*y$nr
+      .height <- 1 / x$nr * nr
       .height <- max(min.ratio, .height)
       .height <- min(1/min.ratio, .height)
-      .height <- .height * x$dim[4]
+      .height <- .height * x$dm$height
     } else {
       .height <- height
     }
-    c(x$dim[1], x$dim[2]+pad+x$dim[4], x$dim[3], .height)
+    WDim(x$dm$left, x$dm$bottom+pad+x$dm$height, x$dm$width, .height)
   }
 }
 
@@ -99,16 +99,16 @@ Beneath <- function(x, height=NULL, pad=0.01, min.ratio=0.02) {
   force(height)
   force(pad)
   force(min.ratio)
-  function(y) {
+  function(nr, nc) {
     if (is.null(height)) {
-      .height <- 1/x$nr*y$nr
+      .height <- 1 / x$nr * nr
       .height <- max(min.ratio, .height)
       .height <- min(1/min.ratio, .height)
-      .height <- .height * x$dim[4]
+      .height <- .height * x$dm$height
     } else {
       .height <- height
     }
-    c(x$dim[1], x$dim[2]-pad-.height, x$dim[3], .height)
+    WDim(x$dm$left, x$dm$bottom-pad-.height, x$dm$width, .height)
   }
 }
 
@@ -127,16 +127,16 @@ LeftOf <- function(x, width=NULL, pad=0.01, min.ratio=0.02) {
   force(width)
   force(pad)
   force(min.ratio)
-  function(y) {
+  function(nr, nc) {
     if (is.null(width)) {
-      .width <- 1/x$nc*y$nc
+      .width <- 1 / x$nc * nc
       .width <- max(min.ratio, .width)
       .width <- min(1/min.ratio, .width)
-      .width <- .width * x$dim[3]
+      .width <- .width * x$dm$width
     } else {
       .width <- width
     }
-    c(x$dim[1]-pad-.width, x$dim[2], .width, x$dim[4])
+    WDim(x$dm$left-pad-.width, x$dm$bottom, .width, x$dm$height)
   }
 }
 
@@ -155,53 +155,15 @@ RightOf <- function(x, width=NULL, pad=0.01, min.ratio=0.02) {
   force(width)
   force(pad)
   force(min.ratio)
-  function(y) {
+  function(nr, nc) {
     if (is.null(width)) {
-      .width <- 1/x$nc*y$nc
+      .width <- 1 / x$nc * nc
       .width <- max(min.ratio, .width)
       .width <- min(1/min.ratio, .width)
-      .width <- .width * x$dim[3]
+      .width <- .width * x$dm$width
     } else {
       .width <- width
     }
-    c(x$dim[1]+pad+x$dim[3], x$dim[2], .width, x$dim[4])
+    WDim(x$dm$left+pad+x$dm$width, x$dm$bottom, .width, x$dm$height)
   }
 }
-
-#' Class WObject
-#'
-#' Class WObject
-#'
-#' @param dim dimension
-#' @param nr number of rows
-#' @param nc number of columns
-#' @return an object of class WObject
-#' @export
-WObject <- function(dim=NULL, nr=NULL, nc=NULL) {
-  o <- list(nc=nc, nr=nr, dim=dim)
-  o
-}
-
-#' Row-bind plotting objects
-#'
-#' Row-bind plotting objects
-#'
-#' @param ... plotting objects
-#' @return an object of class WObject
-#' @export
-RBind <- function(..., nr=NULL) {
-  obs <- list(...)
-  if (is.null(nr))
-    nr <- min(sapply(obs, function(o) o$nr))
-  nc <- sum(sapply(obs, function(o) o$nc))
-  dim <- c(0,0,0,0)
-  dim[1] <- min(sapply(obs, function(o) o$dim[1]))
-  dim[2] <- min(sapply(obs, function(o) o$dim[2]))
-  dim[3] <- max(sapply(obs, function(o) o$dim[1]+o$dim[3]))-dim[1]
-  dim[4] <- max(sapply(obs, function(o) o$dim[2]+o$dim[4]))-dim[2]
-  WObject(dim=dim, nc=nc, nr=nr)
-}
-
-
-
-

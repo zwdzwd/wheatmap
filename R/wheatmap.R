@@ -4,14 +4,15 @@
 #' Create a heatmap
 #'
 #' @param data data matrix
-#' @param dim plotting dimension c(left, bottom, width, height)
+#' @param dm plotting dimension c(left, bottom, width, height)
 #' @param continuous whether the data is on continuous scale
 #' @param cmp an object of CMPar class
 #' @param name name of the plot
+#' @return one or a list of heatmaps (depends on whether dimension is split)
 #' @export
 WHeatmap <- function(
 
-  data=NULL, dim=c(0,0,1,1), name=NULL, continuous=TRUE,
+  data=NULL, dm=WDim(0,0,1,1), name=NULL, continuous=TRUE,
   cmp = CMPar(), # colormapping parameters
 
   ## titles
@@ -36,6 +37,24 @@ WHeatmap <- function(
   ## graph parameters
   gp = NULL) {
 
+  ## allow auto-adjust of dimensions
+  nr <- nrow(data)
+  nc <- ncol(data)
+  if (class(dm)=='function') {
+    dm <- dm(nr, nc)
+  }
+
+  ## split column if dimension indicates so
+  if (dm$column.split && !is.null(dm$sub.dms) &&
+        sum(sapply(dm$sub.dms, function(dm) dm$nc))==ncol(data)) {
+    sub.dms <- dm$sub.dms[order(sapply(dm$sub.dms, function(dm) dm$left))]
+    col.ind <- c(0,cumsum(sapply(dm$sub.dms, function(dm) dm$nc)))
+    return(lapply(seq_along(sub.dms), function(i) {
+      sub.dm <- sub.dms[[i]]
+      WHeatmap(data[,(col.inds[i]+1):col.inds[i+1]], WDim(sub.dm$left, dm$bottom, sub.dm$width, dm$height))
+    }))
+  }
+
   hm <- lapply(formals(), eval)
 
   ## graph parameters
@@ -47,13 +66,6 @@ WHeatmap <- function(
   invisible(lapply(names(as.list(match.call()))[-1], function (nm) {
     hm[[nm]] <<- get(nm)
   }))
-
-  ## allow auto-adjust of dimensions
-  hm$nr <- nrow(data)
-  hm$nc <- ncol(data)
-  if (class(hm$dim)=='function') {
-    hm$dim <- hm$dim(hm)
-  }
 
   ## map to colors
   if (continuous)
@@ -74,10 +86,10 @@ WHeatmap <- function(
 CalcTextRanges.WHeatmap <- function(hm) {
   rg = list()
   ## bottom, left, top, right
-  rg$left <- hm$dim[1]
-  rg$bottom <- hm$dim[2]
-  rg$top <- rg$bottom + hm$dim[4]
-  rg$right <- rg$left + hm$dim[3]
+  rg$left <- hm$dm$left
+  rg$bottom <- hm$dm$bottom
+  rg$top <- rg$bottom + hm$dm$height
+  rg$right <- rg$left + hm$dm$width
 
   if (!is.null(hm$title)) {
     if (hm$title.side=='l') {
@@ -119,8 +131,8 @@ CalcTextRanges.WHeatmap <- function(hm) {
 #' @import grid
 #' @export
 WPlot.WHeatmap <- function(hm) {
-  pushViewport(viewport(x=unit(hm$dim[1],'npc'), y=unit(hm$dim[2],'npc'),
-                       width=unit(hm$dim[3],'npc'), height=unit(hm$dim[4],'npc'),
+  pushViewport(viewport(x=unit(hm$dm$left,'npc'), y=unit(hm$dm$bottom,'npc'),
+                       width=unit(hm$dm$width,'npc'), height=unit(hm$dm$height,'npc'),
                        just=c('left','bottom'), name=hm$name))
   library(grid)
 
@@ -142,15 +154,15 @@ WPlot.WHeatmap <- function(hm) {
       .text.just = 'top'
       .text.y = 1
       .text.rot = -90
-      .vpy = hm$dim[2] - hm$xticklabel.pad
+      .vpy = hm$dm$bottom - hm$xticklabel.pad
     } else {
       .text.just = 'bottom'
       .text.y = 0
       .text.rot = 90
-      .vpy = hm$dim[2] + hm$dim[4] + hm$xticklabel.pad
+      .vpy = hm$dm$bottom + hm$dm$height + hm$xticklabel.pad
     }
-    pushViewport(viewport(x=unit(hm$dim[1], 'npc'), y=unit(.vpy, 'npc'),
-                          width=unit(hm$dim[3],'npc'), height=max(sapply(labels, stringWidth)), just=c('left', .text.just)))
+    pushViewport(viewport(x=unit(hm$dm$left, 'npc'), y=unit(.vpy, 'npc'),
+                          width=unit(hm$dm$width,'npc'), height=max(sapply(labels, stringWidth)), just=c('left', .text.just)))
     grid.text(labels, x=x.mid, y=unit(.text.y,'npc'), just=c('left', 'center'), rot=.text.rot, gp=gpar(fontsize=hm$yticklabel.fontsize))
     upViewport()
   }
@@ -162,14 +174,14 @@ WPlot.WHeatmap <- function(hm) {
     if (hm$yticklabel.side == 'l') {
       .text.just = 'right'
       .text.x = 1
-      .vpx = hm$dim[1] - hm$yticklabel.pad
+      .vpx = hm$dm$left - hm$yticklabel.pad
     } else {
       .text.just = 'left'
       .text.x = 0
-      .vpx = hm$dim[1] + hm$dim[3] + hm$yticklabel.pad
+      .vpx = hm$dm$left + hm$dm$width + hm$yticklabel.pad
     }
-    pushViewport(viewport(x=unit(.vpx, 'npc'), y=unit(hm$dim[2], 'npc'),
-                          width=max(sapply(labels, stringWidth)), height=unit(hm$dim[4],'npc'), just=c(.text.just,'bottom')))
+    pushViewport(viewport(x=unit(.vpx, 'npc'), y=unit(hm$dm$bottom, 'npc'),
+                          width=max(sapply(labels, stringWidth)), height=unit(hm$dm$height,'npc'), just=c(.text.just,'bottom')))
     grid.text(labels, x=unit(.text.x,'npc'), y=y.mid, just=c(.text.just,'center'), gp=gpar(fontsize=hm$yticklabel.fontsize))
     upViewport()
   }
@@ -179,14 +191,14 @@ WPlot.WHeatmap <- function(hm) {
     if (hm$title.side == 'l') {
       .text.just = 'right'
       .text.x = 1
-      .vpx = hm$dim[1] - hm$title.pad
+      .vpx = hm$dm$left - hm$title.pad
     } else {
       .text.just = 'left'
       .text.x = 0
-      .vpx = hm$dim[1] + hm$dim[3] + hm$title.pad
+      .vpx = hm$dm$left + hm$dm$width + hm$title.pad
     }
-    pushViewport(viewport(x=unit(.vpx,'npc'), y=unit(hm$dim[2],'npc'),
-                          width=stringWidth(hm$title), height=unit(hm$dim[4],'npc'), just=c(.text.just,'bottom')))
+    pushViewport(viewport(x=unit(.vpx,'npc'), y=unit(hm$dm$bottom,'npc'),
+                          width=stringWidth(hm$title), height=unit(hm$dm$height,'npc'), just=c(.text.just,'bottom')))
     grid.text(hm$title, x=unit(.text.x,'npc'), y=unit(0.5,'npc'), just=c(.text.just,'center'), gp=gpar(fontsize=hm$title.fontsize))
     upViewport()
   }

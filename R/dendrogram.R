@@ -4,22 +4,20 @@
 #' WDendrogram class
 #'
 #' @param clust hclust object
-#' @param dim plotting dimension
+#' @param dm plotting dimension
 #' @param facing direction of the dendrogram plot
 #' @param name name of the dendrogram plot
 #' @return an object of class WDendrogram
 #' @export
-WDendrogram <- function(clust, dim=c(0,0,1,1),
+WDendrogram <- function(clust, dm=WDim(0,0,1,1),
                         facing=c("bottom", "top", "left", "right"), name=NULL) {
 
-  dd <- list(clust=clust, facing=facing, nr=1, nc=1)
 
   ## allow auto-adjust of dimensions
-  if (class(dim)=='function')
-    dd$dim <- dim(dd)
-  else
-    dd$dim <- dim
+  if (class(dm)=='function')
+    dm <- dm(1, 1)
 
+  dd <- list(clust=clust, facing=facing, dm=dm)
   class(dd) <- c('WDendrogram')
   dd
 }
@@ -30,8 +28,8 @@ WDendrogram <- function(clust, dim=c(0,0,1,1),
 #'
 #' @export
 WPlot.WDendrogram <- function(dend) {
-  pushViewport(viewport(x=unit(dend$dim[1],'npc'), y=unit(dend$dim[2],'npc'),
-                        width=unit(dend$dim[3],'npc'), height=unit(dend$dim[4],'npc'),
+  pushViewport(viewport(x=unit(dend$dm$left,'npc'), y=unit(dend$dm$bottom,'npc'),
+                        width=unit(dend$dm$width,'npc'), height=unit(dend$dm$height,'npc'),
                         just=c('left','bottom'), name=dend$name, gp=gpar(col='black')))
   grid.dendrogram(as.dendrogram(dend$clust), facing=dend$facing)
   upViewport()
@@ -43,7 +41,7 @@ WPlot.WDendrogram <- function(dend) {
 #'
 #' @export
 CalcTextRanges.WDendrogram <- function(dd) {
-  list(left=dd$dim[1], bottom=dd$dim[2], top=dd$dim[2]+dd$dim[4], right=dd$dim[1]+dd$dim[3])
+  list(left=dd$dm$left, bottom=dd$dm$bottom, top=dd$dm$bottom+dd$dm$height, right=dd$dm$left+dd$dm$width)
 }
 
 #' Draw dendrogram under grid system
