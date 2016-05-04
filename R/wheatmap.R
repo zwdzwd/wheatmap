@@ -37,25 +37,20 @@ WHeatmap <- function(
   ## graph parameters
   gp = NULL) {
 
+  hm <- lapply(formals(), eval)
+  
   ## allow auto-adjust of dimensions
   nr <- nrow(data)
   nc <- ncol(data)
   if (class(dm)=='function') {
     dm <- dm(nr, nc)
+  } else {
+    dm$nr <- nr
+    dm$nc <- nc
   }
 
-  ## split column if dimension indicates so
-  if (dm$column.split && !is.null(dm$sub.dms) &&
-        sum(sapply(dm$sub.dms, function(dm) dm$nc))==ncol(data)) {
-    sub.dms <- dm$sub.dms[order(sapply(dm$sub.dms, function(dm) dm$left))]
-    col.ind <- c(0,cumsum(sapply(dm$sub.dms, function(dm) dm$nc)))
-    return(lapply(seq_along(sub.dms), function(i) {
-      sub.dm <- sub.dms[[i]]
-      WHeatmap(data[,(col.inds[i]+1):col.inds[i+1]], WDim(sub.dm$left, dm$bottom, sub.dm$width, dm$height))
-    }))
-  }
-
-  hm <- lapply(formals(), eval)
+  ## when dm is not given as a default
+  hm$dm <- dm
 
   ## graph parameters
   hm$gp <- list()
@@ -69,10 +64,27 @@ WHeatmap <- function(
 
   ## map to colors
   if (continuous)
-    hm$cm <- MapToContinuousColors(hm$data, cmp=hm$cmp)
+    cm <- MapToContinuousColors(hm$data, cmp=hm$cmp)
   else
-    hm$cm <- MapToDiscreteColors(hm$data, cmp=hm$cmp)
+    cm <- MapToDiscreteColors(hm$data, cmp=hm$cmp)
 
+  ## split column if dimension indicates so
+  if (dm$column.split && !is.null(dm$sub.dms) &&
+      sum(sapply(dm$sub.dms, function(dm) dm$nc))==ncol(data)) {
+    sub.dms <- dm$sub.dms[order(sapply(dm$sub.dms, function(dm) dm$left))]
+    col.inds <- c(0,cumsum(sapply(dm$sub.dms, function(dm) dm$nc)))
+    return(do.call(WGroup, lapply(seq_along(sub.dms), function(i) {
+      sub.dm <- sub.dms[[i]]
+      sub.hm <- hm
+      sub.hm$dm <- WDim(sub.dm$left, dm$bottom, sub.dm$width, dm$height)
+      sub.hm$data <- data[,(col.inds[i]+1):col.inds[i+1], drop=FALSE]
+      sub.hm$cmp$cm <- cm
+      
+      do.call(WHeatmap, sub.hm)
+    })))
+  }
+  
+  hm$cm <- cm
   class(hm) <- 'WHeatmap'
   hm
 }

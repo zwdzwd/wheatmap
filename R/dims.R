@@ -44,32 +44,21 @@ WDim <- function(left, bottom, width, height, nr=1, nc=1,
 #' @param nc number of columns
 #' @return an object of class WGroup
 #' @export
-WGroup <- function(dm=NULL) {
-  o <- list(dm=dm)
-  o
-}
-
-#' group plotting objects
-#'
-#' group plotting objects
-#'
-#' @param ... plotting objects
-#' @param nr number of rows
-#' @param nc number of columns
-#' @return an object of class WGroup
-#' @export
-WBind <- function(..., nr=NULL, nc=NULL) {
+WGroup <- function(..., nr=NULL, nc=NULL) {
   obs <- list(...)
   dm <- do.call(.DimGroup, lapply(obs, function(o)o$dm))
   if (is.null(nc))
-    dm$nc <- min(sapply(obs, function(o) o$nc))
+    dm$nc <- max(sapply(obs, function(o) o$dm$nc))
   else
     dm$nc <- nc
   if (is.null(nr))
-    dm$nr <- min(sapply(obs, function(o) o$nr))
+    dm$nr <- max(sapply(obs, function(o) o$dm$nr))
   else
     dm$nr <- nr
-  WGroup(dm=dm)
+  
+  g <- list(obs=obs, dm=dm)
+  class(g) <- 'WGroup'
+  g
 }
 
 #' column group non-overlapping objects
@@ -81,19 +70,12 @@ WBind <- function(..., nr=NULL, nc=NULL) {
 #' @param nc number of columns
 #' @return an object of class WGroup
 #' @export
-WColumnBind <- function(..., nr=NULL, nc=NULL) {
-  obs <- list(...)
-  dm <- do.call(.DimGroup, lapply(obs, function(o)o$dm))
+WGroupColumn <- function(..., nr=NULL, nc=NULL) {
   if (is.null(nc))
-    dm$nc <- min(sapply(obs, function(o) o$nc))
-  else
-    dm$nc <- nc
-  if (is.null(nr))
-    dm$nr <- min(sapply(obs, function(o) o$nr))
-  else
-    dm$nr <- nr
-  dm$column.split = TRUE
-  WGroup(dm=dm)
+    nc <- sum(sapply(list(...), function(o) o$dm$nc))
+  g <- WGroup(..., nr=nr, nc=nc)
+  g$dm$column.split <- TRUE
+  g
 }
 
 #' row group non-overlapping objects
@@ -105,17 +87,10 @@ WColumnBind <- function(..., nr=NULL, nc=NULL) {
 #' @param nc number of columns
 #' @return an object of class WGroup
 #' @export
-WRowBind <- function(..., nr=NULL, nc=NULL) {
-  obs <- list(...)
-  dm <- do.call(.DimGroup, lapply(obs, function(o)o$dm))
-  if (is.null(nc))
-    dm$nc <- min(sapply(obs, function(o) o$nc))
-  else
-    dm$nc <- nc
+WGroupRow <- function(..., nr=NULL, nc=NULL) {
   if (is.null(nr))
-    dm$nr <- min(sapply(obs, function(o) o$nr))
-  else
-    dm$nr <- nr
-  dm$row.split = TRUE
-  WGroup(dm=dm)
+    nr <- sum(sapply(list(...), function(o) o$dm$nr))
+  g <- WGroup(..., nr=nr, nc=nc)
+  g$dm$row.split <- TRUE
+  g
 }

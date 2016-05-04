@@ -37,6 +37,6 @@ p$dendro.top <- WDendrogram(c$column.clust, TopOf(p$color.bar.top), facing='bott
 p$color.bar.middle <- WColorBarV(1:4, RightOf(p$heatmap))
 p$heatmap2 <- WHeatmap(m2, RightOf(p$color.bar.middle))
 ## p$heatmap3 <- WHeatmap(matrix(c(8:1,1:8)), Beneath(p$heatmap2))
-p$color.bar.bottom <- WColorBarH(rep(c(1,2,3),each=4), Beneath(WColumnBind(p$heatmap, p$color.bar.middle, p$heatmap2)), cmp=CMPar(brewer.name='Set2'), continuous=FALSE)
+p$color.bar.bottom <- WColorBarH(rep(c(1,2,3),each=4), Beneath(WGroupColumn(p$heatmap, p$color.bar.middle, p$heatmap2)), cmp=CMPar(brewer.name='Set2'), continuous=FALSE)
 WPlot(p)
 ```

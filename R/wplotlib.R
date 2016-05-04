@@ -15,8 +15,17 @@ WPlot <- function(x, ...) {
 #'
 #' @import grid
 #' @export
-WPlot.list <- function(obs, mar=c(0.03,0.03,0.03,0.03)) {
+WPlot.list <- function(.obs, mar=c(0.03,0.03,0.03,0.03)) {
 
+  ## flatten WGroups
+  obs <- list()
+  for(o in .obs){
+    if ('WGroup' %in% class(o))
+      obs <- c(obs, o$obs)
+    else
+      obs[[length(obs)+1]] <- o
+  }
+  
   mar.bottom = mar[1]
   mar.left = mar[2]
   mar.top = mar[3]
@@ -73,14 +82,19 @@ TopOf <- function(x, height=NULL, pad=0.01, min.ratio=0.02) {
   force(min.ratio)
   function(nr, nc) {
     if (is.null(height)) {
-      .height <- 1 / x$nr * nr
+      .height <- 1 / x$dm$nr * nr
       .height <- max(min.ratio, .height)
       .height <- min(1/min.ratio, .height)
       .height <- .height * x$dm$height
     } else {
       .height <- height
     }
-    WDim(x$dm$left, x$dm$bottom+pad+x$dm$height, x$dm$width, .height)
+    dm <- x$dm
+    dm$nr <- nr
+    dm$nc <- nc
+    dm$bottom <- x$dm$bottom+pad+x$dm$height
+    dm$height <- .height
+    dm
   }
 }
 
@@ -101,14 +115,19 @@ Beneath <- function(x, height=NULL, pad=0.01, min.ratio=0.02) {
   force(min.ratio)
   function(nr, nc) {
     if (is.null(height)) {
-      .height <- 1 / x$nr * nr
+      .height <- 1 / x$dm$nr * nr
       .height <- max(min.ratio, .height)
       .height <- min(1/min.ratio, .height)
       .height <- .height * x$dm$height
     } else {
       .height <- height
     }
-    WDim(x$dm$left, x$dm$bottom-pad-.height, x$dm$width, .height)
+    dm <- x$dm
+    dm$nr <- nr
+    dm$nc <- nc
+    dm$bottom <- x$dm$bottom-pad-.height
+    dm$height <- .height
+    dm
   }
 }
 
@@ -129,14 +148,19 @@ LeftOf <- function(x, width=NULL, pad=0.01, min.ratio=0.02) {
   force(min.ratio)
   function(nr, nc) {
     if (is.null(width)) {
-      .width <- 1 / x$nc * nc
+      .width <- 1 / x$dm$nc * nc
       .width <- max(min.ratio, .width)
       .width <- min(1/min.ratio, .width)
       .width <- .width * x$dm$width
     } else {
       .width <- width
     }
-    WDim(x$dm$left-pad-.width, x$dm$bottom, .width, x$dm$height)
+    dm <- x$dm
+    dm$nr <- nr
+    dm$nc <- nc
+    dm$left <- x$dm$left-pad-.width
+    dm$width <- .width
+    dm
   }
 }
 
@@ -157,13 +181,18 @@ RightOf <- function(x, width=NULL, pad=0.01, min.ratio=0.02) {
   force(min.ratio)
   function(nr, nc) {
     if (is.null(width)) {
-      .width <- 1 / x$nc * nc
+      .width <- 1 / x$dm$nc * nc
       .width <- max(min.ratio, .width)
       .width <- min(1/min.ratio, .width)
       .width <- .width * x$dm$width
     } else {
       .width <- width
     }
-    WDim(x$dm$left+pad+x$dm$width, x$dm$bottom, .width, x$dm$height)
+    dm <- x$dm
+    dm$nr <- nr
+    dm$nc <- nc
+    dm$left <- dm$left+pad+x$dm$width
+    dm$width <- .width
+    dm
   }
 }
