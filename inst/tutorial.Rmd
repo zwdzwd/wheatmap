@@ -60,7 +60,7 @@ a <- a + WLegendV('c2', TopOf('l1', pad=0.1), 'l2')
 
 a <- a + WLegendV('c3', TopOf('l2', pad=0.1), n.text=3)
 
-WLayout(a)
+print(a, layout.only)
 
 WPlot(p)
 ```
