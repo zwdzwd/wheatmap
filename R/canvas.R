@@ -2,6 +2,7 @@
 ResetCanvas <- function() {
   rm(list=ls(w.canvas), envir=w.canvas)
   w.canvas$naming.index <- 1
+  w.canvas$last <- NULL
 }
 
 w.canvas <- new.env(parent=emptyenv())
@@ -22,6 +23,7 @@ RegisterCanvas <- function(obj) {
 
   message('Register ', class(obj)[1], ': ', obj$name, '.')
   assign(obj$name, obj, envir=w.canvas)
+  w.canvas$last <- obj$name
   obj$name
 }
 

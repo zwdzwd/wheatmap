@@ -71,12 +71,15 @@
 #' @export
 WLegendV <- function(x, dm=NULL, name='', n.stops=20, n.text=5, label.fontsize=16, ...) {
 
+  if (is.null(x))
+    x <- GetCanvas(w.canvas$last)
+
   if(is.character(x))
     x <- GetCanvas(x)
 
   if (x$continuous) {
     d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)
-    m <- matrix(d, dimnames=list(format(d, digits=3)))
+    m <- matrix(d, dimnames=list(format(d, digits=2, trim=TRUE)))
   } else {
     d <- x$cm$mapper
     d <- d[order(names(d))]
@@ -108,12 +111,15 @@ WLegendV <- function(x, dm=NULL, name='', n.stops=20, n.text=5, label.fontsize=1
 #' @export
 WLegendH <- function(x, dm=NULL, name='', n.stops=20, n.text=5, label.fontsize=16, ...) {
 
+  if (is.null(x))
+    x <- GetCanvas(w.canvas$last)
+
   if (is.character(x))
     x <- GetCanvas(x)
 
   if (x$continuous) {
     d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)
-    m <- matrix(d, nrow=1, dimnames=list(format(d, digits=3)))
+    m <- matrix(d, nrow=1, dimnames=list(format(d, digits=2, trim=TRUE)))
   } else {
     d <- x$cm$mapper
     d <- d[order(names(d))]

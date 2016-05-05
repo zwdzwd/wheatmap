@@ -179,10 +179,9 @@ print.WHeatmap <- function(hm, stand.alone=TRUE, layout.only=FALSE) {
                        just=c('left','bottom')))
 
   if (layout.only) {
-    grid.text(hm$name)
     grid.rect(gp=gpar(col='red'))
-    upViewport()
-    return
+    grid.text(hm$name)
+    return (upViewport())
   }
 
   nc = ncol(hm$data)
@@ -242,7 +241,7 @@ print.WHeatmap <- function(hm, stand.alone=TRUE, layout.only=FALSE) {
     } else {
       n.texts <- n.labels
     }
-    sample.inds <- seq(1, n.labels, length.out=n.texts)
+    sample.inds <- round(seq(1, n.labels, length.out=n.texts))
     grid.text(labels[sample.inds], x=unit(.text.x,'npc'), y=y.mid[sample.inds],
               just=c(.text.just,'center'), gp=gpar(fontsize=hm$yticklabel.fontsize))
     upViewport()

@@ -29,8 +29,8 @@ print.WDendrogram <- function(dend, stand.alone=TRUE, layout.only=FALSE) {
                         width=unit(dend$dm$width,'npc'), height=unit(dend$dm$height,'npc'),
                         just=c('left','bottom'), gp=gpar(col='black')))
   if (layout.only) {
-    grid.text(dend$name)
     grid.rect(gp=gpar(col='red'))
+    grid.text(dend$name)
   } else {
     grid.dendrogram(as.dendrogram(dend$clust), facing=dend$facing)
   }

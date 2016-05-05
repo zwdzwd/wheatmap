@@ -7,6 +7,8 @@ This is a tutorial on the usage of wheatmap for generating complex heatmaps in a
 
 A heatmap is easy to generate in R. There are many packages like heatmap2, heatmap3, heatmap.plus and ComplexHeatmaps. But many times, I found myself in a situation of plotting a set of heatmaps in a procedure way. And none-of the above packages are nimble enough to do color-bar reordering, multiple heatmaps that can be positioned arbitrarily. So I wrote this package for that purpose.
 
+## preparation
+
 We start with some data
 ```{r}
 library(devtools)
@@ -26,50 +28,104 @@ row.data <- row.data[c$row.clust$order]
 col.data <- col.data[c$column.clust$order]
 ```
 
-We plot
+## final results
+
+The end result of our tutorial can be done by
+```{r}
+WHeatmap(c$mat, name='h1') +
+  WColorBarV(row.data, LeftOf('h1'), 'c1') +
+  WColorBarH(col.data, TopOf('h1'), 'c2') +
+  WDendrogram(c$row.clust, LeftOf('c1'), facing='right') +
+  WDendrogram(c$column.clust, TopOf('c2'), facing='bottom') +
+  WColorBarV(1:4, RightOf('h1'), 'c3', continuous=TRUE) +
+  WHeatmap(m2, RightOf('c3'), 'h2') +
+  WColorBarH(rep(c(1,2,3),each=4), Beneath(WGroupColumn('h1', 'c3', 'h2')), 'c4', 
+             cmp=CMPar(brewer.name='Set2'), continuous=FALSE) +
+  WHeatmap(matrix(rep(c(8:1,1:8),4),nrow=4), Beneath('c4', h.aln=WGroupColumn('h1','c3')), 'h3') +
+  WHeatmap(matrix(1:4,nrow=2), RightOf('h3', h.scale='h2'), 'h4') +
+  WHeatmap(matrix(1:24,nrow=3), Beneath('h3'), 'h5') +
+  WHeatmap(matrix(24:1,nrow=2), Beneath('h5', h.aln=WGroupColumn('h1','c3','h2')), 'h6') +
+  WLegendV('c1', RightOf('h6.3'), 'l1') +
+  WLegendV('c2', TopOf('l1', pad=0.1), 'l2') +
+  WLegendV('c3', TopOf('l2', pad=0.1), n.text=3)
+
+```
+
+## step by step construction
+
+We plot one heatmap first
 ```{r}
 load_all('~/tools/wheatmap/wheatmap/')
 
 a <- WHeatmap(c$mat, name='h1')
-
-a <- a + WColorBarV(row.data, LeftOf('h1'), 'c1')
-
-a <- a + WColorBarH(col.data, TopOf('h1'), 'c2')
-
-a <- a + WDendrogram(c$row.clust, LeftOf('c1'), facing='right')
-
-a <- a + WDendrogram(c$column.clust, TopOf('c2'), facing='bottom')
-  
-a <- a + WColorBarV(1:4, RightOf('h1'), 'c3', continuous=TRUE)
-
-a <- a + WHeatmap(m2, RightOf('c3'), 'h2')
-
-a <- a + WColorBarH(rep(c(1,2,3),each=4), Beneath(WGroupColumn('h1', 'c3', 'h2')), 'c4', cmp=CMPar(brewer.name='Set2'), continuous=FALSE)
-
-a <- a + WHeatmap(matrix(rep(c(8:1,1:8),4),nrow=4), Beneath('c4', h.aln=WGroupColumn('h1','c3')), 'h3')
-
-a <- a + WHeatmap(matrix(1:4,nrow=2), RightOf('h3', h.scale='h2'), 'h4')
-
-a <- a + WHeatmap(matrix(1:24,nrow=3), Beneath('h3'), 'h5')
-
-a <- a + WHeatmap(matrix(24:1,nrow=2), Beneath('h5', h.aln=WGroupColumn('h1','c3','h2')), 'h6')
-
-a <- a + WLegendV('c1', RightOf('h6.3'), 'l1')
-
-a <- a + WLegendV('c2', TopOf('l1', pad=0.1), 'l2')
-
-a <- a + WLegendV('c3', TopOf('l2', pad=0.1), n.text=3)
-
-print(a, layout.only)
-
-WPlot(p)
+a
 ```
 
-Another example of too many labels
+Then we add top and left color bars
+```{r}
+a <- a + WColorBarV(row.data, LeftOf('h1'), 'c1')
+a <- a + WColorBarH(col.data, TopOf('h1'), 'c2')
+a
+```
+
+Then the dendrograms
+```{r}
+a <- a + WDendrogram(c$row.clust, LeftOf('c1'), facing='right')
+a <- a + WDendrogram(c$column.clust, TopOf('c2'), facing='bottom')
+a
+```
+
+Then another vertical color bar on the right. This one we want to have a continuous scale. Then another heatmap on the further right.
+```{r}
+a <- a + WColorBarV(1:4, RightOf('h1'), 'c3', continuous=TRUE)
+a <- a + WHeatmap(m2, RightOf('c3'), 'h2')
+a
+```
+
+Now we can merge 3 items we plot and add a horizontal bar below. Note wheatmap automatically computes the split for you. It's the users' responsibility however, to make sure data are alignable.
+```{r}
+a <- a + WColorBarH(rep(c(1,2,3),each=4), Beneath(WGroupColumn('h1', 'c3', 'h2')), 'c4', cmp=CMPar(brewer.name='Set2'), continuous=FALSE)
+a
+```
+
+We then add another matrix that span two objects under c4
+```{r}
+a <- a + WHeatmap(matrix(rep(c(8:1,1:8),4),nrow=4), Beneath('c4', h.aln=WGroupColumn('h1','c3')), 'h3')
+a
+```
+
+Another to the right of h3
+```{r}
+a <- a + WHeatmap(matrix(1:4,nrow=2), RightOf('h3', h.scale='h2'), 'h4')
+a <- a + WHeatmap(matrix(1:24,nrow=3), Beneath('h3'), 'h5')
+a <- a + WHeatmap(matrix(24:1,nrow=2), Beneath('h5', h.aln=WGroupColumn('h1','c3','h2')), 'h6')
+a
+```
+
+Let's add legend
+```{r}
+a <- a + WLegendV('c1', RightOf('h6.3'), 'l1')
+a <- a + WLegendV('c2', TopOf('l1', pad=0.1), 'l2')
+a <- a + WLegendV('c3', TopOf('l2', pad=0.1), n.text=3)
+a
+```
+
+## Show layout
+
+We can view the internal layout by the providing the `layout.only=TRUE` option. This is useful to see the labeling visually.
+
+```{r}
+print(a, layout.only=TRUE)
+```
+
+## declutter text labels
+
+Wheatmap automatically de-cluttered the labels when there are too many. Below is an example of too many labels:
+
 ```{r}
 load_all('~/tools/wheatmap/wheatmap/')
-m <- matrix(1:1000, nrow=100)
+m <- matrix((1:1000)/1000, nrow=100)
 rownames(m) <- paste0('row', 1:100)
-WHeatmap(m, yticklabels = TRUE)
+WHeatmap(m, yticklabels = TRUE) + WLegendV(NULL, RightOf(), height=0.5)
 ```
 

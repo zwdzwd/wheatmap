@@ -88,7 +88,11 @@ WDim <- function(left, bottom, width, height, nr=1, nc=1,
 #' @param v.scale.proportional when v.scale is provided, whether to make proportional to data
 #' @return a dimension generator on top of x
 #' @export
-TopOf <- function(x, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v.scale=NULL, v.scale.proportional=FALSE) {
+TopOf <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v.scale=NULL, v.scale.proportional=FALSE) {
+
+  if (is.null(x)) {
+    x <- GetCanvas(w.canvas$last)
+  }
 
   x <- .SetToDim(x)
   h.aln <- .SetToDim(h.aln)
@@ -151,7 +155,10 @@ TopOf <- function(x, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v.scale=
 #' @param v.scale.proportional when v.scale is provided, whether to make proportional to data
 #' @return a dimension generator beneath x
 #' @export
-Beneath <- function(x, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v.scale=NULL, v.scale.proportional=FALSE) {
+Beneath <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v.scale=NULL, v.scale.proportional=FALSE) {
+
+  if (is.null(x))
+    x <- GetCanvas(w.canvas$last)
 
   x <- .SetToDim(x)
   h.aln <- .SetToDim(h.aln)
@@ -214,7 +221,10 @@ Beneath <- function(x, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v.scal
 #' @param h.scale.proportional when h.scale is provided, whether to make proportional to data
 #' @return a dimension to the left of x
 #' @export
-LeftOf <- function(x, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.scale=NULL, h.scale.proportional=FALSE) {
+LeftOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.scale=NULL, h.scale.proportional=FALSE) {
+
+  if (is.null(x))
+    x <- GetCanvas(w.canvas$last)
 
   x <- .SetToDim(x)
   v.aln <- .SetToDim(v.aln)
@@ -277,7 +287,11 @@ LeftOf <- function(x, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.scale=
 #' @param h.scale.proportional when h.scale is provided, whether to make proportional to data
 #' @return a dimension to the right of x
 #' @export
-RightOf <- function(x, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.scale=NULL, h.scale.proportional=FALSE) {
+RightOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.scale=NULL, h.scale.proportional=FALSE) {
+
+  message(w.canvas$last)
+  if (is.null(x))
+    x <- GetCanvas(w.canvas$last)
 
   x <- .SetToDim(x)
   v.aln <- .SetToDim(v.aln)

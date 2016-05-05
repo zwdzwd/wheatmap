@@ -104,7 +104,7 @@ WFlatten <- function(.obs) {
 #' @param group plot to display
 #' @import grid
 #' @export
-print.WGroup <- function(group, mar=c(0.03,0.03,0.03,0.03)) {
+print.WGroup <- function(group, mar=c(0.03,0.03,0.03,0.03), stand.alone=TRUE, layout.only=FALSE) {
 
   ## flatten WGroups
   obs <- WFlatten(group$obs)
@@ -143,7 +143,7 @@ print.WGroup <- function(group, mar=c(0.03,0.03,0.03,0.03)) {
     ob$dm$height <- ob$dm$height * (1-mar.top-mar.bottom) / height
 
     ## plot
-    plot(ob, stand.alone=FALSE)
+    plot(ob, stand.alone=FALSE, layout.only=layout.only)
   }
 }
 
