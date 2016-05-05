@@ -29,18 +29,14 @@ col.data <- col.data[c$column.clust$order]
 We plot
 ```{r}
 ## TODO ,auto-infer discrete
-a <- WHeatmap(c$mat, name='h1') + 
-  WColorBarV(row.data, LeftOf('h1'), 'c1', continuous=FALSE)
-
-
+a <- WHeatmap(c$mat, name='h1') +
+  WColorBarV(row.data, LeftOf('h1'), 'c1', continuous=FALSE) +
   WColorBarH(col.data, TopOf('h1'), 'c2', continuous=FALSE) +
   WDendrogram(c$row.clust, LeftOf('c1'), facing='right') +
   WDendrogram(c$column.clust, TopOf('c2'), facing='bottom') +
   WColorBarV(1:4, RightOf('h1'), 'c3') +
-  WHeatmap(m2, RightOf('c3'), 'h2')
-
-
-a + WColorBarH(rep(c(1,2,3),each=4), Beneath(WGroupColumn(p$h1, p$c3, p$h2)), cmp=CMPar(brewer.name='Set2'), continuous=FALSE)
+  WHeatmap(m2, RightOf('c3'), 'h2') + 
+  WColorBarH(rep(c(1,2,3),each=4), Beneath(WGroupColumn('h1', 'c3', 'h2')), cmp=CMPar(brewer.name='Set2'), continuous=FALSE)
 
 b <- WGroupColumn('h1', 'c3', 'h2')
 

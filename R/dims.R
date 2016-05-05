@@ -60,11 +60,14 @@ WDim <- function(left, bottom, width, height, nr=1, nc=1,
 #' @param nc number of columns
 #' @return an object of class WGroup
 #' @export
-WGroup <- function(..., nr=NULL, nc=NULL, to.row.split=FALSE, to.column.split=FALSE) {
-  obs <- list(...)
+WGroup <- function(..., name='', nr=NULL, nc=NULL, to.row.split=FALSE, to.column.split=FALSE) {
+  obs <- lapply(list(...), function(o) {
+    if (is.character(o)) GetCanvas(o)
+    else o
+  })
   names(obs) <- sapply(obs, function(o) o$name)
 
-  g <- list(obs=obs)
+  g <- list(obs=obs, name=name)
   dms <- lapply(obs, function(o)o$dm)
 
   g$dm <- do.call(.DimGroup, dms)
@@ -116,11 +119,10 @@ WGroup <- function(..., nr=NULL, nc=NULL, to.row.split=FALSE, to.column.split=FA
 #' @param nc number of columns
 #' @return an object of class WGroup
 #' @export
-WGroupColumn <- function(..., nr=NULL, nc=NULL) {
-  browser()
+WGroupColumn <- function(..., name='', nr=NULL, nc=NULL) {
+  g <- WGroup(..., nr=nr, nc=nc, name=name, to.column.split=TRUE)
   if (is.null(nc))
-    nc <- sum(sapply(list(...), function(o) o$dm$nc))
-  g <- WGroup(..., nr=nr, nc=nc, to.column.split=TRUE)
+    g$dm$nc <- sum(sapply(g$obs, function(o) o$dm$nc))
   g
 }
 
@@ -133,9 +135,9 @@ WGroupColumn <- function(..., nr=NULL, nc=NULL) {
 #' @param nc number of columns
 #' @return an object of class WGroup
 #' @export
-WGroupRow <- function(..., nr=NULL, nc=NULL) {
+WGroupRow <- function(..., name='', nr=NULL, nc=NULL) {
+  g <- WGroup(..., nr=nr, nc=nc, name=name, to.row.split=TRUE)
   if (is.null(nr))
-    nr <- sum(sapply(list(...), function(o) o$dm$nr))
-  g <- WGroup(..., nr=nr, nc=nc, to.row.split=TRUE)
+    g$dm$nr <- sum(sapply(g$obs, function(o) o$dm$nr))
   g
 }

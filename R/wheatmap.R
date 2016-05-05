@@ -1,33 +1,36 @@
 
-w.canvas <- new.env(parent=emptyenv())
-ResetCanvas()
-
+#' @export
 ResetCanvas <- function() {
-  rm(ls(w.canvas))
+  rm(list=ls(w.canvas), envir=w.canvas)
   w.canvas$naming.index <- 1
 }
 
+w.canvas <- new.env(parent=emptyenv())
+
 RegisterCanvas <- function(obj) {
+  
+  if(is.null(w.canvas$naming.index))
+    w.canvas$naming.index <- 1
+  
   if (obj$name=='') {
     obj$name <- paste0('wheatmap.internal.', w.canvas$naming.index)
     w.canvas$naming.index <- w.canvas$naming.index + 1
   }
   if (obj$name %in% names(w.canvas)) {
-    message('Bad name ', obj$name, 'coincidence with internal. Try another name.')
-    stop()
+    message('Object ', obj$name, ' on canvas updated.')
+    ## stop()
   }
   assign(obj$name, obj, envir=w.canvas)
-  cat(ls(w.canvas))
+  force(w.canvas[[obj$name]])
 }
 
 GetCanvas <- function(nm) {
-  browser()
-  cat(ls(w.canvas))
   obj <- w.canvas[[nm]]
   if (is.null(obj)) {
     message('Painting object ', nm, 'not found. Abort')
     stop()
   }
+  obj
 }
 
 #' WHeatmap object
@@ -83,12 +86,6 @@ WHeatmap <- function(
     hm[[nm]] <<- get(nm)
   }))
 
-  ## map to colors
-  if (continuous)
-    hm$cm <- MapToContinuousColors(hm$data, cmp=hm$cmp)
-  else
-    hm$cm <- MapToDiscreteColors(hm$data, cmp=hm$cmp)
-
   nr <- nrow(hm$data)
   nc <- ncol(hm$data)
   if (class(hm$dm)=='function') {
@@ -98,6 +95,13 @@ WHeatmap <- function(
     dm$nr <- nr
     dm$nc <- nc
   }
+  
+  ## map to colors
+  if (continuous)
+    cm <- MapToContinuousColors(hm$data, cmp=hm$cmp)
+  else
+    cm <- MapToDiscreteColors(hm$data, cmp=hm$cmp)
+  
   ## split column if dimension indicates so
   if (!is.null(dm$column.split)) {
     all.nc <- sapply(dm$column.split, function(dm) dm$nc)
@@ -105,19 +109,21 @@ WHeatmap <- function(
     nc.data <- ncol(data)
     col.inds <- c(0,round(cumsum(all.nc) * nc.data / sum.nc))
     sub.dms <- dm$column.split[order(sapply(dm$column.split, function(dm) dm$left))]
-    w.group <- do.call(WGroupColumn, lapply(seq_along(sub.dms), function(i) {
+    k <- lapply(seq_along(sub.dms), function(i) {
       sub.dm <- sub.dms[[i]]
       sub.hm <- hm
       sub.hm$dm <- WDim(sub.dm$left, dm$bottom, sub.dm$width, dm$height)
       sub.hm$data <- data[,(col.inds[i]+1):col.inds[i+1], drop=FALSE]
-      sub.hm$cmp$cm <- hm$cm
-      sub.hm <- do.call(WHeatmap, sub.hm)
-    }))
+      sub.hm$cmp$cm <- cm
+      do.call(WHeatmap, sub.hm)
+    })
+    w.group <- do.call(WGroupColumn, k)
     return(w.group)
   }
 
   hm$dm <- dm
 
+  hm$cm <- cm
   class(hm) <- 'WHeatmap'
   RegisterCanvas(hm)
   hm
@@ -246,6 +252,7 @@ print.WHeatmap <- function(hm) {
     grid.text(hm$title, x=unit(.text.x,'npc'), y=unit(0.5,'npc'), just=c(.text.just,'center'), gp=gpar(fontsize=hm$title.fontsize))
     upViewport()
   }
+  ResetCanvas()
 }
 
 #' plot WHeatmap
