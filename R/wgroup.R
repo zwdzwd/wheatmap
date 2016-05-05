@@ -87,3 +87,66 @@ WGroupRow <- function(..., name='', nr=NULL, nc=NULL) {
     g$dm$nr <- sum(sapply(g$obs, function(o) o$dm$nr))
   g
 }
+
+WFlatten <- function(.obs) {
+  obs <- list()
+  for(o in .obs){
+    if ('WGroup' %in% class(o))
+      obs <- c(obs, o$obs)
+    else
+      obs[[length(obs)+1]] <- o
+  }
+  obs
+}
+
+#' Draw WGroup
+#'
+#' @param group plot to display
+#' @import grid
+#' @export
+print.WGroup <- function(group, mar=c(0.03,0.03,0.03,0.03)) {
+
+  ## flatten WGroups
+  obs <- WFlatten(group$obs)
+
+  mar.bottom = mar[1]
+  mar.left = mar[2]
+  mar.top = mar[3]
+  mar.right = mar[4]
+
+  left <- min(sapply(obs, function(x) x$dm$left))
+  right <- max(sapply(obs, function(x) x$dm$left+x$dm$width))
+  bottom <- min(sapply(obs, function(x) x$dm$bottom))
+  top <- max(sapply(obs, function(x) x$dm$bottom+x$dm$height))
+  width <- right-left
+  height <- top-bottom
+
+  ## cat(bottom, '\t', left, '\t', top, '\t', right, '\n')
+
+  ## resize margin to accomodate texts/labels
+  text.dms <- lapply(obs, CalcTextRanges)
+  mar.bottom <- mar.bottom + bottom - min(sapply(text.dms, function(x) x$bottom))
+  mar.left <- mar.left + left - min(sapply(text.dms, function(x) x$left))
+  mar.top <- mar.top + max(sapply(text.dms, function(x) x$top)) - top
+  mar.right <- mar.right + max(sapply(text.dms, function(x) x$right)) - right
+
+  ## cat(str(text.dms),'\n')
+  ## cat(mar.bottom, '\t', mar.left, '\t', mar.top, '\t', mar.right, '\n')
+
+  library(grid)
+  grid.newpage()
+  for(ob in obs) {
+    ## scale object
+    ob$dm$left <- mar.left + (ob$dm$left-left) * (1-mar.left-mar.right) / width
+    ob$dm$bottom <- mar.bottom + (ob$dm$bottom-bottom) * (1-mar.top-mar.bottom) / height
+    ob$dm$width <- ob$dm$width * (1-mar.left-mar.right) / width
+    ob$dm$height <- ob$dm$height * (1-mar.top-mar.bottom) / height
+
+    ## plot
+    plot(ob, stand.alone=FALSE)
+  }
+}
+
+#' @export
+plot.WGroup <- print.WGroup
+
