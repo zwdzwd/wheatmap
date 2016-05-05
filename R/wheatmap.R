@@ -1,14 +1,13 @@
 
 w.canvas <- new.env(parent=emptyenv())
+ResetCanvas()
 
 ResetCanvas <- function() {
-  browser()
   rm(ls(w.canvas))
   w.canvas$naming.index <- 1
 }
 
 RegisterCanvas <- function(obj) {
-  browser()
   if (obj$name=='') {
     obj$name <- paste0('wheatmap.internal.', w.canvas$naming.index)
     w.canvas$naming.index <- w.canvas$naming.index + 1

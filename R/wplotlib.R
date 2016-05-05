@@ -56,6 +56,7 @@ print.WGroup <- function(group, mar=c(0.03,0.03,0.03,0.03)) {
     ## plot
     plot(ob)
   }
+  ResetCanvas()
 }
 
 #' @rdname print WGroup
