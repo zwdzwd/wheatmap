@@ -1,38 +1,3 @@
-
-#' @export
-ResetCanvas <- function() {
-  rm(list=ls(w.canvas), envir=w.canvas)
-  w.canvas$naming.index <- 1
-}
-
-w.canvas <- new.env(parent=emptyenv())
-
-RegisterCanvas <- function(obj) {
-  
-  if(is.null(w.canvas$naming.index))
-    w.canvas$naming.index <- 1
-  
-  if (obj$name=='') {
-    obj$name <- paste0('wheatmap.internal.', w.canvas$naming.index)
-    w.canvas$naming.index <- w.canvas$naming.index + 1
-  }
-  if (obj$name %in% names(w.canvas)) {
-    message('Object ', obj$name, ' on canvas updated.')
-    ## stop()
-  }
-  assign(obj$name, obj, envir=w.canvas)
-  force(w.canvas[[obj$name]])
-}
-
-GetCanvas <- function(nm) {
-  obj <- w.canvas[[nm]]
-  if (is.null(obj)) {
-    message('Painting object ', nm, 'not found. Abort')
-    stop()
-  }
-  obj
-}
-
 #' WHeatmap object
 #'
 #' Create a heatmap
@@ -46,7 +11,7 @@ GetCanvas <- function(nm) {
 #' @export
 WHeatmap <- function(
 
-  data=NULL, dm=WDim(0,0,1,1), name='', continuous=TRUE,
+  data=NULL, dm=WDim(0,0,1,1), name='', continuous=NULL,
   cmp = CMPar(), # colormapping parameters
 
   ## titles
@@ -54,6 +19,7 @@ WHeatmap <- function(
 
   ## tick label on x-axis
   xticklabels = NULL,
+  xticklabels.n = NULL,
   xticklabel.side = 'b',
   xticklabel.fontsize = 12,
   xticklabel.rotat = 90,
@@ -61,6 +27,7 @@ WHeatmap <- function(
 
   ## tick label on y-axis
   yticklabels = NULL,
+  yticklabels.n = NULL,
   yticklabel.side = 'l',
   yticklabel.fontsize = 12,
   yticklabel.pad = 0.005,
@@ -68,10 +35,23 @@ WHeatmap <- function(
   ## alpha
   alpha = 1,
 
+  ## subclass name
+  sub.name = NULL,
+
   ## graph parameters
   gp = NULL) {
 
   hm <- lapply(formals(), eval)
+
+  ## auto-infer continuous/discrete
+  if (is.null(continuous)) {
+    if (!is.null(cmp$cm))
+      hm$continuous <- cmp$cm$continuous
+    else if (is.numeric(data) && length(unique(data)) < 8)
+      hm$continuous <- FALSE
+    else
+      hm$continuous <- TRUE
+  }
 
   ## when dm is not given as a default
   hm$dm <- dm
@@ -88,20 +68,20 @@ WHeatmap <- function(
 
   nr <- nrow(hm$data)
   nc <- ncol(hm$data)
-  if (class(hm$dm)=='function') {
+  if ('function' %in% class(hm$dm)) {
     dm <- hm$dm(nr, nc)
   } else {
     dm <- hm$dm
     dm$nr <- nr
     dm$nc <- nc
   }
-  
+
   ## map to colors
-  if (continuous)
+  if (hm$continuous)
     cm <- MapToContinuousColors(hm$data, cmp=hm$cmp)
   else
     cm <- MapToDiscreteColors(hm$data, cmp=hm$cmp)
-  
+
   ## split column if dimension indicates so
   if (!is.null(dm$column.split)) {
     all.nc <- sapply(dm$column.split, function(dm) dm$nc)
@@ -115,9 +95,13 @@ WHeatmap <- function(
       sub.hm$dm <- WDim(sub.dm$left, dm$bottom, sub.dm$width, dm$height)
       sub.hm$data <- data[,(col.inds[i]+1):col.inds[i+1], drop=FALSE]
       sub.hm$cmp$cm <- cm
+      if (!is.null(sub.hm$name))
+        sub.hm$name <- paste0(sub.hm$name, '.', i)
       do.call(WHeatmap, sub.hm)
     })
     w.group <- do.call(WGroupColumn, k)
+    w.group$name <- hm$name
+    RegisterCanvas(w.group)
     return(w.group)
   }
 
@@ -125,7 +109,9 @@ WHeatmap <- function(
 
   hm$cm <- cm
   class(hm) <- 'WHeatmap'
-  RegisterCanvas(hm)
+  if (!is.null(sub.name))
+    class(hm) <- c(sub.name, class(hm))
+  hm$name <- RegisterCanvas(hm)
   hm
 }
 
@@ -180,11 +166,24 @@ CalcTextRanges.WHeatmap <- function(hm) {
 #' @return \code{NULL}
 #' @import grid
 #' @export
-print.WHeatmap <- function(hm) {
+print.WHeatmap <- function(hm, stand.alone=TRUE, layout.only=FALSE) {
   library(grid)
+
+  if (stand.alone) {
+    group <- WGroup(hm)
+    print(group)
+    return(group)
+  }
   pushViewport(viewport(x=unit(hm$dm$left,'npc'), y=unit(hm$dm$bottom,'npc'),
                        width=unit(hm$dm$width,'npc'), height=unit(hm$dm$height,'npc'),
                        just=c('left','bottom')))
+
+  if (layout.only) {
+    grid.text(hm$name)
+    grid.rect(gp=gpar(col='red'))
+    upViewport()
+    return
+  }
 
   nc = ncol(hm$data)
   nr = nrow(hm$data)
@@ -232,7 +231,20 @@ print.WHeatmap <- function(hm) {
     }
     pushViewport(viewport(x=unit(.vpx, 'npc'), y=unit(hm$dm$bottom, 'npc'),
                           width=max(sapply(labels, stringWidth)), height=unit(hm$dm$height,'npc'), just=c(.text.just,'bottom')))
-    grid.text(labels, x=unit(.text.x,'npc'), y=y.mid, just=c(.text.just,'center'), gp=gpar(fontsize=hm$yticklabel.fontsize))
+
+    text.height1 <- as.numeric(convertUnit(stringHeight('a'),'npc'))
+    total.height <- as.numeric(unit(1,'npc'))
+    n.labels <- length(labels)
+    if (!is.null(hm$yticklabels.n))
+      n.texts <- hm$yticklabels.n
+    else if (total.height*1.2 < text.height1*n.labels) {
+      n.texts <- floor(total.height/text.height1*0.4)
+    } else {
+      n.texts <- n.labels
+    }
+    sample.inds <- seq(1, n.labels, length.out=n.texts)
+    grid.text(labels[sample.inds], x=unit(.text.x,'npc'), y=y.mid[sample.inds],
+              just=c(.text.just,'center'), gp=gpar(fontsize=hm$yticklabel.fontsize))
     upViewport()
   }
 
@@ -252,7 +264,6 @@ print.WHeatmap <- function(hm) {
     grid.text(hm$title, x=unit(.text.x,'npc'), y=unit(0.5,'npc'), just=c(.text.just,'center'), gp=gpar(fontsize=hm$title.fontsize))
     upViewport()
   }
-  ResetCanvas()
 }
 
 #' plot WHeatmap

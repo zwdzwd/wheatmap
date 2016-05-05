@@ -54,13 +54,10 @@ print.WGroup <- function(group, mar=c(0.03,0.03,0.03,0.03)) {
     ob$dm$height <- ob$dm$height * (1-mar.top-mar.bottom) / height
 
     ## plot
-    plot(ob)
+    plot(ob, stand.alone=FALSE)
   }
-  ResetCanvas()
 }
 
-#' @rdname print WGroup
-#' @method plot WGroup
 #' @export
 plot.WGroup <- print.WGroup
 

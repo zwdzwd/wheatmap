@@ -11,11 +11,11 @@
 #' @export
 WDendrogram <- function(clust, dm=WDim(0,0,1,1), name='', facing=c("bottom", "top", "left", "right")) {
 
-  if (class(dm)=='function')
+  if ('function' %in% class(dm))
     dm <- dm(1, 1)
   dd <- list(clust=clust, facing=facing, dm=dm, name=name)
   class(dd) <- c('WDendrogram')
-  RegisterCanvas(dd)
+  dd$name <- RegisterCanvas(dd)
   dd
 }
 
@@ -24,11 +24,16 @@ WDendrogram <- function(clust, dm=WDim(0,0,1,1), name='', facing=c("bottom", "to
 #' WPlot
 #'
 #' @export
-print.WDendrogram <- function(dend) {
+print.WDendrogram <- function(dend, stand.alone=TRUE, layout.only=FALSE) {
   pushViewport(viewport(x=unit(dend$dm$left,'npc'), y=unit(dend$dm$bottom,'npc'),
                         width=unit(dend$dm$width,'npc'), height=unit(dend$dm$height,'npc'),
                         just=c('left','bottom'), gp=gpar(col='black')))
-  grid.dendrogram(as.dendrogram(dend$clust), facing=dend$facing)
+  if (layout.only) {
+    grid.text(dend$name)
+    grid.rect(gp=gpar(col='red'))
+  } else {
+    grid.dendrogram(as.dendrogram(dend$clust), facing=dend$facing)
+  }
   upViewport()
 }
 

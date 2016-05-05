@@ -7,6 +7,7 @@
     group <- WGroup(group)
   }
   group <- .add.WGroup(group, p)
+  group
 }
 
 #' @export

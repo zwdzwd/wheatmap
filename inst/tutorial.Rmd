@@ -28,26 +28,48 @@ col.data <- col.data[c$column.clust$order]
 
 We plot
 ```{r}
-## TODO ,auto-infer discrete
-a <- WHeatmap(c$mat, name='h1') +
-  WColorBarV(row.data, LeftOf('h1'), 'c1', continuous=FALSE) +
-  WColorBarH(col.data, TopOf('h1'), 'c2', continuous=FALSE) +
-  WDendrogram(c$row.clust, LeftOf('c1'), facing='right') +
-  WDendrogram(c$column.clust, TopOf('c2'), facing='bottom') +
-  WColorBarV(1:4, RightOf('h1'), 'c3') +
-  WHeatmap(m2, RightOf('c3'), 'h2') + 
-  WColorBarH(rep(c(1,2,3),each=4), Beneath(WGroupColumn('h1', 'c3', 'h2')), cmp=CMPar(brewer.name='Set2'), continuous=FALSE)
+load_all('~/tools/wheatmap/wheatmap/')
 
-b <- WGroupColumn('h1', 'c3', 'h2')
+a <- WHeatmap(c$mat, name='h1')
 
-## p$heatmap3 <- WHeatmap(matrix(c(8:1,1:8)), Beneath(p$heatmap2))
-p$c4 <- 
-p$h3 <- WHeatmap(matrix(rep(c(8:1,1:8),4),nrow=4), Beneath(p$c4, h.aln=WGroupColumn(p$h1,p$c3)))
-p$h4 <- WHeatmap(matrix(1:4,nrow=2), RightOf(p$h3, h.scale = p$h2))
-p$h5 <- WHeatmap(matrix(1:24,nrow=3), Beneath(p$h3))s
-p$h6 <- WHeatmap(matrix(24:1,nrow=2), Beneath(p$h5, h.aln=WGroupColumn(p$h1,p$c3,p$h2)))
-p$g1 <- WLegend(p$c1, TopOf())
+a <- a + WColorBarV(row.data, LeftOf('h1'), 'c1')
+
+a <- a + WColorBarH(col.data, TopOf('h1'), 'c2')
+
+a <- a + WDendrogram(c$row.clust, LeftOf('c1'), facing='right')
+
+a <- a + WDendrogram(c$column.clust, TopOf('c2'), facing='bottom')
+  
+a <- a + WColorBarV(1:4, RightOf('h1'), 'c3', continuous=TRUE)
+
+a <- a + WHeatmap(m2, RightOf('c3'), 'h2')
+
+a <- a + WColorBarH(rep(c(1,2,3),each=4), Beneath(WGroupColumn('h1', 'c3', 'h2')), 'c4', cmp=CMPar(brewer.name='Set2'), continuous=FALSE)
+
+a <- a + WHeatmap(matrix(rep(c(8:1,1:8),4),nrow=4), Beneath('c4', h.aln=WGroupColumn('h1','c3')), 'h3')
+
+a <- a + WHeatmap(matrix(1:4,nrow=2), RightOf('h3', h.scale='h2'), 'h4')
+
+a <- a + WHeatmap(matrix(1:24,nrow=3), Beneath('h3'), 'h5')
+
+a <- a + WHeatmap(matrix(24:1,nrow=2), Beneath('h5', h.aln=WGroupColumn('h1','c3','h2')), 'h6')
+
+a <- a + WLegendV('c1', RightOf('h6.3'), 'l1')
+
+a <- a + WLegendV('c2', TopOf('l1', pad=0.1), 'l2')
+
+a <- a + WLegendV('c3', TopOf('l2', pad=0.1), n.text=3)
+
+WLayout(a)
+
 WPlot(p)
-
-
 ```
+
+Another example of too many labels
+```{r}
+load_all('~/tools/wheatmap/wheatmap/')
+m <- matrix(1:1000, nrow=100)
+rownames(m) <- paste0('row', 1:100)
+WHeatmap(m, yticklabels = TRUE)
+```
+

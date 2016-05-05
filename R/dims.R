@@ -51,9 +51,7 @@ WDim <- function(left, bottom, width, height, nr=1, nc=1,
   WDim(left=left, bottom=bottom, width=width, height=height)
 }
 
-#' Class WGroup
-#'
-#' Class WGroup
+#' Create a WGroup
 #'
 #' @param dm dimension
 #' @param nr number of rows

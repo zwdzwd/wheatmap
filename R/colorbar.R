@@ -6,10 +6,9 @@
 #' @return an object of class WColorBarV
 #' @export
 WColorBarV <- function(data, ...) {
-  cb = WHeatmap(matrix(data), ...)
+  cb = WHeatmap(matrix(data), sub.name='WColorBarV', ...)
   cb$orientation <- 'v'
   cb$cmp$cmap <- NULL
-  class(cb) <- c(class(cb), 'WCbar')
   cb
 }
 
@@ -21,10 +20,9 @@ WColorBarV <- function(data, ...) {
 #' @return an object of class WColorBarH
 #' @export
 WColorBarH <- function(data, ...) {
-  cb = WHeatmap(matrix(data, nrow=1), ...)
+  cb = WHeatmap(matrix(data, nrow=1), sub.name='WColorBarH', ...)
   cb$orientation <- 'h'
   cb$cmp$cmap <- NULL
-  class(cb) <- c(class(cb), 'WCbar')
   cb
 }
 

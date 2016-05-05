@@ -1,7 +1,7 @@
 #' Color Map Parameters
-#' 
+#'
 #' Create color map parameters
-#' 
+#'
 #' @param cm existing color maps
 #' @param dmin minimum for continuous color map
 #' @param dmax maximum for continuous color map
@@ -14,11 +14,11 @@
 #' @param grey.scale whether to use grey scale
 #' @return an object of class CMPar
 #' @export
-CMPar <- function(cm = NULL, 
+CMPar <- function(cm = NULL,
                   dmin = NULL, dmax = NULL, # color scale max and min
                   brewer.name='Accent', brewer.n=3,
                   colorspace.name='rainbow_hcl', colorspace.n=2,
-                  cmap='jet', 
+                  cmap='jet',
                   stop.points=NULL, # color names at stop points
                   grey.scale=FALSE) {
   cmp <- lapply(formals(), eval)
@@ -29,9 +29,9 @@ CMPar <- function(cm = NULL,
 }
 
 #' Constructor for ColoMap object
-#' 
+#'
 #' Create color maps
-#' 
+#'
 #' @param discrete whether colormap is discrete
 #' @param colors colors for each data point
 #' @param dmin miminum in continuous color map
@@ -40,9 +40,9 @@ CMPar <- function(cm = NULL,
 #' @param mapper function that maps data to color
 #' @return an object of class ColorMap
 #' @export
-ColorMap <- function(discrete=FALSE,
+ColorMap <- function(continuous=TRUE,
                      colors=NULL,
-                     dmin=NULL, dmax=NULL, 
+                     dmin=NULL, dmax=NULL,
                      scaler=NULL, mapper=NULL) {
   cm <- lapply(formals(), eval)
   invisible(lapply(names(as.list(match.call()))[-1], function (nm) {
@@ -53,25 +53,25 @@ ColorMap <- function(discrete=FALSE,
 }
 
 #' map data to continuous color
-#' 
+#'
 #' map data to continuous color
-#' 
+#'
 #' @param data numeric vector
 #' @param cmp an color map parameter object of class CMPar
 #' @return an object of ColorMap
 #' @export
 MapToContinuousColors <- function(data, cmp=CMPar()) {
-  
+
   attach(cmp)
   on.exit(detach(cmp))
-  
+
   if (!is.null(cm)) {
     cm$colors <- apply(
-      cm$mapper(cm$scaler(data)), 1, 
+      cm$mapper(cm$scaler(data)), 1,
       function(x) do.call(rgb, c(as.list(x), maxColorValue=255)))
     return(cm)
   }
-  
+
   if (is.null(stop.points)) {
     if (!is.null(cmap)) {
       data(colormap)
@@ -89,19 +89,19 @@ MapToContinuousColors <- function(data, cmp=CMPar()) {
       stop.points <- get(colorspace.name)(colorspace.n)
     }
   }
-  
+
   ## cap data
   if (!is.null(dmax))
     data[data>=dmax] <- dmax
   if (!is.null(dmin))
     data[data<=dmin] <- dmin
-  
+
   .dmax <- max(dmax, data)
   .dmin <- min(dmin, data)
   if (.dmax==.dmin) # when range==0
     .dmax <- .dmax+1
   data <- (data - .dmin) / (.dmax-.dmin)
-  
+
   cm <- ColorMap(
     dmin = .dmin, dmax = .dmax,
     scaler = function(x) {(x-.dmin)/(.dmax-.dmin)},
@@ -111,9 +111,9 @@ MapToContinuousColors <- function(data, cmp=CMPar()) {
 }
 
 #' map data to discrete color
-#' 
+#'
 #' map data to discrete color
-#' 
+#'
 #' @param data numeric vector
 #' @param cmp an color map parameter object of class CMPar
 #' @return an object of ColorMap
@@ -121,15 +121,15 @@ MapToContinuousColors <- function(data, cmp=CMPar()) {
 #' @import colorspace
 #' @export
 MapToDiscreteColors <- function(data, cmp=CMPar()) {
-  
+
   attach(cmp)
   on.exit(detach(cmp))
-  
+
   if (!is.null(cm)) {
     cm$colors <- cm$mapper[as.character(data)]
     return(cm)
   }
-  
+
   library(RColorBrewer)
   library(colorspace)
   alphabet <- as.character(unique(as.vector(data)))
@@ -138,9 +138,9 @@ MapToDiscreteColors <- function(data, cmp=CMPar()) {
   } else {
     mapped.colors <- get(colorspace.name)(length(alphabet))
   }
-  
+
   cm <- ColorMap(
-    discrete=TRUE,
+    continuous=FALSE,
     mapper=setNames(mapped.colors, alphabet))
   cm$colors=cm$mapper[as.character(data)]
   cm
