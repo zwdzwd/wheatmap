@@ -90,8 +90,37 @@ WHeatmap <- function(
   else
     hm$cm <- MapToDiscreteColors(hm$data, cmp=hm$cmp)
 
-  RegisterCanvas(hm)
+  nr <- nrow(hm$data)
+  nc <- ncol(hm$data)
+  if (class(hm$dm)=='function') {
+    dm <- hm$dm(nr, nc)
+  } else {
+    dm <- hm$dm
+    dm$nr <- nr
+    dm$nc <- nc
+  }
+  ## split column if dimension indicates so
+  if (!is.null(dm$column.split)) {
+    all.nc <- sapply(dm$column.split, function(dm) dm$nc)
+    sum.nc <- sum(all.nc)
+    nc.data <- ncol(data)
+    col.inds <- c(0,round(cumsum(all.nc) * nc.data / sum.nc))
+    sub.dms <- dm$column.split[order(sapply(dm$column.split, function(dm) dm$left))]
+    w.group <- do.call(WGroupColumn, lapply(seq_along(sub.dms), function(i) {
+      sub.dm <- sub.dms[[i]]
+      sub.hm <- hm
+      sub.hm$dm <- WDim(sub.dm$left, dm$bottom, sub.dm$width, dm$height)
+      sub.hm$data <- data[,(col.inds[i]+1):col.inds[i+1], drop=FALSE]
+      sub.hm$cmp$cm <- hm$cm
+      sub.hm <- do.call(WHeatmap, sub.hm)
+    }))
+    return(w.group)
+  }
+
+  hm$dm <- dm
+
   class(hm) <- 'WHeatmap'
+  RegisterCanvas(hm)
   hm
 }
 

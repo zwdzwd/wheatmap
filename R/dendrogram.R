@@ -11,8 +11,11 @@
 #' @export
 WDendrogram <- function(clust, dm=WDim(0,0,1,1), name='', facing=c("bottom", "top", "left", "right")) {
 
+  if (class(dm)=='function')
+    dm <- dm(1, 1)
   dd <- list(clust=clust, facing=facing, dm=dm, name=name)
   class(dd) <- c('WDendrogram')
+  RegisterCanvas(dd)
   dd
 }
 
