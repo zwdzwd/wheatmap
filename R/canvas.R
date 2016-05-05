@@ -1,11 +1,31 @@
 #' @export
 ResetCanvas <- function() {
+  if (!is.null(w.canvas$verbose))
+    verbose.old <- w.canvas$verbose
+  else
+    verbose.old <- FALSE
   rm(list=ls(w.canvas), envir=w.canvas)
   w.canvas$naming.index <- 1
   w.canvas$last <- NULL
+  w.canvas$verbose <- verbose.old
+}
+
+#' @export
+OptionCanvas <- function(verbose=FALSE) {
+  w.canvas$verbose <- verbose
 }
 
 w.canvas <- new.env(parent=emptyenv())
+
+.onLoad <- function(libname, pkgname) {
+  ns <- asNamespace(pkgname)
+  ## path <- system.file("extdata", package=pkgname, lib.loc=libname)
+  ## files <- dir(path)
+  ##for(i in seq_len(length(files))){
+  ##assign(objname, db, envir=ns)
+  ##namespaceExport(ns, objname)
+  ResetCanvas()
+}
 
 RegisterCanvas <- function(obj) {
 
@@ -17,11 +37,14 @@ RegisterCanvas <- function(obj) {
     w.canvas$naming.index <- w.canvas$naming.index + 1
   }
   if (obj$name %in% names(w.canvas)) {
-    message('Object ', obj$name, ' on canvas updated.')
+    if (w.canvas$verbose)
+      message('Object ', obj$name, ' on canvas updated.')
     ## stop()
   }
 
-  message('Register ', class(obj)[1], ': ', obj$name, '.')
+  if (w.canvas$verbose)
+    message('Registered ', class(obj)[1], ': ', obj$name, '.')
+
   assign(obj$name, obj, envir=w.canvas)
   w.canvas$last <- obj$name
   obj$name

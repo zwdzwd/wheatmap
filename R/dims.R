@@ -289,7 +289,6 @@ LeftOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.s
 #' @export
 RightOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.scale=NULL, h.scale.proportional=FALSE) {
 
-  message(w.canvas$last)
   if (is.null(x))
     x <- GetCanvas(w.canvas$last)
 

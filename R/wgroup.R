@@ -99,6 +99,10 @@ WFlatten <- function(.obs) {
   obs
 }
 
+#' show layout
+#' @export
+ly <- function(x) print(x, layout.only=TRUE)
+
 #' Draw WGroup
 #'
 #' @param group plot to display
@@ -133,8 +137,6 @@ print.WGroup <- function(group, mar=c(0.03,0.03,0.03,0.03), stand.alone=TRUE, la
   ## cat(str(text.dms),'\n')
   ## cat(mar.bottom, '\t', mar.left, '\t', mar.top, '\t', mar.right, '\n')
 
-  library(grid)
-  grid.newpage()
   for(ob in obs) {
     ## scale object
     ob$dm$left <- mar.left + (ob$dm$left-left) * (1-mar.left-mar.right) / width
