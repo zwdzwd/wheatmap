@@ -10,7 +10,7 @@ A heatmap is easy to generate in R. There are many packages like heatmap2, heatm
 We start with some data
 ```{r}
 library(devtools)
-load_all('~/tools/wheatmap/wheatmap/', export_all=FALSE)
+load_all('~/tools/wheatmap/wheatmap/')
 m <- cbind(matrix(rnorm(20),nrow=4), 5+matrix(rnorm(8),nrow=4))
 m2 <- matrix(1:16,nrow=4)
 dimnames(m) <- list(c('w','x','y','z'), c('a','b','c','d','e','f','g'))
@@ -28,15 +28,30 @@ col.data <- col.data[c$column.clust$order]
 
 We plot
 ```{r}
-p <- list()
-p$heatmap <- WHeatmap(c$mat)
-p$color.bar.left <- WColorBarV(row.data, LeftOf(p$heatmap), continuous=FALSE)
-p$color.bar.top <- WColorBarH(col.data, TopOf(p$heatmap), continuous=FALSE)
-p$dendro.left <- WDendrogram(c$row.clust, LeftOf(p$color.bar.left), facing='right')
-p$dendro.top <- WDendrogram(c$column.clust, TopOf(p$color.bar.top), facing='bottom')
-p$color.bar.middle <- WColorBarV(1:4, RightOf(p$heatmap))
-p$heatmap2 <- WHeatmap(m2, RightOf(p$color.bar.middle))
+## TODO ,auto-infer discrete
+a <- WHeatmap(c$mat, name='h1') + 
+  WColorBarV(row.data, LeftOf('h1'), 'c1', continuous=FALSE)
+
+
+  WColorBarH(col.data, TopOf('h1'), 'c2', continuous=FALSE) +
+  WDendrogram(c$row.clust, LeftOf('c1'), facing='right') +
+  WDendrogram(c$column.clust, TopOf('c2'), facing='bottom') +
+  WColorBarV(1:4, RightOf('h1'), 'c3') +
+  WHeatmap(m2, RightOf('c3'), 'h2')
+
+
+a + WColorBarH(rep(c(1,2,3),each=4), Beneath(WGroupColumn(p$h1, p$c3, p$h2)), cmp=CMPar(brewer.name='Set2'), continuous=FALSE)
+
+b <- WGroupColumn('h1', 'c3', 'h2')
+
 ## p$heatmap3 <- WHeatmap(matrix(c(8:1,1:8)), Beneath(p$heatmap2))
-p$color.bar.bottom <- WColorBarH(rep(c(1,2,3),each=4), Beneath(WGroupColumn(p$heatmap, p$color.bar.middle, p$heatmap2)), cmp=CMPar(brewer.name='Set2'), continuous=FALSE)
+p$c4 <- 
+p$h3 <- WHeatmap(matrix(rep(c(8:1,1:8),4),nrow=4), Beneath(p$c4, h.aln=WGroupColumn(p$h1,p$c3)))
+p$h4 <- WHeatmap(matrix(1:4,nrow=2), RightOf(p$h3, h.scale = p$h2))
+p$h5 <- WHeatmap(matrix(1:24,nrow=3), Beneath(p$h3))s
+p$h6 <- WHeatmap(matrix(24:1,nrow=2), Beneath(p$h5, h.aln=WGroupColumn(p$h1,p$c3,p$h2)))
+p$g1 <- WLegend(p$c1, TopOf())
 WPlot(p)
+
+
 ```

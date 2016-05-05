@@ -1,4 +1,36 @@
 
+w.canvas <- new.env(parent=emptyenv())
+
+ResetCanvas <- function() {
+  browser()
+  rm(ls(w.canvas))
+  w.canvas$naming.index <- 1
+}
+
+RegisterCanvas <- function(obj) {
+  browser()
+  if (obj$name=='') {
+    obj$name <- paste0('wheatmap.internal.', w.canvas$naming.index)
+    w.canvas$naming.index <- w.canvas$naming.index + 1
+  }
+  if (obj$name %in% names(w.canvas)) {
+    message('Bad name ', obj$name, 'coincidence with internal. Try another name.')
+    stop()
+  }
+  assign(obj$name, obj, envir=w.canvas)
+  cat(ls(w.canvas))
+}
+
+GetCanvas <- function(nm) {
+  browser()
+  cat(ls(w.canvas))
+  obj <- w.canvas[[nm]]
+  if (is.null(obj)) {
+    message('Painting object ', nm, 'not found. Abort')
+    stop()
+  }
+}
+
 #' WHeatmap object
 #'
 #' Create a heatmap
@@ -12,7 +44,7 @@
 #' @export
 WHeatmap <- function(
 
-  data=NULL, dm=WDim(0,0,1,1), name=NULL, continuous=TRUE,
+  data=NULL, dm=WDim(0,0,1,1), name='', continuous=TRUE,
   cmp = CMPar(), # colormapping parameters
 
   ## titles
@@ -38,16 +70,6 @@ WHeatmap <- function(
   gp = NULL) {
 
   hm <- lapply(formals(), eval)
-  
-  ## allow auto-adjust of dimensions
-  nr <- nrow(data)
-  nc <- ncol(data)
-  if (class(dm)=='function') {
-    dm <- dm(nr, nc)
-  } else {
-    dm$nr <- nr
-    dm$nc <- nc
-  }
 
   ## when dm is not given as a default
   hm$dm <- dm
@@ -64,27 +86,11 @@ WHeatmap <- function(
 
   ## map to colors
   if (continuous)
-    cm <- MapToContinuousColors(hm$data, cmp=hm$cmp)
+    hm$cm <- MapToContinuousColors(hm$data, cmp=hm$cmp)
   else
-    cm <- MapToDiscreteColors(hm$data, cmp=hm$cmp)
+    hm$cm <- MapToDiscreteColors(hm$data, cmp=hm$cmp)
 
-  ## split column if dimension indicates so
-  if (dm$column.split && !is.null(dm$sub.dms) &&
-      sum(sapply(dm$sub.dms, function(dm) dm$nc))==ncol(data)) {
-    sub.dms <- dm$sub.dms[order(sapply(dm$sub.dms, function(dm) dm$left))]
-    col.inds <- c(0,cumsum(sapply(dm$sub.dms, function(dm) dm$nc)))
-    return(do.call(WGroup, lapply(seq_along(sub.dms), function(i) {
-      sub.dm <- sub.dms[[i]]
-      sub.hm <- hm
-      sub.hm$dm <- WDim(sub.dm$left, dm$bottom, sub.dm$width, dm$height)
-      sub.hm$data <- data[,(col.inds[i]+1):col.inds[i+1], drop=FALSE]
-      sub.hm$cmp$cm <- cm
-      
-      do.call(WHeatmap, sub.hm)
-    })))
-  }
-  
-  hm$cm <- cm
+  RegisterCanvas(hm)
   class(hm) <- 'WHeatmap'
   hm
 }
@@ -134,19 +140,17 @@ CalcTextRanges.WHeatmap <- function(hm) {
   rg
 }
 
-#' WPlot WHeatmap
-#'
-#' WPlot WHeatmap
+#' plot WHeatmap
 #'
 #' @param hm an object of class WHeatmap
 #' @return \code{NULL}
 #' @import grid
 #' @export
-WPlot.WHeatmap <- function(hm) {
+print.WHeatmap <- function(hm) {
+  library(grid)
   pushViewport(viewport(x=unit(hm$dm$left,'npc'), y=unit(hm$dm$bottom,'npc'),
                        width=unit(hm$dm$width,'npc'), height=unit(hm$dm$height,'npc'),
-                       just=c('left','bottom'), name=hm$name))
-  library(grid)
+                       just=c('left','bottom')))
 
   nc = ncol(hm$data)
   nr = nrow(hm$data)
@@ -215,6 +219,11 @@ WPlot.WHeatmap <- function(hm) {
     upViewport()
   }
 }
+
+#' plot WHeatmap
+#'
+#' @param hm heatmap to plot
+plot.WHeatmap <- print.WHeatmap
 
 #' row cluster a matrix
 #'

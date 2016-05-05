@@ -9,15 +9,9 @@
 #' @param name name of the dendrogram plot
 #' @return an object of class WDendrogram
 #' @export
-WDendrogram <- function(clust, dm=WDim(0,0,1,1),
-                        facing=c("bottom", "top", "left", "right"), name=NULL) {
+WDendrogram <- function(clust, dm=WDim(0,0,1,1), name='', facing=c("bottom", "top", "left", "right")) {
 
-
-  ## allow auto-adjust of dimensions
-  if (class(dm)=='function')
-    dm <- dm(1, 1)
-
-  dd <- list(clust=clust, facing=facing, dm=dm)
+  dd <- list(clust=clust, facing=facing, dm=dm, name=name)
   class(dd) <- c('WDendrogram')
   dd
 }
@@ -27,13 +21,16 @@ WDendrogram <- function(clust, dm=WDim(0,0,1,1),
 #' WPlot
 #'
 #' @export
-WPlot.WDendrogram <- function(dend) {
+print.WDendrogram <- function(dend) {
   pushViewport(viewport(x=unit(dend$dm$left,'npc'), y=unit(dend$dm$bottom,'npc'),
                         width=unit(dend$dm$width,'npc'), height=unit(dend$dm$height,'npc'),
-                        just=c('left','bottom'), name=dend$name, gp=gpar(col='black')))
+                        just=c('left','bottom'), gp=gpar(col='black')))
   grid.dendrogram(as.dendrogram(dend$clust), facing=dend$facing)
   upViewport()
 }
+
+#' @export
+plot.WDendrogram <- print.WDendrogram
 
 #' Calculate Text Ranges
 #'

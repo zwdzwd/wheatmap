@@ -11,9 +11,9 @@
 #' @param row.split a list of WDim objects for row split
 #' @export
 WDim <- function(left, bottom, width, height, nr=1, nc=1,
-                 sub.dms=NULL, column.split=FALSE, row.split=FALSE) {
+                 column.split=NULL, row.split=NULL) {
   dm <- list(left=left, bottom=bottom, width=width, height=height, nr=nr, nc=nc,
-              sub.dms=sub.dms, column.split=column.split, row.split=row.split)
+             column.split=column.split, row.split=row.split)
   class(dm) <- 'WDim'
   dm
 }
@@ -26,13 +26,29 @@ WDim <- function(left, bottom, width, height, nr=1, nc=1,
   dm$bottom+dm$height
 }
 
+## Draw height
+##
+## Height without inter-subdimension space
+.DimDrawHeight <- function(dm) {
+  if (is.null(dm$row.split)) return(dm$height)
+  else return(sum(sapply(dm$row.split, .DimDrawHeight)))
+}
+
+## Draw width
+##
+## Width without inter-subdimension space
+.DimDrawWidth <- function(dm) {
+  if (is.null(dm$column.split)) return(dm$width)
+  else return(sum(sapply(dm$column.split, .DimDrawWidth)))
+}
+
 .DimGroup <- function(...) {
   dms <- list(...)
   left = min(sapply(dms, function(dm) dm$left))
   bottom = min(sapply(dms, function(dm) dm$bottom))
   width = max(sapply(dms, function(dm) dm$left+dm$width)) - left
   height = max(sapply(dms, function(dm) dm$bottom+dm$height)) - bottom
-  WDim(left=left, bottom=bottom, width=width, height=height, sub.dms=dms)
+  WDim(left=left, bottom=bottom, width=width, height=height)
 }
 
 #' Class WGroup
@@ -44,21 +60,51 @@ WDim <- function(left, bottom, width, height, nr=1, nc=1,
 #' @param nc number of columns
 #' @return an object of class WGroup
 #' @export
-WGroup <- function(..., nr=NULL, nc=NULL) {
+WGroup <- function(..., nr=NULL, nc=NULL, to.row.split=FALSE, to.column.split=FALSE) {
   obs <- list(...)
-  dm <- do.call(.DimGroup, lapply(obs, function(o)o$dm))
+  names(obs) <- sapply(obs, function(o) o$name)
+
+  g <- list(obs=obs)
+  dms <- lapply(obs, function(o)o$dm)
+
+  g$dm <- do.call(.DimGroup, dms)
+  if (to.row.split)
+    g$dm$row.split <- dms
+  if (to.column.split)
+    g$dm$column.split <- dms
+
   if (is.null(nc))
-    dm$nc <- max(sapply(obs, function(o) o$dm$nc))
+    g$dm$nc <- max(sapply(obs, function(o) o$dm$nc))
   else
-    dm$nc <- nc
+    g$dm$nc <- nc
   if (is.null(nr))
-    dm$nr <- max(sapply(obs, function(o) o$dm$nr))
+    g$dm$nr <- max(sapply(obs, function(o) o$dm$nr))
   else
-    dm$nr <- nr
-  
-  g <- list(obs=obs, dm=dm)
+    g$dm$nr <- nr
+
   class(g) <- 'WGroup'
   g
+}
+
+.add.WGroup <- function(group, new.ob) {
+  group$obs[[length(group$obs)+1]] <- new.ob
+  names(group$obs)[length(group$obs)] <- new.ob$name
+  nc <- max(group$dm$nc, new.ob$dm$nc)
+  nr <- max(group$dm$nr, new.ob$dm$nr)
+  group$dm <- .DimGroup(group$dm, new.ob$dm)
+  group$dm$nc <- nc
+  group$dm$nr <- nr
+  group
+}
+
+#' subset WGroup
+#'
+#' subset WGroup
+#'
+#' @param i integer indexing element
+#' @export
+`[.WGroup` <- function(x, i) {
+  x$obs[[i]]
 }
 
 #' column group non-overlapping objects
@@ -71,10 +117,10 @@ WGroup <- function(..., nr=NULL, nc=NULL) {
 #' @return an object of class WGroup
 #' @export
 WGroupColumn <- function(..., nr=NULL, nc=NULL) {
+  browser()
   if (is.null(nc))
     nc <- sum(sapply(list(...), function(o) o$dm$nc))
-  g <- WGroup(..., nr=nr, nc=nc)
-  g$dm$column.split <- TRUE
+  g <- WGroup(..., nr=nr, nc=nc, to.column.split=TRUE)
   g
 }
 
@@ -90,7 +136,6 @@ WGroupColumn <- function(..., nr=NULL, nc=NULL) {
 WGroupRow <- function(..., nr=NULL, nc=NULL) {
   if (is.null(nr))
     nr <- sum(sapply(list(...), function(o) o$dm$nr))
-  g <- WGroup(..., nr=nr, nc=nc)
-  g$dm$row.split <- TRUE
+  g <- WGroup(..., nr=nr, nc=nc, to.row.split=TRUE)
   g
 }
