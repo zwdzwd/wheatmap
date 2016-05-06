@@ -24,7 +24,7 @@ WDendrogram <- function(clust, dm=WDim(0,0,1,1), name='', facing=c("bottom", "to
 #' WPlot
 #'
 #' @export
-print.WDendrogram <- function(dend, stand.alone=TRUE, layout.only=FALSE) {
+print.WDendrogram <- function(dend, stand.alone=TRUE, layout.only=FALSE, cex=1) {
   pushViewport(viewport(x=unit(dend$dm$left,'npc'), y=unit(dend$dm$bottom,'npc'),
                         width=unit(dend$dm$width,'npc'), height=unit(dend$dm$height,'npc'),
                         just=c('left','bottom'), gp=gpar(col='black')))
@@ -46,7 +46,7 @@ plot.WDendrogram <- print.WDendrogram
 #'
 #' @export
 CalcTextBounding.WDendrogram <- function(dd) {
-  dm <- DimToTop(dd$dm)
+  dm <- DimToTop(dd)
   dm$left <- NPCToPoints(dm$left)
   dm$bottom <- NPCToPoints(dm$bottom)
   dm$height <- NPCToPoints(dm$height)

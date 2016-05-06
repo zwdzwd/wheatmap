@@ -37,6 +37,12 @@ ResetCanvas()
 
 ```{r}
 a <- WHeatmap(cc$mat, name='h1')
+a <- a + WColorBarV(row.data, LeftOf('h1'), 'c1')
+a <- a + WColorBarH(col.data, TopOf('h1'), 'c2')
+a + WDendrogram(cc$row.clust, LeftOf('c1'), facing='right')
+a <- a + WDendrogram(cc$row.clust, LeftOf('c1'), facing='right') + WDendrogram(cc$column.clust, TopOf('c2'), facing='bottom')
+a
+
 ```
 
 ## Final results
@@ -151,3 +157,8 @@ rownames(m) <- paste0('row', 1:100)
 WHeatmap(m, yticklabels = TRUE) + WLegendV(NULL, RightOf(), height=0.5)
 ```
 
+## Text and labels
+
+```{r}
+WHeatmap(cc$mat, name='h1', yticklabels = TRUE, xticklabels = TRUE, xticklabel.side = 't', xticklabel.fontsize = 25, yticklabel.fontsize=20)
+```

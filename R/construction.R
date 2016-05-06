@@ -4,9 +4,11 @@
 
   ## first plotting object
   if (!('WGroup' %in% class(group))) {
-    group <- WGroup(group, is.root=TRUE)
+    group <- ResolveDim(group, NULL)
+    group <- WGroup(group)
   }
-  group <- .add.WGroup(group, p)
+  p <- ResolveDim(p, group)
+  group <- AddWGroup(group, p)
   group
 }
 

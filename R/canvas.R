@@ -58,7 +58,7 @@ GetCanvas <- function(nm) {
   }
   obj <- w.canvas[[nm]]
   if (is.null(obj)) {
-    message('Painting object ', nm, 'not found. Abort')
+    message('Painting object ', nm, ' not found. Abort')
     stop()
   }
   obj

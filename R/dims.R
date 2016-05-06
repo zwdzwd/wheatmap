@@ -1,5 +1,10 @@
+#' @export
+ResolveDim <- function(x) {
+  UseMethod('ResolveDim', x)
+}
+
 LengthToTop <- function(obj, .length) {
-  if (is.characeter(obj)) {
+  if (is.character(obj)) {
     obj <- GetCanvas(obj)
   }
 
@@ -201,9 +206,12 @@ Beneath <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v
   if (is.null(x))
     x <- GetCanvas(w.canvas$last)
 
-  x <- DimToTop(x)
-  h.aln <- DimToTop(h.aln)
-  v.scale <- DimToTop(v.scale)
+  if (!('WDim' %in% class(x)))
+    x <- DimToTop(x)
+  if (!('WDim' %in% class(h.aln)))
+    h.aln <- DimToTop(h.aln)
+  if (!('WDim' %in% class(v.scale)))
+    v.scale <- DimToTop(v.scale)
 
   force(x); force(h.aln); force(v.scale);
   force(v.scale.proportional)
@@ -267,9 +275,12 @@ LeftOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.s
   if (is.null(x))
     x <- GetCanvas(w.canvas$last)
 
-  x <- DimToTop(x)
-  v.aln <- DimToTop(v.aln)
-  h.scale <- DimToTop(h.scale)
+  if (!('WDim' %in% class(x)))
+    x <- DimToTop(x)
+  if (!('WDim' %in% class(v.aln)))
+    v.aln <- DimToTop(v.aln)
+  if (!('WDim' %in% class(h.scale)))
+    h.scale <- DimToTop(h.scale)
 
   force(x); force(v.aln); force(h.scale);
   force(h.scale.proportional)
@@ -333,9 +344,12 @@ RightOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.
   if (is.null(x))
     x <- GetCanvas(w.canvas$last)
 
-  x <- DimToTop(x)
-  v.aln <- DimToTop(v.aln)
-  h.scale <- DimToTop(h.scale)
+  if (!('WDim' %in% class(x)))
+    x <- DimToTop(x)
+  if (!('WDim' %in% class(v.aln)))
+    v.aln <- DimToTop(v.aln)
+  if (!('WDim' %in% class(h.scale)))
+    h.scale <- DimToTop(h.scale)
 
   force(x); force(v.aln); force(h.scale);
   force(h.scale.proportional)

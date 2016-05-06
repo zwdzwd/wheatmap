@@ -89,9 +89,9 @@ AddWGroup <- function(group.obj, new.obj) {
 
   ## put old and new children's dimensions
   ## to npc of the new dimension
-  lapply(group$children, function(nm) {
+  lapply(group.obj$children, function(nm) {
     obj <- GetCanvas(nm)
-    obj$dm <- ToAffine(FromAffine(new.obj$dm, group.obj$dm), dm)
+    obj$dm <- ToAffine(FromAffine(obj$dm, group.obj$dm), dm)
     RegisterCanvas(obj)
   })
 
@@ -138,7 +138,7 @@ ly <- function(x) print(x, layout.only=TRUE)
 #'
 #' Scale group to incorporate text on margins
 #' @param group.obj group object that needs to be scaled
-#' @return scaled group obj
+#' @return scaled group obj (temporary, unregistered on canvas)
 ScaleGroup <- function(group.obj, mar=c(0.03,0.03,0.03,0.03)) {
 
   mar.bottom = mar[1]
@@ -153,7 +153,7 @@ ScaleGroup <- function(group.obj, mar=c(0.03,0.03,0.03,0.03)) {
   dmb$height <- dmb$height*(1+mar.bottom+mar.top)
   group.dmb <- DimInPoints(group.obj$dm)
   group.obj$dm <- ToAffine(group.dmb, dmb)
-  group.obj <- RegisterCanvas(group.obj)
+#   group.obj <- RegisterCanvas(group.obj)
   cex <- c(group.dmb$width / dmb$width,
            group.dmb$height / dmb$height)
 
@@ -169,7 +169,6 @@ ScaleGroup <- function(group.obj, mar=c(0.03,0.03,0.03,0.03)) {
 print.WGroup <- function(group, mar=c(0.03,0.03,0.03,0.03), stand.alone=TRUE, cex=1, layout.only=FALSE) {
 
   if (stand.alone) {
-    browser()
     res <- ScaleGroup(group, mar=mar)
     cex <- res$cex
     group <- res$group
