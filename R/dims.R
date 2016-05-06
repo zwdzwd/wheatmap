@@ -1,3 +1,20 @@
+DimToTop <- function(obj, dm=NULL) {
+
+  if (is.characeter(obj)) {
+    obj <- GetCanvas(obj)
+  }
+  
+  if (is.null(dm)) {
+    dm <- obj$dm
+  }
+  if (is.null(obj$parent)) {
+    return(dm)
+  }
+  parent <- GetCanvas(obj$parent)
+  dm <- FromAffine(dm, parent$dm)
+  return(DimToTop(parent, dm))
+}
+
 DimInPoints <- function(dm) {
   dm.new <- dm
   dm.new$left <- convertUnit(unit(dm$left, 'npc'),'points')
@@ -59,28 +76,28 @@ WDim <- function(left, bottom, width, height, nr=1, nc=1,
 }
 
 
-.SetToDim <- function(x) {
-  if (is.null(x))
-    return (x)
-  else if (is.character(x)) {
-    x <- GetCanvas(x)
-    return (x$dm)
-  } else
-    return (x$dm)
-}
+# .SetToDim <- function(x) {
+#   if (is.null(x))
+#     return (x)
+#   else if (is.character(x)) {
+#     x <- GetCanvas(x)
+#     return (x$dm)
+#   } else
+#     return (x$dm)
+# }
 
-.GroupSetToDim <- function(x, group) {
-  if (is.character(x)) {
-    if (is.null(group))
-      message('No group provided. This is a bug.')
-    stopifnot(!is.null(group))
-    .x <- group[x]
-    if (is.null(.x))
-      message('Name not found: ', x, '. Make sure objects are named.')
-    x <- .x$dm
-  }
-  x
-}
+# .GroupSetToDim <- function(x, group) {
+#   if (is.character(x)) {
+#     if (is.null(group))
+#       message('No group provided. This is a bug.')
+#     stopifnot(!is.null(group))
+#     .x <- group[x]
+#     if (is.null(.x))
+#       message('Name not found: ', x, '. Make sure objects are named.')
+#     x <- .x$dm
+#   }
+#   x
+# }
 
 #' Top of
 #'
@@ -101,18 +118,18 @@ TopOf <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v.s
     x <- GetCanvas(w.canvas$last)
   }
 
-  x <- .SetToDim(x)
-  h.aln <- .SetToDim(h.aln)
-  v.scale <- .SetToDim(v.scale)
+  x <- DimToTop(x)
+  h.aln <- DimToTop(h.aln)
+  v.scale <- DimToTop(v.scale)
 
   force(x); force(h.aln); force(v.scale);
   force(v.scale.proportional)
   force(height); force(pad); force(min.ratio);
-  function(nr, nc, group=NULL) {
+  function(nr, nc) {
 
-    x <- .GroupSetToDim(x, group)
-    h.aln <- .GroupSetToDim(h.aln, group)
-    v.scale <- .GroupSetToDim(v.scale, group)
+    # x <- .GroupSetToDim(x, group)
+    # h.aln <- .GroupSetToDim(h.aln, group)
+    # v.scale <- .GroupSetToDim(v.scale, group)
 
     dm <- x
     dm$nr <- nr
@@ -167,18 +184,18 @@ Beneath <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v
   if (is.null(x))
     x <- GetCanvas(w.canvas$last)
 
-  x <- .SetToDim(x)
-  h.aln <- .SetToDim(h.aln)
-  v.scale <- .SetToDim(v.scale)
+  x <- DimToTop(x)
+  h.aln <- DimToTop(h.aln)
+  v.scale <- DimToTop(v.scale)
 
   force(x); force(h.aln); force(v.scale);
   force(v.scale.proportional)
   force(height); force(pad); force(min.ratio);
-  function(nr, nc, group=NULL) {
+  function(nr, nc) {
 
-    x <- .GroupSetToDim(x, group)
-    h.aln <- .GroupSetToDim(h.aln, group)
-    v.scale <- .GroupSetToDim(v.scale, group)
+    # x <- .GroupSetToDim(x, group)
+    # h.aln <- .GroupSetToDim(h.aln, group)
+    # v.scale <- .GroupSetToDim(v.scale, group)
 
     dm <- x
     dm$nr <- nr
@@ -233,18 +250,18 @@ LeftOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.s
   if (is.null(x))
     x <- GetCanvas(w.canvas$last)
 
-  x <- .SetToDim(x)
-  v.aln <- .SetToDim(v.aln)
-  h.scale <- .SetToDim(h.scale)
+  x <- DimToTop(x)
+  v.aln <- DimToTop(v.aln)
+  h.scale <- DimToTop(h.scale)
 
   force(x); force(v.aln); force(h.scale);
   force(h.scale.proportional)
   force(width); force(pad); force(min.ratio);
-  function(nr, nc, group=NULL) {
+  function(nr, nc) {
 
-    x <- .GroupSetToDim(x, group)
-    v.aln <- .GroupSetToDim(v.aln, group)
-    h.scale <- .GroupSetToDim(h.scale, group)
+    # x <- .GroupSetToDim(x, group)
+    # v.aln <- .GroupSetToDim(v.aln, group)
+    # h.scale <- .GroupSetToDim(h.scale, group)
 
     dm <- x
     dm$nr <- nr
@@ -299,18 +316,18 @@ RightOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.
   if (is.null(x))
     x <- GetCanvas(w.canvas$last)
 
-  x <- .SetToDim(x)
-  v.aln <- .SetToDim(v.aln)
-  h.scale <- .SetToDim(h.scale)
+  x <- DimToTop(x)
+  v.aln <- DimToTop(v.aln)
+  h.scale <- DimToTop(h.scale)
 
   force(x); force(v.aln); force(h.scale);
   force(h.scale.proportional)
   force(width); force(pad); force(min.ratio);
-  function(nr, nc, group=NULL) {
+  function(nr, nc) {
 
-    x <- .GroupSetToDim(x, group)
-    v.aln <- .GroupSetToDim(v.aln, group)
-    h.scale <- .GroupSetToDim(h.scale, group)
+    # x <- .GroupSetToDim(x, group)
+    # v.aln <- .GroupSetToDim(v.aln, group)
+    # h.scale <- .GroupSetToDim(h.scale, group)
 
     dm <- x
     dm$nr <- nr

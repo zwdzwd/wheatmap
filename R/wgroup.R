@@ -20,6 +20,7 @@ FromAffine <- function(dm.affine, dm.sys) {
   dm$bottom <- dm.sys$bottom + dm.affine$bottom * dm.sys$height
   dm$width <- dm.sys$width * dm.affine$width
   dm$height <- dm.sys$height * dm.affine$height
+  
   dm
 }
 
@@ -34,7 +35,7 @@ FromAffine <- function(dm.affine, dm.sys) {
 #' @export
 WGroup <- function(..., name='', parent=NULL,
                    nr=NULL, nc=NULL) {
-
+## row and column.split must be a set separately ??
   objs <- lapply(list(...), function(o) {
     if (is.character(o)) GetCanvas(o)
     else o
@@ -58,7 +59,7 @@ WGroup <- function(..., name='', parent=NULL,
     children=names(objs),
     name=name,
     dm=dm), class='WGroup')
-  group.obj <- RegisterCanvas(group.obj)
+  group.name <- RegisterCanvas(group.obj)
 
   ## put childrens dimension to npc of the parent
   lapply(objs, function(obj) {

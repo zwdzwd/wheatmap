@@ -14,6 +14,8 @@ WHeatmap <- function(
   data=NULL, dm=WDim(0,0,1,1), name='', continuous=NULL,
   cmp = CMPar(), # colormapping parameters
 
+  parent=NULL,
+  
   ## titles
   title = NULL, title.fontsize=12, title.pad=0.005, title.side='l',
 
@@ -115,24 +117,29 @@ SplitWHeatmap <- function(hm, dm, cm) {
 
   sub.dms.col <- dm$column.split[order(sapply(dm$column.split, function(dm) dm$left))]
   sub.dms.row <- rev(dm$row.split[order(sapply(dm$row.split, function(dm) dm$bottom))])
+  sub.dms.col <- lapply(sub.dms.col, function(.dm) {DimToTop(hm, .dm)})
+  sub.dms.row <- lapply(sub.dms.row, function(.dm) {DimToTop(hm, .dm)})
   sub.dms <- expand.grid(seq_along(sub.dms.row), seq_along(sub.dms.col))
+  group.name <- RegisterCanvas(WGroup(name=hm$name)) # register a name on canvas
   k <- apply(sub.dms, 1, function(dm.i) {
     ir <- dm.i[1]
     ic <- dm.i[2]
     sub.dm.row <- sub.dms.row[[ir]]
     sub.dm.col <- sub.dms.col[[ic]]
     sub.hm <- hm
-    sub.hm$dm <- WDim(sub.dm.col$left, sub.dm.row$bottom, sub.dm.col$width, sub.dm.row$height)
+    sub.hm$dm <- WDim(sub.dm.col$left, sub.dm.row$bottom, sub.dm.col$width, sub.dm.row$height,
+                      row.split=sub.dm.row$row.split, column.split=sub.dm.col$column.split,
+                      nr=sub.dm.row$nr, nc=sub.dm.col$nc)
     sub.hm$data <- hm$data[(row.inds[ir]+1):row.inds[ir+1],
                            (col.inds[ic]+1):col.inds[ic+1], drop=FALSE]
     sub.hm$cmp$cm <- cm
-    if (!is.null(sub.hm$name))
-      sub.hm$name <- paste0(sub.hm$name, '.', ir, '.', ic)
+    sub.hm$name <- paste0(group.name, '.', ir, '.', ic)
     do.call(WHeatmap, sub.hm)
   })
-  w.group <- do.call(WGroupColumn, k)
-  w.group$name <- hm$name
-  RegisterCanvas(w.group)
+  w.group <- do.call(WGroup, c(k, name=group.name))
+  w.group$dm$row.split <- dm$row.split
+  w.group$dm$column.split=dm$column.split
+  RegisterCanvas(w.group) # update
 
   return(w.group)
 }
