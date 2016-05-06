@@ -15,7 +15,7 @@ WDendrogram <- function(clust, dm=WDim(0,0,1,1), name='', facing=c("bottom", "to
     dm <- dm(1, 1)
   dd <- list(clust=clust, facing=facing, dm=dm, name=name)
   class(dd) <- c('WDendrogram')
-  dd$name <- RegisterCanvas(dd)
+  dd <- RegisterCanvas(dd)
   dd
 }
 
@@ -45,8 +45,13 @@ plot.WDendrogram <- print.WDendrogram
 #' Calculate Text Ranges
 #'
 #' @export
-CalcTextRanges.WDendrogram <- function(dd) {
-  list(left=dd$dm$left, bottom=dd$dm$bottom, top=dd$dm$bottom+dd$dm$height, right=dd$dm$left+dd$dm$width)
+CalcTextBounding.WDendrogram <- function(dd) {
+  dm <- DimToTop(dd$dm)
+  dm$left <- NPCToPoints(dm$left)
+  dm$bottom <- NPCToPoints(dm$bottom)
+  dm$height <- NPCToPoints(dm$height)
+  dm$width <- NPCToPoints(dm$width)
+  dm
 }
 
 #' Draw dendrogram under grid system

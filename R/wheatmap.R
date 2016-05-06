@@ -15,7 +15,7 @@ WHeatmap <- function(
   cmp = CMPar(), # colormapping parameters
 
   parent=NULL,
-  
+
   ## titles
   title = NULL, title.fontsize=12, title.pad=0.005, title.side='l',
 
@@ -95,7 +95,7 @@ WHeatmap <- function(
   class(hm) <- 'WHeatmap'
   if (!is.null(sub.name))
     class(hm) <- c(sub.name, class(hm))
-  hm$name <- RegisterCanvas(hm)
+  hm <- RegisterCanvas(hm)
   hm
 }
 
@@ -117,10 +117,8 @@ SplitWHeatmap <- function(hm, dm, cm) {
 
   sub.dms.col <- dm$column.split[order(sapply(dm$column.split, function(dm) dm$left))]
   sub.dms.row <- rev(dm$row.split[order(sapply(dm$row.split, function(dm) dm$bottom))])
-  sub.dms.col <- lapply(sub.dms.col, function(.dm) {DimToTop(hm, .dm)})
-  sub.dms.row <- lapply(sub.dms.row, function(.dm) {DimToTop(hm, .dm)})
   sub.dms <- expand.grid(seq_along(sub.dms.row), seq_along(sub.dms.col))
-  group.name <- RegisterCanvas(WGroup(name=hm$name)) # register a name on canvas
+  group.obj <- RegisterCanvas(WGroup(name=hm$name)) # register a name on canvas
   k <- apply(sub.dms, 1, function(dm.i) {
     ir <- dm.i[1]
     ic <- dm.i[2]
@@ -133,61 +131,68 @@ SplitWHeatmap <- function(hm, dm, cm) {
     sub.hm$data <- hm$data[(row.inds[ir]+1):row.inds[ir+1],
                            (col.inds[ic]+1):col.inds[ic+1], drop=FALSE]
     sub.hm$cmp$cm <- cm
-    sub.hm$name <- paste0(group.name, '.', ir, '.', ic)
+    sub.hm$name <- paste0(group.obj$name, '.', ir, '.', ic)
     do.call(WHeatmap, sub.hm)
   })
   w.group <- do.call(WGroup, c(k, name=group.name))
-  w.group$dm$row.split <- dm$row.split
-  w.group$dm$column.split=dm$column.split
+  w.group$dm$row.split <- sub.dms.row
+  w.group$dm$column.split <- sub.dms.col
   RegisterCanvas(w.group) # update
 
   return(w.group)
 }
 
-
-#' Calculate Text Ranges
-#'
-#' Calculate dimension of object with text
-#'
-#' @method CalcTextRanges WHeatmap
+#' Calculate Texting Bounding for WHeatmap
+#' @param hm object of class WHeatmap
+#' @return an object of class WDim in coordinate points
 #' @export
-CalcTextRanges.WHeatmap <- function(hm) {
-  rg = list()
-  ## bottom, left, top, right
-  rg$left <- hm$dm$left
-  rg$bottom <- hm$dm$bottom
-  rg$top <- rg$bottom + hm$dm$height
-  rg$right <- rg$left + hm$dm$width
+CalcTextBounding.WHeatmap <- function(hm) {
 
-  if (!is.null(hm$title)) {
-    if (hm$title.side=='l') {
-      rg$left <- rg$left - text.width(hm$title, hm$title.fontsize) - hm$title.pad
-    } else {
-      rg$right <- rg$right + text.width(hm$title, hm$title.fontsize) + hm$title.pad
-    }
-  }
+  ## this needs be called at the ROOT view port
+  dm <- DimToTop(hm)
+
+  ## bottom, left, top, right
+  left <- NPCToPoints(dm$left)
+  bottom <- NPCToPoints(dm$bottom)
+  top <- bottom + NPCToPoints(dm$height)
+  right <- left + NPCToPoints(dm$width)
 
   if (!is.null(hm$yticklabels)) {
     if (hm$yticklabel.side=='l') {
-      rg$left <- rg$left - max(sapply(
-        rownames(hm$data), function(t) text.width(t, hm$yticklabel.fontsize))) - hm$yticklabel.pad
+      left <- left - max(sapply(
+        rownames(hm$data), function(t) text.width(t, hm$yticklabel.fontsize))) -
+        NPCToPoints(LengthToTop(hm, hm$yticklabel.pad))
     } else {
-      rg$right <- rg$right + max(sapply(
-        rownames(hm$data), function(t) text.width(t, hm$yticklabel.fontsize))) + hm$yticklabel.pad
+      right <- right + max(sapply(
+        rownames(hm$data), function(t) text.width(t, hm$yticklabel.fontsize))) +
+        NPCToPoints(LengthToTop(hm, hm$yticklabel.pad))
     }
   }
+
+  #  if (!is.null(hm$title)) {
+  #    if (hm$title.side=='l') {
+  #      rg$left <- rg$left - text.width(hm$title, hm$title.fontsize) - hm$title.pad
+  #    } else {
+  #      rg$right <- rg$right + text.width(hm$title, hm$title.fontsize) + hm$title.pad
+  #    }
+  #  }
 
   if (!is.null(hm$xticklabels)) {
     if (hm$xticklabel.side=='b') {
-      rg$bottom <- rg$bottom - max(sapply(
-        rownames(hm$data), function(t) text.width(t, hm$yticklabel.fontsize))) - hm$xticklabel.pad
+      bottom <- bottom - max(sapply(
+        rownames(hm$data), function(t) text.width(t, hm$yticklabel.fontsize))) -
+        NPCToPoints(LengthToTop(hm$xticklabel.pad))
     } else {
-      rg$top <- rg$top + max(sapply(
-        rownames(hm$data), function(t) text.width(t, hm$yticklabel.fontsize))) + hm$xticklabel.pad
+      top <- top + max(sapply(
+        rownames(hm$data), function(t) text.width(t, hm$yticklabel.fontsize))) +
+        NPCToPoints(LengthToTop(hm$xticklabel.pad))
     }
   }
-
-  rg
+  dm$left <- left
+  dm$bottom <- bottom
+  dm$width <- right-left
+  dm$height <- top-bottom
+  dm
 }
 
 #' plot WHeatmap
@@ -196,7 +201,7 @@ CalcTextRanges.WHeatmap <- function(hm) {
 #' @return \code{NULL}
 #' @import grid
 #' @export
-print.WHeatmap <- function(hm, stand.alone=TRUE, layout.only=FALSE) {
+print.WHeatmap <- function(hm, stand.alone=TRUE, cex=1, layout.only=FALSE) {
   library(grid)
 
   if (stand.alone) {
@@ -222,34 +227,35 @@ print.WHeatmap <- function(hm, stand.alone=TRUE, layout.only=FALSE) {
   grid.rect(x[expand.index[[2]]], y[expand.index[[1]]],
             width=unit(1/nc, 'npc'), height=unit(1/nr, 'npc'),
             gp=do.call('gpar', c(list(fill=hm$cm$colors), hm$gp)), just=c('left','bottom'))
-  upViewport()
 
   ## x tick labels
   if (!is.null(hm$xticklabels)) {
-    .WPrintXTickLabels(hm)
+    .WPrintXTickLabels(hm, cex=cex)
   }
 
   ## y tick labels
   if (!is.null(hm$yticklabels)) {
-    .WPrintYTickLabels(hm)
+    .WPrintYTickLabels(hm, cex=cex)
   }
 
-  ## titles
-  if (!is.null(hm$title)) {
-    if (hm$title.side == 'l') {
-      .text.just = 'right'
-      .text.x = 1
-      .vpx = hm$dm$left - hm$title.pad
-    } else {
-      .text.just = 'left'
-      .text.x = 0
-      .vpx = hm$dm$left + hm$dm$width + hm$title.pad
-    }
-    pushViewport(viewport(x=unit(.vpx,'npc'), y=unit(hm$dm$bottom,'npc'),
-                          width=stringWidth(hm$title), height=unit(hm$dm$height,'npc'), just=c(.text.just,'bottom')))
-    grid.text(hm$title, x=unit(.text.x,'npc'), y=unit(0.5,'npc'), just=c(.text.just,'center'), gp=gpar(fontsize=hm$title.fontsize))
-    upViewport()
-  }
+  upViewport()
+
+  #   ## titles
+  #   if (!is.null(hm$title)) {
+  #     if (hm$title.side == 'l') {
+  #       .text.just = 'right'
+  #       .text.x = 1
+  #       .vpx = hm$dm$left - hm$title.pad
+  #     } else {
+  #       .text.just = 'left'
+  #       .text.x = 0
+  #       .vpx = hm$dm$left + hm$dm$width + hm$title.pad
+  #     }
+  #     pushViewport(viewport(x=unit(.vpx,'npc'), y=unit(hm$dm$bottom,'npc'),
+  #                           width=stringWidth(hm$title), height=unit(hm$dm$height,'npc'), just=c(.text.just,'bottom')))
+  #     grid.text(hm$title, x=unit(.text.x,'npc'), y=unit(0.5,'npc'), just=c(.text.just,'center'), gp=gpar(fontsize=hm$title.fontsize))
+  #     upViewport()
+  #   }
 }
 
 .TickLabelResample <- function(labels, ticklabels.n) {
@@ -266,28 +272,26 @@ print.WHeatmap <- function(hm, stand.alone=TRUE, layout.only=FALSE) {
   sample.inds <- round(seq(1, n.labels, length.out=n.texts))
 }
 
-.WPrintXTickLabels <- function(hm) {
+.WPrintXTickLabels <- function(hm, cex=1) {
   labels <- colnames(hm$data)
   nc = ncol(hm$data)
   x.mid <- (seq_len(nc)-0.5)/nc
   if (hm$xticklabel.side == 'b') {
     .text.just = 'top'
-    .text.y = 1
+    .text.y = 1 + hm$xticklabel.pad
     .text.rot = -90
-    .vpy = hm$dm$bottom - hm$xticklabel.pad
   } else {
     .text.just = 'bottom'
-    .text.y = 0
+    .text.y = - hm$xticklabel.pad
     .text.rot = 90
-    .vpy = hm$dm$bottom + hm$dm$height + hm$xticklabel.pad
   }
-  pushViewport(viewport(x=unit(hm$dm$left, 'npc'), y=unit(.vpy, 'npc'),
-                        width=unit(hm$dm$width,'npc'), height=max(sapply(labels, stringWidth)), just=c('left', .text.just)))
+#   pushViewport(viewport(x=unit(hm$dm$left, 'npc'), y=unit(.vpy, 'npc'),
+#                         width=unit(hm$dm$width,'npc'), height=max(sapply(labels, stringWidth)), just=c('left', .text.just)))
   sample.inds <- .TickLabelResample(labels, hm$xticklabels.n)
   grid.text(labels[sample.inds],
-            x=x.mid[sample.inds], y=unit(.text.y,'npc'),
-            just=c('left', 'center'), rot=.text.rot, gp=gpar(fontsize=hm$yticklabel.fontsize))
-  upViewport()
+            x=x.mid[sample.inds], y=unit(.text.y,'npc'), rot=.text.rot,
+            just=c('left', 'center'), gp=gpar(fontsize=hm$yticklabel.fontsize*cex))
+#   upViewport()
 }
 
 .WPrintYTickLabels <- function(hm) {
@@ -296,20 +300,18 @@ print.WHeatmap <- function(hm, stand.alone=TRUE, layout.only=FALSE) {
   y.mid <- (rev(seq_len(nr))-0.5)/nr
   if (hm$yticklabel.side == 'l') {
     .text.just = 'right'
-    .text.x = 1
-    .vpx = hm$dm$left - hm$yticklabel.pad
+    .text.x = 1 + hm$yticklabel.pad
   } else {
     .text.just = 'left'
-    .text.x = 0
-    .vpx = hm$dm$left + hm$dm$width + hm$yticklabel.pad
+    .text.x = - hm$yticklabel.pad
   }
-  pushViewport(viewport(x=unit(.vpx, 'npc'), y=unit(hm$dm$bottom, 'npc'),
-                        width=max(sapply(labels, stringWidth)), height=unit(hm$dm$height,'npc'), just=c(.text.just,'bottom')))
+#   pushViewport(viewport(x=unit(.vpx, 'npc'), y=unit(hm$dm$bottom, 'npc'),
+#                         width=max(sapply(labels, stringWidth)), height=unit(hm$dm$height,'npc'), just=c(.text.just,'bottom')))
   sample.inds <- .TickLabelResample(labels, hm$yticklabels.n)
   grid.text(labels[sample.inds],
             x=unit(.text.x,'npc'), y=y.mid[sample.inds],
-            just=c(.text.just,'center'), gp=gpar(fontsize=hm$yticklabel.fontsize))
-  upViewport()
+            just=c(.text.just,'center'), gp=gpar(fontsize=hm$yticklabel.fontsize*cex))
+#   upViewport()
 }
 
 #' plot WHeatmap

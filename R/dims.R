@@ -1,9 +1,22 @@
-DimToTop <- function(obj, dm=NULL) {
-
+LengthToTop <- function(obj, .length) {
   if (is.characeter(obj)) {
     obj <- GetCanvas(obj)
   }
-  
+
+  if (is.null(obj$parent)) {
+    return(.length)
+  }
+  parent <- GetCanvas(obj$parent)
+  .length <- .length * parent$dm$width
+  return(LengthToTop(parent, .length))
+}
+
+DimToTop <- function(obj, dm=NULL) {
+
+  if (is.character(obj)) {
+    obj <- GetCanvas(obj)
+  }
+
   if (is.null(dm)) {
     dm <- obj$dm
   }
@@ -17,10 +30,11 @@ DimToTop <- function(obj, dm=NULL) {
 
 DimInPoints <- function(dm) {
   dm.new <- dm
-  dm.new$left <- convertUnit(unit(dm$left, 'npc'),'points')
-  dm.new$bottom <- convertUnit(unit(dm$bottom, 'npc'),'points')
-  dm.new$width <- convertUnit(unit(dm$width, 'npc'),'points')
-  dm.new$height <- convertUnit(unit(dm$height, 'npc'),'points')
+  dm.new$left <- NPCToPoints(dm$left)
+  dm.new$bottom <- NPCToPoints(dm$bottom)
+  dm.new$width <- NPCToPoints(dm$width)
+  dm.new$height <- NPCToPoints(dm$height)
+  dm.new
 }
 
 #' class WDim
@@ -34,7 +48,7 @@ DimInPoints <- function(dm) {
 #' @param column.split a list of WDim objects for column split
 #' @param row.split a list of WDim objects for row split
 #' @export
-WDim <- function(left, bottom, width, height, nr=1, nc=1,
+WDim <- function(left=0, bottom=0, width=1, height=1, nr=1, nc=1,
                  column.split=NULL, row.split=NULL) {
   dm <- list(left=left, bottom=bottom, width=width, height=height, nr=nr, nc=nc,
              column.split=column.split, row.split=row.split)
@@ -118,9 +132,12 @@ TopOf <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v.s
     x <- GetCanvas(w.canvas$last)
   }
 
-  x <- DimToTop(x)
-  h.aln <- DimToTop(h.aln)
-  v.scale <- DimToTop(v.scale)
+  if (!('WDim' %in% class(x)))
+    x <- DimToTop(x)
+  if (!('WDim' %in% class(h.aln)))
+    h.aln <- DimToTop(h.aln)
+  if (!('WDim' %in% class(v.scale)))
+    v.scale <- DimToTop(v.scale)
 
   force(x); force(h.aln); force(v.scale);
   force(v.scale.proportional)

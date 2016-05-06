@@ -47,7 +47,7 @@ RegisterCanvas <- function(obj) {
 
   assign(obj$name, obj, envir=w.canvas)
   w.canvas$last <- obj$name
-  obj$name
+  obj
 }
 
 GetCanvas <- function(nm) {

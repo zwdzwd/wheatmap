@@ -20,7 +20,7 @@ FromAffine <- function(dm.affine, dm.sys) {
   dm$bottom <- dm.sys$bottom + dm.affine$bottom * dm.sys$height
   dm$width <- dm.sys$width * dm.affine$width
   dm$height <- dm.sys$height * dm.affine$height
-  
+
   dm
 }
 
@@ -45,11 +45,11 @@ WGroup <- function(..., name='', parent=NULL,
   dms <- lapply(objs, function(o) o$dm)
   dm <- do.call(.DimGroup, dms)
   if (is.null(nc))
-    dm$nc <- max(sapply(obs, function(o) o$dm$nc))
+    dm$nc <- max(sapply(objs, function(o) o$dm$nc))
   else
     dm$nc <- nc
   if (is.null(nr))
-    dm$nr <- max(sapply(obs, function(o) o$dm$nr))
+    dm$nr <- max(sapply(objs, function(o) o$dm$nr))
   else
     dm$nr <- nr
 
@@ -59,7 +59,7 @@ WGroup <- function(..., name='', parent=NULL,
     children=names(objs),
     name=name,
     dm=dm), class='WGroup')
-  group.name <- RegisterCanvas(group.obj)
+  group.obj <- RegisterCanvas(group.obj)
 
   ## put childrens dimension to npc of the parent
   lapply(objs, function(obj) {
@@ -77,7 +77,7 @@ CalcTextBounding.WGroup <- function(group.obj) {
     obj <- GetCanvas(nm)
     CalcTextBounding(obj)
   }))
-  dmb <- FromAffine(dmb, group.dmb)
+#   dmb <- FromAffine(dmb, group.dmb)
   .DimGroup(dmb, group.dmb)
 }
 
@@ -97,11 +97,11 @@ AddWGroup <- function(group.obj, new.obj) {
 
   new.obj$dm <- ToAffine(new.obj$dm, dm)
   new.obj$parent <- group.obj$name
-  RegisterCanvas(obj)
+  new.obj <- RegisterCanvas(new.obj)
 
   group.obj$dm <- dm
   group.obj$children <- c(group.obj$children, new.obj$name)
-  RegisterCanvas(group.obj)
+  group.obj <- RegisterCanvas(group.obj)
 
   group.obj
 }
@@ -137,57 +137,27 @@ ly <- function(x) print(x, layout.only=TRUE)
 #' Scale group
 #'
 #' Scale group to incorporate text on margins
-#' @param group
-ScaleGroup <- function(group, mar=c(0.03,0.03,0.03,0.03)) {
+#' @param group.obj group object that needs to be scaled
+#' @return scaled group obj
+ScaleGroup <- function(group.obj, mar=c(0.03,0.03,0.03,0.03)) {
 
   mar.bottom = mar[1]
   mar.left = mar[2]
   mar.top = mar[3]
   mar.right = mar[4]
 
-  dmb <- CalcTextBounding(group)
+  dmb <- CalcTextBounding(group.obj)
   dmb$left <- dmb$left - dmb$width*mar.left
   dmb$bottom <- dmb$bottom - dmb$height*mar.bottom
   dmb$width <- dmb$width*(1+mar.left+mar.right)
   dmb$height <- dmb$height*(1+mar.bottom+mar.top)
-  group.dm <- DimInPoints(group.obj$dm)
-  group.obj$dm <- ToAffine(group.dm, dmb)
-  cex <- c(group.dmb$width / dmb.width,
-           group.dmb$height / dmb.height)
+  group.dmb <- DimInPoints(group.obj$dm)
+  group.obj$dm <- ToAffine(group.dmb, dmb)
+  group.obj <- RegisterCanvas(group.obj)
+  cex <- c(group.dmb$width / dmb$width,
+           group.dmb$height / dmb$height)
 
-  ## flatten WGroups
-  obs <- WFlatten(group$obs)
-
-  left <- min(sapply(obs, function(x) x$dm$left))
-  right <- max(sapply(obs, function(x) x$dm$left+x$dm$width))
-  bottom <- min(sapply(obs, function(x) x$dm$bottom))
-  top <- max(sapply(obs, function(x) x$dm$bottom+x$dm$height))
-  width <- right-left
-  height <- top-bottom
-
-  ## cat(bottom, '\t', left, '\t', top, '\t', right, '\n')
-
-  ## resize margin to accomodate texts/labels
-  text.dms <- lapply(obs, CalcTextRanges)
-  mar.bottom <- mar.bottom + bottom - min(sapply(text.dms, function(x) x$bottom))
-  mar.left <- mar.left + left - min(sapply(text.dms, function(x) x$left))
-  mar.top <- mar.top + max(sapply(text.dms, function(x) x$top)) - top
-  mar.right <- mar.right + max(sapply(text.dms, function(x) x$right)) - right
-
-  ## cat(str(text.dms),'\n')
-  ## cat(mar.bottom, '\t', mar.left, '\t', mar.top, '\t', mar.right, '\n')
-
-  for(ob in obs) {
-    ## scale object
-    ob$dm$left <- mar.left + (ob$dm$left-left) * (1-mar.left-mar.right) / width
-    ob$dm$bottom <- mar.bottom + (ob$dm$bottom-bottom) * (1-mar.top-mar.bottom) / height
-    ob$dm$width <- ob$dm$width * (1-mar.left-mar.right) / width
-    ob$dm$height <- ob$dm$height * (1-mar.top-mar.bottom) / height
-
-    ## plot
-    plot(ob, stand.alone=FALSE, layout.only=layout.only)
-  }
-return cex, group
+  list(cex=cex, group=group.obj)
 }
 
 #' Draw WGroup
@@ -199,11 +169,21 @@ return cex, group
 print.WGroup <- function(group, mar=c(0.03,0.03,0.03,0.03), stand.alone=TRUE, cex=1, layout.only=FALSE) {
 
   if (stand.alone) {
-    cex <- ScaleGroup(group)
+    browser()
+    res <- ScaleGroup(group, mar=mar)
+    cex <- res$cex
+    group <- res$group
+    grid.newpage()
   }
-  for (ob in group$obs) {
+
+  pushViewport(viewport(x=unit(group$dm$left,'npc'), y=unit(group$dm$bottom,'npc'),
+                        width=unit(group$dm$width,'npc'), height=unit(group$dm$height,'npc'),
+                        just=c('left','bottom')))
+  for (child in group$children) {
+    ob <- GetCanvas(child)
     plot(ob, stand.alone=FALSE, cex=cex, layout.only=layout.only)
   }
+  upViewport()
 }
 
 #' @export

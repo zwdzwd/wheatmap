@@ -35,6 +35,10 @@ We perform some cleaning to make sure nothing exists before
 ResetCanvas()
 ```
 
+```{r}
+a <- WHeatmap(cc$mat, name='h1')
+```
+
 ## Final results
 
 The end result of our tutorial can be done by the "one"-liner
