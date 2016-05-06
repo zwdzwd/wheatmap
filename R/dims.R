@@ -1,36 +1,42 @@
 #' @export
-ResolveDim <- function(x) {
-  UseMethod('ResolveDim', x)
+ResolveDim <- function(x, ...) {
+  UseMethod('ResolveDim', x, ...)
 }
 
-LengthToTop <- function(obj, .length) {
-  if (is.character(obj)) {
-    obj <- GetCanvas(obj)
+.ResolveDim <- function(x, nr, nc, group) {
+  if (is.null(x$dm)) {
+    message('Error dm is NULL. Abort.')
+    stop()
   }
+  if ('WDim' %in% class(x$dm))
+    return(x)
+  if ('function' %in% class(x$dm)) {
+    x$dm <- x$dm(x, nr, nc, group)
+    return(x)
+  }
+  message('Unknown dimension')
+  stop()
+}
 
-  if (is.null(obj$parent)) {
+LengthToTop <- function(obj, root, .length) {
+  parent <- GetParentIn(obj, root)
+  if (is.null($parent)) {
     return(.length)
   }
-  parent <- GetCanvas(obj$parent)
   .length <- .length * parent$dm$width
-  return(LengthToTop(parent, .length))
+  return(LengthToTop(parent, root, .length))
 }
 
-DimToTop <- function(obj, dm=NULL) {
-
-  if (is.character(obj)) {
-    obj <- GetCanvas(obj)
-  }
-
+DimToTop <- function(obj, root, dm=NULL) {
   if (is.null(dm)) {
     dm <- obj$dm
   }
-  if (is.null(obj$parent)) {
+  parent <- GetParentIn(obj, root)
+  if (is.null(parent)) {
     return(dm)
   }
-  parent <- GetCanvas(obj$parent)
   dm <- FromAffine(dm, parent$dm)
-  return(DimToTop(parent, dm))
+  return(DimToTop(parent, root, dm))
 }
 
 DimInPoints <- function(dm) {
@@ -95,28 +101,23 @@ WDim <- function(left=0, bottom=0, width=1, height=1, nr=1, nc=1,
 }
 
 
-# .SetToDim <- function(x) {
-#   if (is.null(x))
-#     return (x)
-#   else if (is.character(x)) {
-#     x <- GetCanvas(x)
-#     return (x$dm)
-#   } else
-#     return (x$dm)
-# }
-
-# .GroupSetToDim <- function(x, group) {
-#   if (is.character(x)) {
-#     if (is.null(group))
-#       message('No group provided. This is a bug.')
-#     stopifnot(!is.null(group))
-#     .x <- group[x]
-#     if (is.null(.x))
-#       message('Name not found: ', x, '. Make sure objects are named.')
-#     x <- .x$dm
-#   }
-#   x
-# }
+.WResolveName <- function(nm, group) {
+  if ('function' %in% class(nm)) {
+    x <- nm(group)
+    return(x)
+  }
+  if (is.character(nm)) {
+    if (is.null(group)) {
+      message('No group provided. This is a bug.')
+      stop()
+    }
+    x <- group[nm]
+    if (is.null(x))
+      message('Name not found: ', x, '. Make sure objects are named.')
+    return(x)
+  }
+  return(nm)
+}
 
 #' Top of
 #'
@@ -133,25 +134,14 @@ WDim <- function(left=0, bottom=0, width=1, height=1, nr=1, nc=1,
 #' @export
 TopOf <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v.scale=NULL, v.scale.proportional=FALSE) {
 
-  if (is.null(x)) {
-    x <- GetCanvas(w.canvas$last)
-  }
-
-  if (!('WDim' %in% class(x)))
-    x <- DimToTop(x)
-  if (!('WDim' %in% class(h.aln)))
-    h.aln <- DimToTop(h.aln)
-  if (!('WDim' %in% class(v.scale)))
-    v.scale <- DimToTop(v.scale)
-
   force(x); force(h.aln); force(v.scale);
   force(v.scale.proportional)
   force(height); force(pad); force(min.ratio);
-  function(nr, nc) {
+  function(obj, nr, nc, group) {
 
-    # x <- .GroupSetToDim(x, group)
-    # h.aln <- .GroupSetToDim(h.aln, group)
-    # v.scale <- .GroupSetToDim(v.scale, group)
+    x <- DimToTop(.WResolveName(x, group), group)
+    h.aln <- DimToTop(.WResolveName(h.aln, group), group)
+    v.scale <- DimToTop(.WResolveName(v.scale, group), group)
 
     dm <- x
     dm$nr <- nr
@@ -203,24 +193,14 @@ TopOf <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v.s
 #' @export
 Beneath <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v.scale=NULL, v.scale.proportional=FALSE) {
 
-  if (is.null(x))
-    x <- GetCanvas(w.canvas$last)
-
-  if (!('WDim' %in% class(x)))
-    x <- DimToTop(x)
-  if (!('WDim' %in% class(h.aln)))
-    h.aln <- DimToTop(h.aln)
-  if (!('WDim' %in% class(v.scale)))
-    v.scale <- DimToTop(v.scale)
-
   force(x); force(h.aln); force(v.scale);
   force(v.scale.proportional)
   force(height); force(pad); force(min.ratio);
-  function(nr, nc) {
+  function(obj, nr, nc, group) {
 
-    # x <- .GroupSetToDim(x, group)
-    # h.aln <- .GroupSetToDim(h.aln, group)
-    # v.scale <- .GroupSetToDim(v.scale, group)
+    x <- DimToTop(.WResolveName(x, group), group)
+    h.aln <- DimToTop(.WResolveName(h.aln, group), group)
+    v.scale <- DimToTop(.WResolveName(v.scale, group), group)
 
     dm <- x
     dm$nr <- nr
@@ -272,24 +252,14 @@ Beneath <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v
 #' @export
 LeftOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.scale=NULL, h.scale.proportional=FALSE) {
 
-  if (is.null(x))
-    x <- GetCanvas(w.canvas$last)
-
-  if (!('WDim' %in% class(x)))
-    x <- DimToTop(x)
-  if (!('WDim' %in% class(v.aln)))
-    v.aln <- DimToTop(v.aln)
-  if (!('WDim' %in% class(h.scale)))
-    h.scale <- DimToTop(h.scale)
-
   force(x); force(v.aln); force(h.scale);
   force(h.scale.proportional)
   force(width); force(pad); force(min.ratio);
-  function(nr, nc) {
+  function(obj, nr, nc, group) {
 
-    # x <- .GroupSetToDim(x, group)
-    # v.aln <- .GroupSetToDim(v.aln, group)
-    # h.scale <- .GroupSetToDim(h.scale, group)
+    x <- DimToTop(.WResolveName(x, group), group)
+    v.aln <- DimToTop(.WResolveName(v.aln, group), group)
+    h.scale <- DimToTop(.WResolveName(h.scale, group), group)
 
     dm <- x
     dm$nr <- nr
@@ -341,24 +311,14 @@ LeftOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.s
 #' @export
 RightOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.scale=NULL, h.scale.proportional=FALSE) {
 
-  if (is.null(x))
-    x <- GetCanvas(w.canvas$last)
-
-  if (!('WDim' %in% class(x)))
-    x <- DimToTop(x)
-  if (!('WDim' %in% class(v.aln)))
-    v.aln <- DimToTop(v.aln)
-  if (!('WDim' %in% class(h.scale)))
-    h.scale <- DimToTop(h.scale)
-
   force(x); force(v.aln); force(h.scale);
   force(h.scale.proportional)
   force(width); force(pad); force(min.ratio);
-  function(nr, nc) {
+  function(obj, nr, nc, group) {
 
-    # x <- .GroupSetToDim(x, group)
-    # v.aln <- .GroupSetToDim(v.aln, group)
-    # h.scale <- .GroupSetToDim(h.scale, group)
+    x <- DimToTop(.WResolveName(x, group), group)
+    v.aln <- DimToTop(.WResolveName(v.aln, group), group)
+    h.scale <- DimToTop(.WResolveName(h.scale, group), group)
 
     dm <- x
     dm$nr <- nr

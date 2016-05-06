@@ -7,27 +7,30 @@
 #' @param nc number of columns
 #' @return an object of class WDim
 #' @export
-WColumnBind <- function(..., name='', nr=NULL, nc=NULL) {
-  objs <- lapply(list(...), function(o) {
-    if (is.character(o)) GetCanvas(o)
-    else o
-  })
-  names(objs) <- sapply(objs, function(o) o$name)
+WColumnBind <- function(..., nr=NULL, nc=NULL) {
 
-  dms <- lapply(objs, function(o) o$dm)
-  dm <- do.call(.DimGroup, dms)
-  if (is.null(nc))
-    dm$nc <- sum(sapply(dms, function(.dm) .dm$nc))
-  else
-    dm$nc <- nc
-  if (is.null(nr))
-    dm$nr <- max(sapply(dms, function(.dm) .dm$nr))
-  else
-    dm$nr <- nr
+  ## a function returns dm
+  objs <- list(...)
+  force(nr); force(nc);
+  function(group) {
+    objs <- lapply(objs, function(o) {
+      if (is.character(o)) group[o]
+      else o
+    })
+    dms <- lapply(objs, function(o) DimToTop(o, group))
+    dm <- do.call(.DimGroup, dms)
+    if (is.null(nc))
+      dm$nc <- sum(sapply(dms, function(.dm) .dm$nc))
+    else
+      dm$nc <- nc
+    if (is.null(nr))
+      dm$nr <- max(sapply(dms, function(.dm) .dm$nr))
+    else
+      dm$nr <- nr
 
-  dm$column.split <- lapply(dms, function(.dm) ToAffine(.dm, dm))
-  dm
-  g
+    dm$column.split <- lapply(dms, function(.dm) ToAffine(.dm, dm))
+    WObject(dm=dm)
+  }
 }
 
 #' row bind non-overlapping objects
@@ -39,24 +42,32 @@ WColumnBind <- function(..., name='', nr=NULL, nc=NULL) {
 #' @param nc number of columns
 #' @return an object of class WDim
 #' @export
-WRowBind <- function(..., name='', nr=NULL, nc=NULL) {
-  objs <- lapply(list(...), function(o) {
-    if (is.character(o)) GetCanvas(o)
-    else o
-  })
-  names(objs) <- sapply(objs, function(o) o$name)
+WRowBind <- function(..., nr=NULL, nc=NULL) {
 
-  dms <- lapply(objs, function(o) o$dm)
-  dm <- do.call(.DimGroup, dms)
-  if (is.null(nc))
-    dm$nc <- max(sapply(dms, function(.dm) .dm$nc))
-  else
-    dm$nc <- nc
-  if (is.null(nr))
-    dm$nr <- sum(sapply(dms, function(.dm) .dm$nr))
-  else
-    dm$nr <- nr
+  ## a function returns dm
+  objs <- list(...)
+  force(nr); force(nc);
+  function(group) {
+    objs <- lapply(objs, function(o) {
+      if (is.character(o)) group[o]
+      else o
+    })
+    dms <- lapply(objs, function(o) DimToTop(o, group))
+    dm <- do.call(.DimGroup, dms)
+    if (is.null(nc))
+      dm$nc <- max(sapply(dms, function(.dm) .dm$nc))
+    else
+      dm$nc <- nc
+    if (is.null(nr))
+      dm$nr <- sum(sapply(dms, function(.dm) .dm$nr))
+    else
+      dm$nr <- nr
 
-  dm$row.split <- lapply(dms, function(.dm) ToAffine(.dm, dm))
-  dm
+    dm$row.split <- lapply(dms, function(.dm) ToAffine(.dm, dm))
+    WObject(dm=dm)
+  }
+}
+
+WObject <- function(parent=NULL,dm=NULL) {
+  structure(list(parent=parent, dm=dm), class='WObject')
 }

@@ -1,5 +1,5 @@
 
-.WLegend <- function(m, x, dm=NULL, name='', sub.name='.WLegend', width=NULL, height=NULL, h.aln=NULL, v.aln=NULL, ...) {
+.WLegend <- function(m, x, group, dm=NULL, name='', width=NULL, height=NULL, h.aln=NULL, v.aln=NULL, kargs=list()) {
 
   nr = nrow(m)
   nc = ncol(m)
@@ -8,7 +8,7 @@
     dm <- WDim(0, 0, x$dm$width/x$dm$nc*nc, x$dm$height/x$dm$nr*nr)
 
   if ('function' %in% class(dm))
-    dm <- dm(nr, nc)
+    dm <- dm(NULL, nr, nc, group)
 
   ## specific to legend, we need to ensure
   ## the dimensions are not exotic
@@ -35,27 +35,21 @@
   }
 
   if (!is.null(v.aln)) {
-    if (is.character(v.aln))
-      v.aln <- GetCanvas(v.aln)
     dm$bottom <- v.aln$bottom
     dm$height <- v.aln$height
   }
 
   if (!is.null(h.aln)) {
-    if (is.character(h.aln))
-      h.aln <- GetCanvas(h.aln)
     dm$left <- h.aln$left
     dm$width <- h.aln$width
   }
-
-  if (name == '')
-    name <- paste0(x$name, '.legend')
 
   if (x$continuous) {
     legend <- WHeatmap(m, dm=dm, name=name, sub.name=sub.name, cmp=CMPar(cm=x$cm), ...)
   } else {
     legend <- WHeatmap(m, dm=dm, name=name, sub.name=sub.name, continuous=FALSE, ...)
   }
+
   legend
 }
 
@@ -71,32 +65,35 @@
 #' @export
 WLegendV <- function(x, dm=NULL, name='', n.stops=20, n.text=5, label.fontsize=16, ...) {
 
-  if (is.null(x))
-    x <- GetCanvas(w.canvas$last)
+  kargs <- list(...)
+  force(x); force(dm); force(name); force(n.stops);
+  force(n.text); force(label.fontsize); force(kargs);
+  structure(list(generator=function(group) {
+    if (x$continuous) {
+      d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)
+      m <- matrix(d, dimnames=list(format(d, digits=2, trim=TRUE)))
+    } else {
+      d <- x$cm$mapper
+      d <- d[order(names(d))]
+      m <- matrix(d, dimnames=list(names(d), NULL))
+    }
 
-  if(is.character(x))
-    x <- GetCanvas(x)
-
-  if (x$continuous) {
-    d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)
-    m <- matrix(d, dimnames=list(format(d, digits=2, trim=TRUE)))
-  } else {
-    d <- x$cm$mapper
-    d <- d[order(names(d))]
-    m <- matrix(d, dimnames=list(names(d), NULL))
-  }
-
-  legend <- .WLegend(m, x, dm, name=name, sub.name='WLegendV', ...)
-  legend$yticklabels <- TRUE
-  if (x$continuous)
-    legend$yticklabels.n <- n.text
-  legend$yticklabel.fontsize <- label.fontsize
-  legend$yticklabel.side <- 'r'
-  legend$orientation <- 'v'
-  class(legend) <- c('WLegendV', class(legend))
-  legend
+    legend <- .WLegend(m, x, group, dm, name=name, kargs=kargs)
+    legend$yticklabels <- TRUE
+    if (x$continuous)
+      legend$yticklabels.n <- n.text
+    legend$yticklabel.fontsize <- label.fontsize
+    legend$yticklabel.side <- 'r'
+    legend$orientation <- 'v'
+    class(legend) <- c('.WLegendV', class(legend))
+    legend
+  }, class='WLegendV'))
 }
 
+ResolveDim.WLegendV <- function(legend, group) {
+  legend <- legend$generator(group)
+  legend
+}
 
 #' WLegendH
 #'
@@ -111,28 +108,33 @@ WLegendV <- function(x, dm=NULL, name='', n.stops=20, n.text=5, label.fontsize=1
 #' @export
 WLegendH <- function(x, dm=NULL, name='', n.stops=20, n.text=5, label.fontsize=16, ...) {
 
-  if (is.null(x))
-    x <- GetCanvas(w.canvas$last)
+  kargs <- list(...)
+  force(x); force(dm); force(name); force(n.stops);
+  force(n.text); force(label.fontsize); force(kargs);
+  ## function that returns the legend
+  structure(list(generator=function(group) {
+    if (x$continuous) {
+      d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)
+      m <- matrix(d, nrow=1, dimnames=list(format(d, digits=2, trim=TRUE)))
+    } else {
+      d <- x$cm$mapper
+      d <- d[order(names(d))]
+      m <- matrix(d, dimnames=list(NULL, names(d)), nrow=1)
+    }
 
-  if (is.character(x))
-    x <- GetCanvas(x)
+    legend <- .WLegend(m, x, group, dm, name=name, kargs=kargs)
+    legend$xticklabels <- TRUE
+    if (x$continuous)
+      legend$xticklabels.n <- n.text
+    legend$xticklabel.fontsize <- label.fontsize
+    legend$xticklabel.side <- 'b'
+    legend$orientation <- 'h'
+    class(legend) <- c('.WLegendH', class(legend))
+    legend
+  }, class='WLegendH'))
+}
 
-  if (x$continuous) {
-    d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)
-    m <- matrix(d, nrow=1, dimnames=list(format(d, digits=2, trim=TRUE)))
-  } else {
-    d <- x$cm$mapper
-    d <- d[order(names(d))]
-    m <- matrix(d, dimnames=list(NULL, names(d)), nrow=1)
-  }
-
-  legend <- .WLegend(m, x, dm, name=name, sub.name='WLegendH', ...)
-  legend$xticklabels <- TRUE
-  if (x$continuous)
-    legend$xticklabels.n <- n.text
-  legend$xticklabel.fontsize <- label.fontsize
-  legend$xticklabel.side <- 'b'
-  legend$orientation <- 'h'
-  class(legend) <- c('WLegendH', class(legend))
+ResolveDim.WLegendH <- function(legend, group) {
+  legend <- legend$generator(group)
   legend
 }

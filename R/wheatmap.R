@@ -13,6 +13,7 @@ WHeatmap <- function(
 
   data=NULL, dm=WDim(0,0,1,1), name='', continuous=NULL,
   cmp = CMPar(), # colormapping parameters
+  cm = NULL,
 
   parent=NULL,
 
@@ -55,9 +56,6 @@ WHeatmap <- function(
       hm$continuous <- TRUE
   }
 
-  ## when dm is not given as a default
-  hm$dm <- dm
-
   ## graph parameters
   hm$gp <- list()
   hm$gp$col <- 'white'
@@ -68,34 +66,28 @@ WHeatmap <- function(
     hm[[nm]] <<- get(nm)
   }))
 
-  nr <- nrow(hm$data)
-  nc <- ncol(hm$data)
-  if ('function' %in% class(hm$dm)) {
-    dm <- hm$dm(nr, nc)
-  } else {
-    dm <- hm$dm
-    dm$nr <- nr
-    dm$nc <- nc
-  }
-
   ## map to colors
   if (hm$continuous)
-    cm <- MapToContinuousColors(hm$data, cmp=hm$cmp)
+    hm$cm <- MapToContinuousColors(hm$data, cmp=hm$cmp, cm=cm)
   else
-    cm <- MapToDiscreteColors(hm$data, cmp=hm$cmp)
-
-  ## split if dimension indicates so
-  if (!is.null(dm$column.split) || !is.null(dm$row.split)) {
-    return(SplitWHeatmap(hm, dm, cm))
-  }
-
-  hm$dm <- dm
+    hm$cm <- MapToDiscreteColors(hm$data, cmp=hm$cmp, cm=cm)
 
   hm$cm <- cm
   class(hm) <- 'WHeatmap'
   if (!is.null(sub.name))
     class(hm) <- c(sub.name, class(hm))
-  hm <- RegisterCanvas(hm)
+  hm
+}
+
+ResolveDim.WHeatmap <- function(hm, group) {
+
+  hm <- .ResolveDim(hm, nrow(hm$data), ncol(hm$data), group)
+
+
+  ## split if dimension indicates so
+  if (!is.null(hm$dm$column.split) || !is.null(hm$dm$row.split)) {
+    return(SplitWHeatmap(hm, hm$dm, cm))
+  }
   hm
 }
 
@@ -118,7 +110,6 @@ SplitWHeatmap <- function(hm, dm, cm) {
   sub.dms.col <- dm$column.split[order(sapply(dm$column.split, function(dm) dm$left))]
   sub.dms.row <- rev(dm$row.split[order(sapply(dm$row.split, function(dm) dm$bottom))])
   sub.dms <- expand.grid(seq_along(sub.dms.row), seq_along(sub.dms.col))
-  group.obj <- RegisterCanvas(WGroup(name=hm$name)) # register a name on canvas
   k <- apply(sub.dms, 1, function(dm.i) {
     ir <- dm.i[1]
     ic <- dm.i[2]
@@ -134,10 +125,9 @@ SplitWHeatmap <- function(hm, dm, cm) {
     sub.hm$name <- paste0(group.obj$name, '.', ir, '.', ic)
     do.call(WHeatmap, sub.hm)
   })
-  w.group <- do.call(WGroup, c(k, name=group.name))
+  w.group <- do.call(WGroup, c(k, name=hm$name))
   w.group$dm$row.split <- sub.dms.row
   w.group$dm$column.split <- sub.dms.col
-  RegisterCanvas(w.group) # update
 
   return(w.group)
 }
@@ -146,10 +136,10 @@ SplitWHeatmap <- function(hm, dm, cm) {
 #' @param hm object of class WHeatmap
 #' @return an object of class WDim in coordinate points
 #' @export
-CalcTextBounding.WHeatmap <- function(hm) {
+CalcTextBounding.WHeatmap <- function(hm, group) {
 
   ## this needs be called at the ROOT view port
-  dm <- DimToTop(hm)
+  dm <- DimToTop(hm, group)
   ## bottom, left, top, right
   left <- NPCToPoints(dm$left)
   bottom <- NPCToPoints(dm$bottom)

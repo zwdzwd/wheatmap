@@ -5,8 +5,8 @@
 #' W.R.T lower left corner of the view port in the unit of points
 #' @param x object
 #' @export
-CalcTextBounding <- function(x) {
-  UseMethod('CalcTextBounding', x)
+CalcTextBounding <- function(x, ...) {
+  UseMethod('CalcTextBounding', x, ...)
 }
 
 NPCToPoints <- function(npc) {

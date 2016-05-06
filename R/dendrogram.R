@@ -13,9 +13,12 @@ WDendrogram <- function(clust, dm=WDim(0,0,1,1), name='', facing=c("bottom", "to
 
   if ('function' %in% class(dm))
     dm <- dm(1, 1)
-  dd <- list(clust=clust, facing=facing, dm=dm, name=name)
-  class(dd) <- c('WDendrogram')
-  dd <- RegisterCanvas(dd)
+  dd <- structure(list(clust=clust, facing=facing, dm=dm, name=name), class='WDendrogram')
+  dd
+}
+
+ResolveDim.WDendrogram <- function(dd, group) {
+  dd <- .ResolveDim(dd, 1, 1, group)
   dd
 }
 
@@ -45,8 +48,8 @@ plot.WDendrogram <- print.WDendrogram
 #' Calculate Text Ranges
 #'
 #' @export
-CalcTextBounding.WDendrogram <- function(dd) {
-  dm <- DimToTop(dd)
+CalcTextBounding.WDendrogram <- function(dd, group) {
+  dm <- DimToTop(dd, group)
   dm$left <- NPCToPoints(dm$left)
   dm$bottom <- NPCToPoints(dm$bottom)
   dm$height <- NPCToPoints(dm$height)

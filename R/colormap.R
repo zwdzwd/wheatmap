@@ -14,8 +14,7 @@
 #' @param grey.scale whether to use grey scale
 #' @return an object of class CMPar
 #' @export
-CMPar <- function(cm = NULL,
-                  dmin = NULL, dmax = NULL, # color scale max and min
+CMPar <- function(dmin = NULL, dmax = NULL, # color scale max and min
                   brewer.name='Accent', brewer.n=3,
                   colorspace.name='rainbow_hcl', colorspace.n=2,
                   cmap='jet',
@@ -60,12 +59,12 @@ ColorMap <- function(continuous=TRUE,
 #' @param cmp an color map parameter object of class CMPar
 #' @return an object of ColorMap
 #' @export
-MapToContinuousColors <- function(data, cmp=CMPar()) {
+MapToContinuousColors <- function(data, cmp=CMPar(), given.cm=NULL) {
 
   attach(cmp)
   on.exit(detach(cmp))
 
-  if (!is.null(cm)) {
+  if (!is.null(given.cm)) {
     cm$colors <- apply(
       cm$mapper(cm$scaler(data)), 1,
       function(x) do.call(rgb, c(as.list(x), maxColorValue=255)))
@@ -120,12 +119,12 @@ MapToContinuousColors <- function(data, cmp=CMPar()) {
 #' @import RColorBrewer
 #' @import colorspace
 #' @export
-MapToDiscreteColors <- function(data, cmp=CMPar()) {
+MapToDiscreteColors <- function(data, cmp=CMPar(), given.cm=NULL) {
 
   attach(cmp)
   on.exit(detach(cmp))
 
-  if (!is.null(cm)) {
+  if (!is.null(given.cm)) {
     cm$colors <- cm$mapper[as.character(data)]
     return(cm)
   }

@@ -33,14 +33,9 @@ FromAffine <- function(dm.affine, dm.sys) {
 #' @param nc number of columns
 #' @return an object of class WGroup
 #' @export
-WGroup <- function(..., name='', parent=NULL,
-                   nr=NULL, nc=NULL) {
+WGroup <- function(..., name='', nr=NULL, nc=NULL) {
 ## row and column.split must be a set separately ??
-  objs <- lapply(list(...), function(o) {
-    if (is.character(o)) GetCanvas(o)
-    else o
-  })
-  names(objs) <- sapply(objs, function(o) o$name)
+  objs <- list(...)
 
   dms <- lapply(objs, function(o) o$dm)
   dm <- do.call(.DimGroup, dms)
@@ -53,30 +48,21 @@ WGroup <- function(..., name='', parent=NULL,
   else
     dm$nr <- nr
 
-  ## register group itself
+  objs <- lapply(objs, function(obj) {
+    obj$dm <- ToAffine(obj$dm, dm)
+  })
+
   group.obj <- structure(list(
-    parent=parent,
-    children=names(objs),
+    children=objs,
     name=name,
     dm=dm), class='WGroup')
-  group.obj <- RegisterCanvas(group.obj)
-
-  ## put childrens dimension to npc of the parent
-  lapply(objs, function(obj) {
-    obj$dm <- ToAffine(obj$dm, dm)
-    obj$parent <- group.obj$name
-    RegisterCanvas(obj)
-  })
 
   group.obj
 }
 
-CalcTextBounding.WGroup <- function(group.obj) {
+CalcTextBounding.WGroup <- function(group.obj, group) {
   group.dmb <- DimInPoints(group.obj$dm)
-  dmb <- do.call(.DimGroup, lapply(group.obj$children, function(nm) {
-    obj <- GetCanvas(nm)
-    CalcTextBounding(obj)
-  }))
+  dmb <- do.call(.DimGroup, lapply(group.obj$children, CalcTextBounding(obj, group)))
 #   dmb <- FromAffine(dmb, group.dmb)
   .DimGroup(dmb, group.dmb)
 }
@@ -89,20 +75,16 @@ AddWGroup <- function(group.obj, new.obj) {
 
   ## put old and new children's dimensions
   ## to npc of the new dimension
-  lapply(group.obj$children, function(nm) {
-    obj <- GetCanvas(nm)
+  ## olds
+  group.obj$children <- lapply(group.obj$children, function(obj) {
     obj$dm <- ToAffine(FromAffine(obj$dm, group.obj$dm), dm)
-    RegisterCanvas(obj)
+    obj
   })
 
+  ## new
   new.obj$dm <- ToAffine(new.obj$dm, dm)
-  new.obj$parent <- group.obj$name
-  new.obj <- RegisterCanvas(new.obj)
-
   group.obj$dm <- dm
-  group.obj$children <- c(group.obj$children, new.obj$name)
-  group.obj <- RegisterCanvas(group.obj)
-
+  group.obj$children <- c(group.obj$children, new.obj)
   group.obj
 }
 
@@ -113,11 +95,33 @@ AddWGroup <- function(group.obj, new.obj) {
 #' @param i integer indexing element
 #' @export
 `[.WGroup` <- function(x, i) {
-  if (is.numeric(i))
-    GetCanvas(x$children[i])
-  else
-    GetCanvas(i)
+  for (xx in x$children) {
+    if (xx$name == i)
+      return(xx)
+    else if ('WGroup' %in% class(xx)) {
+      xxx <- xx[i]
+      if (!is.null(xxx))
+        return(xxx)
+    }
+  }
+  return(NULL)
 }
+
+GetParentIn <- function(x, ancestor) {
+  if ('WGroup' %in% class(ancestor)) {
+    for (child in ancestor$children) {
+      if (child$name==x$name)
+        return(ancestor)
+      if ('WGroup' %in% in class(child)) {
+        parent <- GetParentIn(x, child)
+        if (!is.null(parent))
+          return(parent)
+      }
+    }
+  }
+  return(NULL)
+}
+
 
 # WFlatten <- function(.obs) {
 #   obs <- list()
@@ -138,7 +142,7 @@ ly <- function(x) print(x, layout.only=TRUE)
 #'
 #' Scale group to incorporate text on margins
 #' @param group.obj group object that needs to be scaled
-#' @return scaled group obj (temporary, unregistered on canvas)
+#' @return scaled group obj
 ScaleGroup <- function(group.obj, mar=c(0.03,0.03,0.03,0.03)) {
 
   mar.bottom = mar[1]
@@ -146,14 +150,13 @@ ScaleGroup <- function(group.obj, mar=c(0.03,0.03,0.03,0.03)) {
   mar.top = mar[3]
   mar.right = mar[4]
 
-  dmb <- CalcTextBounding(group.obj)
+  dmb <- CalcTextBounding(group.obj, group)
   dmb$left <- dmb$left - dmb$width*mar.left
   dmb$bottom <- dmb$bottom - dmb$height*mar.bottom
   dmb$width <- dmb$width*(1+mar.left+mar.right)
   dmb$height <- dmb$height*(1+mar.bottom+mar.top)
   group.dmb <- DimInPoints(group.obj$dm)
   group.obj$dm <- ToAffine(group.dmb, dmb)
-#   group.obj <- RegisterCanvas(group.obj)
   cex <- c(group.dmb$width / dmb$width,
            group.dmb$height / dmb$height)
 
@@ -179,8 +182,7 @@ print.WGroup <- function(group, mar=c(0.03,0.03,0.03,0.03), stand.alone=TRUE, ce
                         width=unit(group$dm$width,'npc'), height=unit(group$dm$height,'npc'),
                         just=c('left','bottom')))
   for (child in group$children) {
-    ob <- GetCanvas(child)
-    plot(ob, stand.alone=FALSE, cex=cex, layout.only=layout.only)
+    plot(child, stand.alone=FALSE, cex=cex, layout.only=layout.only)
   }
   upViewport()
 }
