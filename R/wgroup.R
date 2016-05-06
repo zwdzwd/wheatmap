@@ -1,49 +1,108 @@
 
+#' @param dm absolute coordinate
+#' @param dm.sys the affine system
+#' @return dm.affine on the affine coordiante
+ToAffine <- function(dm, dm.sys) {
+  dm.affine <- dm
+  dm.affine$left <- (dm$left - dm.sys$left) / dm.sys$width
+  dm.affine$bottom <- (dm$bottom - dm.sys$bottom) / dm.sys$height
+  dm.affine$width <- dm$width / dm.sys$width
+  dm.affine$height <- dm$height / dm.sys$height
+  dm.affine
+}
+
+#' @param obj object on affine coordinate
+#' @param dm.sys the affine system
+#' @return object on absolute coordinate
+FromAffine <- function(dm.affine, dm.sys) {
+  dm <- dm.affine
+  dm$left <- dm.sys$left + dm.affine$left * dm.sys$width
+  dm$bottom <- dm.sys$bottom + dm.affine$bottom * dm.sys$height
+  dm$width <- dm.sys$width * dm.affine$width
+  dm$height <- dm.sys$height * dm.affine$height
+  dm
+}
+
 #' Create a WGroup
+#'
+#' Children must be registered already
 #'
 #' @param dm dimension
 #' @param nr number of rows
 #' @param nc number of columns
 #' @return an object of class WGroup
 #' @export
-WGroup <- function(..., name='', nr=NULL, nc=NULL, to.row.split=FALSE, to.column.split=FALSE) {
-  obs <- lapply(list(...), function(o) {
+WGroup <- function(..., name='', parent=NULL,
+                   nr=NULL, nc=NULL) {
+
+  objs <- lapply(list(...), function(o) {
     if (is.character(o)) GetCanvas(o)
     else o
   })
-  names(obs) <- sapply(obs, function(o) o$name)
+  names(objs) <- sapply(objs, function(o) o$name)
 
-  g <- list(obs=obs, name=name)
-  dms <- lapply(obs, function(o)o$dm)
-
-  g$dm <- do.call(.DimGroup, dms)
-  if (to.row.split)
-    g$dm$row.split <- dms
-  if (to.column.split)
-    g$dm$column.split <- dms
-
+  dms <- lapply(objs, function(o) o$dm)
+  dm <- do.call(.DimGroup, dms)
   if (is.null(nc))
-    g$dm$nc <- max(sapply(obs, function(o) o$dm$nc))
+    dm$nc <- max(sapply(obs, function(o) o$dm$nc))
   else
-    g$dm$nc <- nc
+    dm$nc <- nc
   if (is.null(nr))
-    g$dm$nr <- max(sapply(obs, function(o) o$dm$nr))
+    dm$nr <- max(sapply(obs, function(o) o$dm$nr))
   else
-    g$dm$nr <- nr
+    dm$nr <- nr
 
-  class(g) <- 'WGroup'
-  g
+  ## register group itself
+  group.obj <- structure(list(
+    parent=parent,
+    children=names(objs),
+    name=name,
+    dm=dm), class='WGroup')
+  group.obj <- RegisterCanvas(group.obj)
+
+  ## put childrens dimension to npc of the parent
+  lapply(objs, function(obj) {
+    obj$dm <- ToAffine(obj$dm, dm)
+    obj$parent <- group.obj$name
+    RegisterCanvas(obj)
+  })
+
+  group.obj
 }
 
-.add.WGroup <- function(group, new.ob) {
-  group$obs[[length(group$obs)+1]] <- new.ob
-  names(group$obs)[length(group$obs)] <- new.ob$name
-  nc <- max(group$dm$nc, new.ob$dm$nc)
-  nr <- max(group$dm$nr, new.ob$dm$nr)
-  group$dm <- .DimGroup(group$dm, new.ob$dm)
-  group$dm$nc <- nc
-  group$dm$nr <- nr
-  group
+CalcTextBounding.WGroup <- function(group.obj) {
+  group.dmb <- DimInPoints(group.obj$dm)
+  dmb <- do.call(.DimGroup, lapply(group.obj$children, function(nm) {
+    obj <- GetCanvas(nm)
+    CalcTextBounding(obj)
+  }))
+  dmb <- FromAffine(dmb, group.dmb)
+  .DimGroup(dmb, group.dmb)
+}
+
+## new.obj should be registered already
+AddWGroup <- function(group.obj, new.obj) {
+  dm <- .DimGroup(group.obj$dm, new.obj$dm)
+  dm$nc <- max(group.obj$dm$nc, new.obj$dm$nc)
+  dm$nr <- max(group.obj$dm$nr, new.obj$dm$nr)
+
+  ## put old and new children's dimensions
+  ## to npc of the new dimension
+  lapply(group$children, function(nm) {
+    obj <- GetCanvas(nm)
+    obj$dm <- ToAffine(FromAffine(new.obj$dm, group.obj$dm), dm)
+    RegisterCanvas(obj)
+  })
+
+  new.obj$dm <- ToAffine(new.obj$dm, dm)
+  new.obj$parent <- group.obj$name
+  RegisterCanvas(obj)
+
+  group.obj$dm <- dm
+  group.obj$children <- c(group.obj$children, new.obj$name)
+  RegisterCanvas(group.obj)
+
+  group.obj
 }
 
 #' subset WGroup
@@ -53,70 +112,50 @@ WGroup <- function(..., name='', nr=NULL, nc=NULL, to.row.split=FALSE, to.column
 #' @param i integer indexing element
 #' @export
 `[.WGroup` <- function(x, i) {
-  x$obs[[i]]
+  if (is.numeric(i))
+    GetCanvas(x$children[i])
+  else
+    GetCanvas(i)
 }
 
-#' column group non-overlapping objects
-#'
-#' column group non-overlapping objects
-#'
-#' @param ... plotting objects
-#' @param nr number of rows
-#' @param nc number of columns
-#' @return an object of class WGroup
-#' @export
-WGroupColumn <- function(..., name='', nr=NULL, nc=NULL) {
-  g <- WGroup(..., nr=nr, nc=nc, name=name, to.column.split=TRUE)
-  if (is.null(nc))
-    g$dm$nc <- sum(sapply(g$obs, function(o) o$dm$nc))
-  g
-}
-
-#' row group non-overlapping objects
-#'
-#' row group non-overlapping objects
-#'
-#' @param ... plotting objects
-#' @param nr number of rows
-#' @param nc number of columns
-#' @return an object of class WGroup
-#' @export
-WGroupRow <- function(..., name='', nr=NULL, nc=NULL) {
-  g <- WGroup(..., nr=nr, nc=nc, name=name, to.row.split=TRUE)
-  if (is.null(nr))
-    g$dm$nr <- sum(sapply(g$obs, function(o) o$dm$nr))
-  g
-}
-
-WFlatten <- function(.obs) {
-  obs <- list()
-  for(o in .obs){
-    if ('WGroup' %in% class(o))
-      obs <- c(obs, o$obs)
-    else
-      obs[[length(obs)+1]] <- o
-  }
-  obs
-}
+# WFlatten <- function(.obs) {
+#   obs <- list()
+#   for(o in .obs){
+#     if ('WGroup' %in% class(o))
+#       obs <- c(obs, o$obs)
+#     else
+#       obs[[length(obs)+1]] <- o
+#   }
+#   obs
+# }
 
 #' show layout
 #' @export
 ly <- function(x) print(x, layout.only=TRUE)
 
-#' Draw WGroup
+#' Scale group
 #'
-#' @param group plot to display
-#' @import grid
-#' @export
-print.WGroup <- function(group, mar=c(0.03,0.03,0.03,0.03), stand.alone=TRUE, layout.only=FALSE) {
-
-  ## flatten WGroups
-  obs <- WFlatten(group$obs)
+#' Scale group to incorporate text on margins
+#' @param group
+ScaleGroup <- function(group, mar=c(0.03,0.03,0.03,0.03)) {
 
   mar.bottom = mar[1]
   mar.left = mar[2]
   mar.top = mar[3]
   mar.right = mar[4]
+
+  dmb <- CalcTextBounding(group)
+  dmb$left <- dmb$left - dmb$width*mar.left
+  dmb$bottom <- dmb$bottom - dmb$height*mar.bottom
+  dmb$width <- dmb$width*(1+mar.left+mar.right)
+  dmb$height <- dmb$height*(1+mar.bottom+mar.top)
+  group.dm <- DimInPoints(group.obj$dm)
+  group.obj$dm <- ToAffine(group.dm, dmb)
+  cex <- c(group.dmb$width / dmb.width,
+           group.dmb$height / dmb.height)
+
+  ## flatten WGroups
+  obs <- WFlatten(group$obs)
 
   left <- min(sapply(obs, function(x) x$dm$left))
   right <- max(sapply(obs, function(x) x$dm$left+x$dm$width))
@@ -146,6 +185,23 @@ print.WGroup <- function(group, mar=c(0.03,0.03,0.03,0.03), stand.alone=TRUE, la
 
     ## plot
     plot(ob, stand.alone=FALSE, layout.only=layout.only)
+  }
+return cex, group
+}
+
+#' Draw WGroup
+#'
+#' @param group plot to display
+#' @param cex for scale fonts
+#' @import grid
+#' @export
+print.WGroup <- function(group, mar=c(0.03,0.03,0.03,0.03), stand.alone=TRUE, cex=1, layout.only=FALSE) {
+
+  if (stand.alone) {
+    cex <- ScaleGroup(group)
+  }
+  for (ob in group$obs) {
+    plot(ob, stand.alone=FALSE, cex=cex, layout.only=layout.only)
   }
 }
 

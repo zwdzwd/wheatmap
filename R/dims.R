@@ -1,3 +1,10 @@
+DimInPoints <- function(dm) {
+  dm.new <- dm
+  dm.new$left <- convertUnit(unit(dm$left, 'npc'),'points')
+  dm.new$bottom <- convertUnit(unit(dm$bottom, 'npc'),'points')
+  dm.new$width <- convertUnit(unit(dm$width, 'npc'),'points')
+  dm.new$height <- convertUnit(unit(dm$height, 'npc'),'points')
+}
 
 #' class WDim
 #'

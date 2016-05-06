@@ -1,14 +1,15 @@
-#' Calculate Text Ranges
+#' Calculate Text Bounding
 #'
-#' Calculate dimensions accounting for texts.
+#' Calculate bounding box including texts.
 #'
+#' W.R.T lower left corner of the view port in the unit of points
 #' @param x object
 #' @examples
 #' x <- WHeatmap(matrix(rnorm(16),nrow=4))
 #' CalcTextRanges(x)
 #' @export
-CalcTextRanges <- function(x) {
-  UseMethod('CalcTextRanges', x)
+CalcTextBounding <- function(x) {
+  UseMethod('CalcTextBounding', x)
 }
 
 #' font width and scale to specified font size

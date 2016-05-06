@@ -4,7 +4,7 @@
 
   ## first plotting object
   if (!('WGroup' %in% class(group))) {
-    group <- WGroup(group)
+    group <- WGroup(group, is.root=TRUE)
   }
   group <- .add.WGroup(group, p)
   group

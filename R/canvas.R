@@ -51,6 +51,11 @@ RegisterCanvas <- function(obj) {
 }
 
 GetCanvas <- function(nm) {
+  if (length(nm)>1) {
+    objs <- lapply(nm, GetCanvas)
+    names(objs) <- nm
+    return(objs)
+  }
   obj <- w.canvas[[nm]]
   if (is.null(obj)) {
     message('Painting object ', nm, 'not found. Abort')
