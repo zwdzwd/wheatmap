@@ -62,25 +62,24 @@ WLegendV <- function(dm=NULL, x=NULL, name='', n.stops=20, n.text=5, label.fonts
                      width=NULL, height=NULL, h.aln=NULL, v.aln=NULL, ...) {
 
   kargs <- list(...)
-  kargs$m <- m
-  force(x); force(m); force(name);
+  kargs$dm <- dm
+  kargs$name <- name
+  force(x); force(kargs);
   force(n.stops); force(n.text); force(label.fontsize);
-  force(heat.gen); force(kargs);
   structure(function(group) {
     x <- Resolve(x, group)
     if (x$continuous) {
       d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)
       kargs$data <- matrix(d, dimnames=list(format(d, digits=2, trim=TRUE)))
-      kargs$dm <- dm
-      heat.gen <- WHeatmap(m, dm=dm, name=name, cmp=CMPar(cm=x$cm), ...)
     } else {
       d <- x$cm$mapper
       d <- d[order(names(d))]
-      m <- matrix(d, dimnames=list(names(d), NULL))
-      legend <- WHeatmap(m, dm=dm, name=name, continuous=FALSE, ...)
+      kargs$data <- matrix(d, dimnames=list(names(d), NULL))
+      kargs$continuous <- FALSE
     }
     
-    legend <- heat.gen(group)
+    kargs$cm <- x$cm
+    legend <- do(WHeatmap, kargs)
     legend$dm <- WLegendInferDim(
       m, x, group, dm=dm,
       width=width, height=height, h.aln=h.aln, v.aln=v.aln)
@@ -109,22 +108,25 @@ WLegendV <- function(dm=NULL, x=NULL, name='', n.stops=20, n.text=5, label.fonts
 WLegendH <- function(x, dm=NULL, name='', n.stops=20, n.text=5, label.fontsize=16,
                      width=NULL, height=NULL, h.aln=NULL, v.aln=NULL, ...) {
 
-  if (x$continuous) {
-    d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)
-    m <- matrix(d, nrow=1, dimnames=list(format(d, digits=2, trim=TRUE)))
-    heat.gen <- WHeatmap(m, dm=dm, name=name, cmp=CMPar(cm=x$cm), ...)
-  } else {
-    d <- x$cm$mapper
-    d <- d[order(names(d))]
-    m <- matrix(d, dimnames=list(NULL, names(d)), nrow=1)
-    heat.gen <- WHeatmap(m, dm=dm, name=name, continuous=FALSE, ...)
-  }
-  
-  force(x); force(m); force(name);
+  kargs <- list(...)
+  kargs$dm <- dm
+  kargs$name <- name
+  force(x); force(kargs);
   force(n.stops); force(n.text); force(label.fontsize);
-  force(heat.gen);
   structure(function(group) {
-    legend <- heat.gen(group)
+    x <- Resolve(x, group)
+    if (x$continuous) {
+      d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)
+      kargs$data <- matrix(d, nrow=1, dimnames=list(format(d, digits=2, trim=TRUE)))
+    } else {
+      d <- x$cm$mapper
+      d <- d[order(names(d))]
+      kargs$data <- matrix(d, dimnames=list(NULL, names(d)), nrow=1)
+      kargs$continuous <- FALSE
+    }
+    
+    kargs$cm <- x$cm
+    legend <- do(WHeatmap, kargs)
     legend$dm <- WLegendInferDim(
       m, x, group, dm=dm,
       width=width, height=height, h.aln=h.aln, v.aln=v.aln)
