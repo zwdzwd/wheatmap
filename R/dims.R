@@ -1,26 +1,43 @@
 #' @export
-ResolveDim <- function(x, ...) {
-  UseMethod('ResolveDim', x, ...)
+Resolve <- function(x, ...) {
+  UseMethod('Resolve', x, ...)
 }
 
-.ResolveDim <- function(x, nr, nc, group) {
-  if (is.null(x$dm)) {
-    message('Error dm is NULL. Abort.')
-    stop()
-  }
-  if ('WDim' %in% class(x$dm))
-    return(x)
-  if ('function' %in% class(x$dm)) {
-    x$dm <- x$dm(x, nr, nc, group)
-    return(x)
-  }
-  message('Unknown dimension')
-  stop()
+Resolve.WGenerator <- function(x, group) {
+  x(group)
+}
+
+Resolve.WDim <- function(x, ...) x
+
+Resolve.WHeatmap <- function(x, ...) x
+
+Resolve.WGroup <- function(x, ...) x
+
+Resolve.WObject <- function(x, ...) x
+
+Resolve.WDimGenerator <- function(x, nr, nc, group) {
+  x(nr, nc, group)
+  ## if (is.null(x$dm)) {
+  ##   message('Error dm is NULL. Abort.')
+  ##   stop()
+  ## }
+  ## if ('WDim' %in% class(x$dm))
+  ##   return(x)
+  ## if ('function' %in% class(x$dm)) {
+  ##   x$dm <- x$dm(x, nr, nc, group)
+  ##   return(x)
+  ## }
+  ## message('Unknown dimension')
+  ## stop()
+}
+
+Resolve.character <- function(x, group) {
+  group[x]
 }
 
 LengthToTop <- function(obj, root, .length) {
   parent <- GetParentIn(obj, root)
-  if (is.null($parent)) {
+  if (is.null(parent)) {
     return(.length)
   }
   .length <- .length * parent$dm$width
@@ -137,7 +154,7 @@ TopOf <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v.s
   force(x); force(h.aln); force(v.scale);
   force(v.scale.proportional)
   force(height); force(pad); force(min.ratio);
-  function(obj, nr, nc, group) {
+  structure(function(nr, nc, group) {
 
     x <- DimToTop(.WResolveName(x, group), group)
     h.aln <- DimToTop(.WResolveName(h.aln, group), group)
@@ -175,7 +192,7 @@ TopOf <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v.s
     dm$column.split <- h.aln$column.split
 
     dm
-  }
+  }, class='WDimGenerator')
 }
 
 #' Beneath
@@ -196,7 +213,7 @@ Beneath <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v
   force(x); force(h.aln); force(v.scale);
   force(v.scale.proportional)
   force(height); force(pad); force(min.ratio);
-  function(obj, nr, nc, group) {
+  structure(function(nr, nc, group) {
 
     x <- DimToTop(.WResolveName(x, group), group)
     h.aln <- DimToTop(.WResolveName(h.aln, group), group)
@@ -234,7 +251,7 @@ Beneath <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v
     dm$column.split <- h.aln$column.split
 
     dm
-  }
+  }, class='WDimGenerator')
 }
 
 #' LeftOf
@@ -255,7 +272,7 @@ LeftOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.s
   force(x); force(v.aln); force(h.scale);
   force(h.scale.proportional)
   force(width); force(pad); force(min.ratio);
-  function(obj, nr, nc, group) {
+  structure(function(nr, nc, group) {
 
     x <- DimToTop(.WResolveName(x, group), group)
     v.aln <- DimToTop(.WResolveName(v.aln, group), group)
@@ -293,7 +310,7 @@ LeftOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.s
     dm$row.split <- v.aln$row.split
 
     dm
-  }
+  }, class='WDimGenerator')
 }
 
 #' RightOf
@@ -314,7 +331,7 @@ RightOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.
   force(x); force(v.aln); force(h.scale);
   force(h.scale.proportional)
   force(width); force(pad); force(min.ratio);
-  function(obj, nr, nc, group) {
+  structure(function(nr, nc, group) {
 
     x <- DimToTop(.WResolveName(x, group), group)
     v.aln <- DimToTop(.WResolveName(v.aln, group), group)
@@ -352,6 +369,6 @@ RightOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.
     dm$row.split <- v.aln$row.split
 
     dm
-  }
+  }, class='WDimGenerator')
 }
 

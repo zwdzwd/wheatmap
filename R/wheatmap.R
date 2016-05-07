@@ -9,42 +9,43 @@
 #' @param name name of the plot
 #' @return one or a list of heatmaps (depends on whether dimension is split)
 #' @export
-WHeatmap <- function(
+WHeatmap <- function(data=NULL, dm=WDim(0,0,1,1), name='', continuous=NULL,
+                     cmp = CMPar(), # colormapping parameters
+                     cm = NULL,
 
-  data=NULL, dm=WDim(0,0,1,1), name='', continuous=NULL,
-  cmp = CMPar(), # colormapping parameters
-  cm = NULL,
+                     parent=NULL,
 
-  parent=NULL,
+                     ## titles
+                     title = NULL, title.fontsize=12, title.pad=0.005, title.side='l',
 
-  ## titles
-  title = NULL, title.fontsize=12, title.pad=0.005, title.side='l',
+                     ## tick label on x-axis
+                     xticklabels = NULL,
+                     xticklabels.n = NULL,
+                     xticklabel.side = 'b',
+                     xticklabel.fontsize = 12,
+                     xticklabel.rotat = 90,
+                     xticklabel.pad = 0.005,
 
-  ## tick label on x-axis
-  xticklabels = NULL,
-  xticklabels.n = NULL,
-  xticklabel.side = 'b',
-  xticklabel.fontsize = 12,
-  xticklabel.rotat = 90,
-  xticklabel.pad = 0.005,
+                     ## tick label on y-axis
+                     yticklabels = NULL,
+                     yticklabels.n = NULL,
+                     yticklabel.side = 'l',
+                     yticklabel.fontsize = 12,
+                     yticklabel.pad = 0.005,
 
-  ## tick label on y-axis
-  yticklabels = NULL,
-  yticklabels.n = NULL,
-  yticklabel.side = 'l',
-  yticklabel.fontsize = 12,
-  yticklabel.pad = 0.005,
+                     ## alpha
+                     alpha = 1,
 
-  ## alpha
-  alpha = 1,
+                     ## subclass name
+                     sub.name = NULL,
 
-  ## subclass name
-  sub.name = NULL,
-
-  ## graph parameters
-  gp = NULL) {
+                     ## graph parameters
+                     gp = NULL) {
 
   hm <- lapply(formals(), eval)
+  invisible(lapply(names(as.list(match.call()))[-1], function (nm) {
+    hm[[nm]] <<- get(nm)
+  }))
 
   ## auto-infer continuous/discrete
   if (is.null(continuous)) {
@@ -62,9 +63,7 @@ WHeatmap <- function(
   hm$gp$lty <- 'blank'
   lapply(names(gp), function(x) {hm$gp[[x]] <<- gp[[x]]})
 
-  invisible(lapply(names(as.list(match.call()))[-1], function (nm) {
-    hm[[nm]] <<- get(nm)
-  }))
+
 
   ## map to colors
   if (hm$continuous)
@@ -76,22 +75,19 @@ WHeatmap <- function(
   class(hm) <- 'WHeatmap'
   if (!is.null(sub.name))
     class(hm) <- c(sub.name, class(hm))
-  hm
+
+  force(hm); force(cm);
+  structure(function(group) {
+    hm <- .ResolveDim(hm, nrow(hm$data), ncol(hm$data), group)
+    ## split if dimension indicates so
+    if (!is.null(hm$dm$column.split) || !is.null(hm$dm$row.split)) {
+      return(SplitWHeatmap(hm, hm$dm, cm, group))
+    }
+    hm
+  }, class='WGenerator')
 }
 
-ResolveDim.WHeatmap <- function(hm, group) {
-
-  hm <- .ResolveDim(hm, nrow(hm$data), ncol(hm$data), group)
-
-
-  ## split if dimension indicates so
-  if (!is.null(hm$dm$column.split) || !is.null(hm$dm$row.split)) {
-    return(SplitWHeatmap(hm, hm$dm, cm))
-  }
-  hm
-}
-
-SplitWHeatmap <- function(hm, dm, cm) {
+SplitWHeatmap <- function(hm, dm, cm, group) {
 
   if (is.null(dm$column.split))
     dm$column.split <- list(dm)
@@ -123,7 +119,7 @@ SplitWHeatmap <- function(hm, dm, cm) {
                            (col.inds[ic]+1):col.inds[ic+1], drop=FALSE]
     sub.hm$cmp$cm <- cm
     sub.hm$name <- paste0(group.obj$name, '.', ir, '.', ic)
-    do.call(WHeatmap, sub.hm)
+    do.call(WHeatmap, sub.hm)(group)
   })
   w.group <- do.call(WGroup, c(k, name=hm$name))
   w.group$dm$row.split <- sub.dms.row
@@ -190,14 +186,8 @@ CalcTextBounding.WHeatmap <- function(hm, group) {
 #' @return \code{NULL}
 #' @import grid
 #' @export
-print.WHeatmap <- function(hm, stand.alone=TRUE, cex=1, layout.only=FALSE) {
+print.WHeatmap <- function(hm, cex=1, layout.only=FALSE) {
   library(grid)
-
-  if (stand.alone) {
-    group <- WGroup(hm)
-    print(group)
-    return(group)
-  }
   pushViewport(viewport(x=unit(hm$dm$left,'npc'), y=unit(hm$dm$bottom,'npc'),
                        width=unit(hm$dm$width,'npc'), height=unit(hm$dm$height,'npc'),
                        just=c('left','bottom')))
@@ -247,114 +237,8 @@ print.WHeatmap <- function(hm, stand.alone=TRUE, cex=1, layout.only=FALSE) {
   #   }
 }
 
-.TickLabelResample <- function(labels, ticklabels.n) {
-  text.height1 <- as.numeric(convertUnit(stringHeight('a'),'npc'))
-  total.height <- as.numeric(unit(1,'npc'))
-  n.labels <- length(labels)
-  if (!is.null(ticklabels.n))
-    n.texts <- ticklabels.n
-  else if (total.height*1.2 < text.height1*n.labels) {
-    n.texts <- floor(total.height/text.height1*0.4)
-  } else {
-    n.texts <- n.labels
-  }
-  sample.inds <- round(seq(1, n.labels, length.out=n.texts))
-}
-
-.WPrintXTickLabels <- function(hm, cex=1) {
-  labels <- colnames(hm$data)
-  nc = ncol(hm$data)
-  x.mid <- (seq_len(nc)-0.5)/nc
-  if (hm$xticklabel.side == 'b') {
-    .text.just = 'right'
-    .text.y = - hm$xticklabel.pad
-    .text.rot = 90
-  } else {
-    .text.just = 'left'
-    .text.y = 1 + hm$xticklabel.pad
-    .text.rot = 90
-  }
-  sample.inds <- .TickLabelResample(labels, hm$xticklabels.n)
-  grid.text(labels[sample.inds],
-            x=x.mid[sample.inds], y=unit(.text.y,'npc'), rot=.text.rot,
-            just=c(.text.just, 'center'), gp=gpar(fontsize=hm$xticklabel.fontsize*cex))
-}
-
-.WPrintYTickLabels <- function(hm, cex=1) {
-  labels <- rownames(hm$data)
-  nr = nrow(hm$data)
-  y.mid <- (rev(seq_len(nr))-0.5)/nr
-  if (hm$yticklabel.side == 'l') {
-    .text.just = 'right'
-    .text.x = - hm$yticklabel.pad
-  } else {
-    .text.just = 'left'
-    .text.x = 1 + hm$yticklabel.pad
-  }
-  sample.inds <- .TickLabelResample(labels, hm$yticklabels.n)
-  grid.text(labels[sample.inds],
-            x=unit(.text.x,'npc'), y=y.mid[sample.inds],
-            just=c(.text.just,'center'), gp=gpar(fontsize=hm$yticklabel.fontsize*min(cex)))
-}
-
 #' plot WHeatmap
 #'
 #' @param hm heatmap to plot
 plot.WHeatmap <- print.WHeatmap
-
-#' row cluster a matrix
-#'
-#' row cluster a matrix
-#'
-#' @param mat input matrix
-#' @param hc.method method to use in hclust
-#' @return a list of clustered row, column and matrix
-#' @export
-row.cluster <- function(mat, hc.method='ward.D2') {
-  d.row <- dist(mat)
-  r <- list()
-  r$row.clust <- hclust(d.row)
-  r$column.clust <- NULL
-  r$mat <- mat[r$row.hc$order,]
-  r
-}
-
-#' column cluster a matrix
-#'
-#' column cluster a matrix
-#'
-#' @param mat input matrix
-#' @param hc.method method to use in hclust
-#' @return a list of clustered row, column and matrix
-#' @export
-column.cluster <- function(mat, hc.method='ward.D2') {
-  d.column <- dist(t(mat))
-  r <- list()
-  r$row.clust <- NULL
-  r$column.clust <- hclust(d.column)
-  r$mat <- mat[,r$column.clust$order]
-  r
-}
-
-#' row- and column-cluster a matrix
-#'
-#' row- and column-cluster a matrix
-#'
-#' @param at input matrix
-#' @param hc.method method to use in hclust
-#' @return a list of clustered row, column and matrix
-#' @import stats
-#' @export
-both.cluster <- function(mat, hc.method='ward.D2') {
-  library(stats)
-  d.row <- dist(mat)
-  d.column <- dist(t(mat))
-  r <- list()
-  r$row.clust <- hclust(d.row)
-  r$column.clust <- hclust(d.column)
-  r$mat <- mat[r$row.clust$order, r$column.clust$order]
-  r
-}
-
-
 

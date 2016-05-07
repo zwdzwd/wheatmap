@@ -34,7 +34,7 @@ FromAffine <- function(dm.affine, dm.sys) {
 #' @return an object of class WGroup
 #' @export
 WGroup <- function(..., name='', nr=NULL, nc=NULL) {
-## row and column.split must be a set separately ??
+  ## row and column.split must be a set separately ??
   objs <- list(...)
 
   dms <- lapply(objs, function(o) o$dm)
@@ -112,7 +112,7 @@ GetParentIn <- function(x, ancestor) {
     for (child in ancestor$children) {
       if (child$name==x$name)
         return(ancestor)
-      if ('WGroup' %in% in class(child)) {
+      if ('WGroup' %in% class(child)) {
         parent <- GetParentIn(x, child)
         if (!is.null(parent))
           return(parent)
@@ -122,17 +122,16 @@ GetParentIn <- function(x, ancestor) {
   return(NULL)
 }
 
-
-# WFlatten <- function(.obs) {
-#   obs <- list()
-#   for(o in .obs){
-#     if ('WGroup' %in% class(o))
-#       obs <- c(obs, o$obs)
-#     else
-#       obs[[length(obs)+1]] <- o
-#   }
-#   obs
-# }
+WFlatten <- function(.obs) {
+  obs <- list()
+  for(o in .obs){
+    if ('WGroup' %in% class(o))
+      obs <- c(obs, o$obs)
+    else
+      obs[[length(obs)+1]] <- o
+  }
+  obs
+}
 
 #' show layout
 #' @export
@@ -169,7 +168,8 @@ ScaleGroup <- function(group.obj, mar=c(0.03,0.03,0.03,0.03)) {
 #' @param cex for scale fonts
 #' @import grid
 #' @export
-print.WGroup <- function(group, mar=c(0.03,0.03,0.03,0.03), stand.alone=TRUE, cex=1, layout.only=FALSE) {
+print.WGroup <- function(group, mar=c(0.03,0.03,0.03,0.03),
+                         stand.alone=TRUE, cex=1, layout.only=FALSE) {
 
   if (stand.alone) {
     res <- ScaleGroup(group, mar=mar)
@@ -178,11 +178,13 @@ print.WGroup <- function(group, mar=c(0.03,0.03,0.03,0.03), stand.alone=TRUE, ce
     grid.newpage()
   }
 
-  pushViewport(viewport(x=unit(group$dm$left,'npc'), y=unit(group$dm$bottom,'npc'),
-                        width=unit(group$dm$width,'npc'), height=unit(group$dm$height,'npc'),
+  pushViewport(viewport(x=unit(group$dm$left,'npc'),
+                        y=unit(group$dm$bottom,'npc'),
+                        width=unit(group$dm$width,'npc'),
+                        height=unit(group$dm$height,'npc'),
                         just=c('left','bottom')))
   for (child in group$children) {
-    plot(child, stand.alone=FALSE, cex=cex, layout.only=layout.only)
+    print(child, stand.alone=FALSE, cex=cex, layout.only=layout.only)
   }
   upViewport()
 }

@@ -11,10 +11,15 @@
 #' @export
 WDendrogram <- function(clust, dm=WDim(0,0,1,1), name='', facing=c("bottom", "top", "left", "right")) {
 
-  if ('function' %in% class(dm))
-    dm <- dm(1, 1)
-  dd <- structure(list(clust=clust, facing=facing, dm=dm, name=name), class='WDendrogram')
-  dd
+  dd <- lapply(formals(), eval)
+  invisible(lapply(names(as.list(match.call()))[-1], function (nm) {
+    dd[[nm]] <<- get(nm)
+  }))
+  class(dd) <- 'WDendrogram'
+  force(dd)
+  structure(function(group) {
+    dd
+  }, class='WGenerator')
 }
 
 ResolveDim.WDendrogram <- function(dd, group) {
