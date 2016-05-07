@@ -14,3 +14,6 @@
 
 #' @export
 `+.WHeatmap` <- `+.WGroup`
+
+#' @export
+`+.WGenerator` <- `+.WGroup`

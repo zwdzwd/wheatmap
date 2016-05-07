@@ -50,6 +50,7 @@ WGroup <- function(..., name='', nr=NULL, nc=NULL) {
 
   objs <- lapply(objs, function(obj) {
     obj$dm <- ToAffine(obj$dm, dm)
+    obj
   })
 
   group.obj <- structure(list(
@@ -60,9 +61,11 @@ WGroup <- function(..., name='', nr=NULL, nc=NULL) {
   group.obj
 }
 
-CalcTextBounding.WGroup <- function(group.obj, group) {
+CalcTextBounding.WGroup <- function(group.obj, top.group=NULL) {
+  browser()
+  if (is.null(top.group)) top.group <- group.obj
   group.dmb <- DimInPoints(group.obj$dm)
-  dmb <- do.call(.DimGroup, lapply(group.obj$children, CalcTextBounding(obj, group)))
+  dmb <- do.call(.DimGroup, lapply(group.obj$children, function(obj) CalcTextBounding(obj, top.group)))
 #   dmb <- FromAffine(dmb, group.dmb)
   .DimGroup(dmb, group.dmb)
 }
@@ -81,11 +84,27 @@ AddWGroup <- function(group.obj, new.obj) {
     obj
   })
 
+  if (new.obj$name=='')
+    GroupAssignName(group.obj)
+
   ## new
   new.obj$dm <- ToAffine(new.obj$dm, dm)
   group.obj$dm <- dm
-  group.obj$children <- c(group.obj$children, new.obj)
+  group.obj$children[[length(group.obj$children)+1]] <- new.obj
   group.obj
+}
+
+GroupAllNames <- (group.obj) {
+  do.call(c, lapply(group.obj$children, function(x){
+    if ('WGroup' %in% class(x))
+      GroupAllNames(x)
+    else
+      x$name
+  }))
+}
+
+GroupAssignName(group.obj) {
+  GroupAllNames(group.obj)
 }
 
 #' subset WGroup
@@ -149,7 +168,7 @@ ScaleGroup <- function(group.obj, mar=c(0.03,0.03,0.03,0.03)) {
   mar.top = mar[3]
   mar.right = mar[4]
 
-  dmb <- CalcTextBounding(group.obj, group)
+  dmb <- CalcTextBounding(group.obj)
   dmb$left <- dmb$left - dmb$width*mar.left
   dmb$bottom <- dmb$bottom - dmb$height*mar.bottom
   dmb$width <- dmb$width*(1+mar.left+mar.right)
@@ -171,6 +190,7 @@ ScaleGroup <- function(group.obj, mar=c(0.03,0.03,0.03,0.03)) {
 print.WGroup <- function(group, mar=c(0.03,0.03,0.03,0.03),
                          stand.alone=TRUE, cex=1, layout.only=FALSE) {
 
+  browser()
   if (stand.alone) {
     res <- ScaleGroup(group, mar=mar)
     cex <- res$cex

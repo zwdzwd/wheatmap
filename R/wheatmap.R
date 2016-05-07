@@ -9,7 +9,7 @@
 #' @param name name of the plot
 #' @return one or a list of heatmaps (depends on whether dimension is split)
 #' @export
-WHeatmap <- function(data=NULL, dm=WDim(0,0,1,1), name='', continuous=NULL,
+WHeatmap <- function(data=NULL, dm=NULL, name='', continuous=NULL,
                      cmp = CMPar(), # colormapping parameters
                      cm = NULL,
 
@@ -42,15 +42,20 @@ WHeatmap <- function(data=NULL, dm=WDim(0,0,1,1), name='', continuous=NULL,
                      ## graph parameters
                      gp = NULL) {
 
+  stopifnot('matrix' %in% class(data))
+
   hm <- lapply(formals(), eval)
   invisible(lapply(names(as.list(match.call()))[-1], function (nm) {
     hm[[nm]] <<- get(nm)
   }))
 
+  if (is.null(hm$dm))
+    hm$dm <- WDim(0,0,1,1,nr=nrow(data), nc=ncol(data))
+
   ## auto-infer continuous/discrete
   if (is.null(continuous)) {
-    if (!is.null(cmp$cm))
-      hm$continuous <- cmp$cm$continuous
+    if (!is.null(cm))
+      hm$continuous <- cm$continuous
     else if (is.numeric(data) && length(unique(data)) < 8)
       hm$continuous <- FALSE
     else
@@ -63,22 +68,19 @@ WHeatmap <- function(data=NULL, dm=WDim(0,0,1,1), name='', continuous=NULL,
   hm$gp$lty <- 'blank'
   lapply(names(gp), function(x) {hm$gp[[x]] <<- gp[[x]]})
 
-
-
   ## map to colors
   if (hm$continuous)
-    hm$cm <- MapToContinuousColors(hm$data, cmp=hm$cmp, cm=cm)
+    hm$cm <- MapToContinuousColors(hm$data, cmp=hm$cmp, given.cm=cm)
   else
-    hm$cm <- MapToDiscreteColors(hm$data, cmp=hm$cmp, cm=cm)
+    hm$cm <- MapToDiscreteColors(hm$data, cmp=hm$cmp, given.cm=cm)
 
-  hm$cm <- cm
   class(hm) <- 'WHeatmap'
   if (!is.null(sub.name))
     class(hm) <- c(sub.name, class(hm))
 
-  force(hm); force(cm);
+  force(hm);
   structure(function(group) {
-    hm <- .ResolveDim(hm, nrow(hm$data), ncol(hm$data), group)
+    hm$dm <- Resolve(hm$dm, nrow(hm$data), ncol(hm$data), group)
     ## split if dimension indicates so
     if (!is.null(hm$dm$column.split) || !is.null(hm$dm$row.split)) {
       return(SplitWHeatmap(hm, hm$dm, cm, group))
@@ -134,6 +136,7 @@ SplitWHeatmap <- function(hm, dm, cm, group) {
 #' @export
 CalcTextBounding.WHeatmap <- function(hm, group) {
 
+  browser()
   ## this needs be called at the ROOT view port
   dm <- DimToTop(hm, group)
   ## bottom, left, top, right
@@ -146,11 +149,11 @@ CalcTextBounding.WHeatmap <- function(hm, group) {
     if (hm$yticklabel.side=='l') {
       left <- left - max(sapply(
         rownames(hm$data), function(t) text.width(t, hm$yticklabel.fontsize))) -
-        NPCToPoints(LengthToTop(hm, hm$yticklabel.pad))
+        NPCToPoints(LengthToTop(hm, group, hm$yticklabel.pad))
     } else {
       right <- right + max(sapply(
         rownames(hm$data), function(t) text.width(t, hm$yticklabel.fontsize))) +
-        NPCToPoints(LengthToTop(hm, hm$yticklabel.pad))
+        NPCToPoints(LengthToTop(hm, group, hm$yticklabel.pad))
     }
   }
 
@@ -166,11 +169,11 @@ CalcTextBounding.WHeatmap <- function(hm, group) {
     if (hm$xticklabel.side=='b') {
       bottom <- bottom - max(sapply(
         rownames(hm$data), function(t) text.width(t, hm$xticklabel.fontsize))) -
-        NPCToPoints(LengthToTop(hm, hm$xticklabel.pad))
+        NPCToPoints(LengthToTop(hm, group, hm$xticklabel.pad))
     } else {
       top <- top + max(sapply(
         rownames(hm$data), function(t) text.width(t, hm$xticklabel.fontsize))) +
-        NPCToPoints(LengthToTop(hm, hm$xticklabel.pad))
+        NPCToPoints(LengthToTop(hm, group, hm$xticklabel.pad))
     }
   }
   dm$left <- left
@@ -186,7 +189,7 @@ CalcTextBounding.WHeatmap <- function(hm, group) {
 #' @return \code{NULL}
 #' @import grid
 #' @export
-print.WHeatmap <- function(hm, cex=1, layout.only=FALSE) {
+print.WHeatmap <- function(hm, cex=1, layout.only=FALSE, stand.alone=FALSE) {
   library(grid)
   pushViewport(viewport(x=unit(hm$dm$left,'npc'), y=unit(hm$dm$bottom,'npc'),
                        width=unit(hm$dm$width,'npc'), height=unit(hm$dm$height,'npc'),

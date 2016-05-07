@@ -1,7 +1,3 @@
-#' @export
-Resolve <- function(x, ...) {
-  UseMethod('Resolve', x, ...)
-}
 
 Resolve.WGenerator <- function(x, group) {
   x(group)
@@ -10,6 +6,8 @@ Resolve.WGenerator <- function(x, group) {
 Resolve.WDim <- function(x, ...) x
 
 Resolve.WHeatmap <- function(x, ...) x
+
+Resolve.WDendrogram <- function(x, ...) x
 
 Resolve.WGroup <- function(x, ...) x
 
@@ -118,22 +116,29 @@ WDim <- function(left=0, bottom=0, width=1, height=1, nr=1, nc=1,
 }
 
 
-.WResolveName <- function(nm, group) {
-  if ('function' %in% class(nm)) {
-    x <- nm(group)
-    return(x)
-  }
-  if (is.character(nm)) {
-    if (is.null(group)) {
-      message('No group provided. This is a bug.')
-      stop()
-    }
-    x <- group[nm]
-    if (is.null(x))
-      message('Name not found: ', x, '. Make sure objects are named.')
-    return(x)
-  }
-  return(nm)
+# .WResolveName <- function(nm, group) {
+#   if ('function' %in% class(nm)) {
+#     x <- nm(group)
+#     return(x)
+#   }
+#   if (is.character(nm)) {
+#     if (is.null(group)) {
+#       message('No group provided. This is a bug.')
+#       stop()
+#     }
+#     x <- group[nm]
+#     if (is.null(x))
+#       message('Name not found: ', x, '. Make sure objects are named.')
+#     return(x)
+#   }
+#   return(nm)
+# }
+
+.ResolveName <- function(x, group) {
+  if (is.null(x))
+    return(NULL)
+  else
+    return(DimToTop(Resolve(x, group), group))
 }
 
 #' Top of
@@ -156,9 +161,9 @@ TopOf <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v.s
   force(height); force(pad); force(min.ratio);
   structure(function(nr, nc, group) {
 
-    x <- DimToTop(.WResolveName(x, group), group)
-    h.aln <- DimToTop(.WResolveName(h.aln, group), group)
-    v.scale <- DimToTop(.WResolveName(v.scale, group), group)
+    x <- .ResolveName(x, group)
+    h.aln <- .ResolveName(h.aln, group)
+    v.scale <- .ResolveName(v.scale, group)
 
     dm <- x
     dm$nr <- nr
@@ -215,9 +220,9 @@ Beneath <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v
   force(height); force(pad); force(min.ratio);
   structure(function(nr, nc, group) {
 
-    x <- DimToTop(.WResolveName(x, group), group)
-    h.aln <- DimToTop(.WResolveName(h.aln, group), group)
-    v.scale <- DimToTop(.WResolveName(v.scale, group), group)
+    x <- .ResolveName(x, group)
+    h.aln <- .ResolveName(h.aln, group)
+    v.scale <- .ResolveName(v.scale, group)
 
     dm <- x
     dm$nr <- nr
@@ -274,9 +279,9 @@ LeftOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.s
   force(width); force(pad); force(min.ratio);
   structure(function(nr, nc, group) {
 
-    x <- DimToTop(.WResolveName(x, group), group)
-    v.aln <- DimToTop(.WResolveName(v.aln, group), group)
-    h.scale <- DimToTop(.WResolveName(h.scale, group), group)
+    x <- .ResolveName(x, group)
+    v.aln <- .ResolveName(v.aln, group)
+    h.scale <- .ResolveName(h.scale, group)
 
     dm <- x
     dm$nr <- nr
@@ -333,9 +338,9 @@ RightOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.
   force(width); force(pad); force(min.ratio);
   structure(function(nr, nc, group) {
 
-    x <- DimToTop(.WResolveName(x, group), group)
-    v.aln <- DimToTop(.WResolveName(v.aln, group), group)
-    h.scale <- DimToTop(.WResolveName(h.scale, group), group)
+    x <- .ResolveName(x, group)
+    v.aln <- .ResolveName(v.aln, group)
+    h.scale <- .ResolveName(h.scale, group)
 
     dm <- x
     dm$nr <- nr

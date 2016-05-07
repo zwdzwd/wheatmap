@@ -1,13 +1,3 @@
-#' Calculate Text Bounding
-#'
-#' Calculate bounding box including texts.
-#'
-#' W.R.T lower left corner of the view port in the unit of points
-#' @param x object
-#' @export
-CalcTextBounding <- function(x, ...) {
-  UseMethod('CalcTextBounding', x, ...)
-}
 
 NPCToPoints <- function(npc) {
   as.numeric(convertUnit(unit(npc,'npc'),'points'))

@@ -9,8 +9,9 @@
 #' @param name name of the dendrogram plot
 #' @return an object of class WDendrogram
 #' @export
-WDendrogram <- function(clust, dm=WDim(0,0,1,1), name='', facing=c("bottom", "top", "left", "right")) {
+WDendrogram <- function(clust=NULL, dm=WDim(0,0,1,1), name='', facing=c("bottom", "top", "left", "right")) {
 
+  stopifnot('hclust' %in% class(clust))
   dd <- lapply(formals(), eval)
   invisible(lapply(names(as.list(match.call()))[-1], function (nm) {
     dd[[nm]] <<- get(nm)
@@ -18,13 +19,9 @@ WDendrogram <- function(clust, dm=WDim(0,0,1,1), name='', facing=c("bottom", "to
   class(dd) <- 'WDendrogram'
   force(dd)
   structure(function(group) {
+    dd$dm <- Resolve(dm,1,1,group)
     dd
   }, class='WGenerator')
-}
-
-ResolveDim.WDendrogram <- function(dd, group) {
-  dd <- .ResolveDim(dd, 1, 1, group)
-  dd
 }
 
 #' WPlot
