@@ -91,13 +91,23 @@ WHeatmap <- function(data=NULL, dm=NULL, name='', continuous=NULL,
 
 SplitWHeatmap <- function(hm, dm, cm, group) {
 
-  if (is.null(dm$column.split))
-    dm$column.split <- list(dm)
-  if (is.null(dm$row.split))
-    dm$row.split <- list(dm)
-
-  all.nc <- sapply(dm$column.split, function(dm) dm$nc)
-  all.nr <- sapply(dm$row.split, function(dm) dm$nr)
+  if (is.null(dm$column.split)) {
+    column.split <- list(dm)
+    column.split[[1]]$left <- 0
+    column.split[[1]]$width <- 1
+  } else {
+    column.split <- dm$column.split
+  }
+  if (is.null(dm$row.split)) {
+    row.split <- list(dm)
+    row.split[[1]]$bottom <- 0
+    row.split[[1]]$height <- 1
+  } else {
+    row.split <- dm$row.split
+  }
+  
+  all.nc <- sapply(column.split, function(dm) dm$nc)
+  all.nr <- sapply(row.split, function(dm) dm$nr)
   sum.nc <- sum(all.nc)
   sum.nr <- sum(all.nr)
   nc.data <- ncol(hm$data)
@@ -105,8 +115,8 @@ SplitWHeatmap <- function(hm, dm, cm, group) {
   col.inds <- c(0,round(cumsum(all.nc) * nc.data / sum.nc))
   row.inds <- c(0,round(cumsum(all.nr) * nr.data / sum.nr))
 
-  sub.dms.col <- dm$column.split[order(sapply(dm$column.split, function(dm) dm$left))]
-  sub.dms.row <- rev(dm$row.split[order(sapply(dm$row.split, function(dm) dm$bottom))])
+  sub.dms.col <- column.split[order(sapply(column.split, function(dm) dm$left))]
+  sub.dms.row <- rev(row.split[order(sapply(row.split, function(dm) dm$bottom))])
   sub.dms <- expand.grid(seq_along(sub.dms.row), seq_along(sub.dms.col))
   k <- apply(sub.dms, 1, function(dm.i) {
     ir <- dm.i[1]
@@ -120,12 +130,15 @@ SplitWHeatmap <- function(hm, dm, cm, group) {
     sub.hm$data <- hm$data[(row.inds[ir]+1):row.inds[ir+1],
                            (col.inds[ic]+1):col.inds[ic+1], drop=FALSE]
     sub.hm$cmp$cm <- cm
-    sub.hm$name <- paste0(group.obj$name, '.', ir, '.', ic)
+    sub.hm$name <- paste0(hm$name, '.', ir, '.', ic)
     do.call(WHeatmap, sub.hm)(group)
   })
-  w.group <- do.call(WGroup, c(k, name=hm$name))
-  w.group$dm$row.split <- sub.dms.row
-  w.group$dm$column.split <- sub.dms.col
+  k$name <- hm$name
+  k$group.dm <- dm
+  k$affine <- TRUE
+  w.group <- do.call(WGroup, k)
+  # w.group$dm$row.split <- sub.dms.row
+  # w.group$dm$column.split <- sub.dms.col
 
   return(w.group)
 }
@@ -136,7 +149,6 @@ SplitWHeatmap <- function(hm, dm, cm, group) {
 #' @export
 CalcTextBounding.WHeatmap <- function(hm, group) {
 
-  browser()
   ## this needs be called at the ROOT view port
   dm <- DimToTop(hm, group)
   ## bottom, left, top, right

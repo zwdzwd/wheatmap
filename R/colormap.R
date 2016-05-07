@@ -65,10 +65,10 @@ MapToContinuousColors <- function(data, cmp=CMPar(), given.cm=NULL) {
   on.exit(detach(cmp))
 
   if (!is.null(given.cm)) {
-    cm$colors <- apply(
-      cm$mapper(cm$scaler(data)), 1,
+    given.cm$colors <- apply(
+      given.cm$mapper(given.cm$scaler(data)), 1,
       function(x) do.call(rgb, c(as.list(x), maxColorValue=255)))
-    return(cm)
+    return(given.cm)
   }
 
   if (is.null(stop.points)) {
@@ -125,8 +125,8 @@ MapToDiscreteColors <- function(data, cmp=CMPar(), given.cm=NULL) {
   on.exit(detach(cmp))
 
   if (!is.null(given.cm)) {
-    cm$colors <- cm$mapper[as.character(data)]
-    return(cm)
+    given.cm$colors <- given.cm$mapper[as.character(data)]
+    return(given.cm)
   }
 
   library(RColorBrewer)

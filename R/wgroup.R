@@ -31,33 +31,43 @@ FromAffine <- function(dm.affine, dm.sys) {
 #' @param dm dimension
 #' @param nr number of rows
 #' @param nc number of columns
+#' @param affine member is on affine coordinate
 #' @return an object of class WGroup
 #' @export
-WGroup <- function(..., name='', nr=NULL, nc=NULL) {
+WGroup <- function(..., name='', group.dm=WDim(), affine=FALSE, nr=NULL, nc=NULL) {
   ## row and column.split must be a set separately ??
   objs <- list(...)
 
-  dms <- lapply(objs, function(o) o$dm)
-  dm <- do.call(.DimGroup, dms)
-  if (is.null(nc))
-    dm$nc <- max(sapply(objs, function(o) o$dm$nc))
-  else
-    dm$nc <- nc
-  if (is.null(nr))
-    dm$nr <- max(sapply(objs, function(o) o$dm$nr))
-  else
-    dm$nr <- nr
-
-  objs <- lapply(objs, function(obj) {
-    obj$dm <- ToAffine(obj$dm, dm)
-    obj
-  })
+  ## convert to affine coordinates if not
+  ## the group dm is the merge of the member
+  ## dm before affine conversion
+  if (!affine) {
+    dms <- lapply(objs, function(o) o$dm)
+    dm <- do.call(.DimGroup, dms) ## bounding box coordinates before scaling
+  
+    if (is.null(nc))
+      dm$nc <- max(sapply(objs, function(o) o$dm$nc))
+    else
+      dm$nc <- nc
+    if (is.null(nr))
+      dm$nr <- max(sapply(objs, function(o) o$dm$nr))
+    else
+      dm$nr <- nr
+  
+    objs <- lapply(objs, function(obj) {
+      obj$dm <- ToAffine(obj$dm, dm)
+      obj
+    })
+    
+    group.dm <- dm
+  }
 
   group.obj <- structure(list(
     children=objs,
     name=name,
-    dm=dm), class='WGroup')
+    dm=group.dm), class='WGroup')
 
+  ## assign names if missing
   missing.inds <- which(sapply(objs, function(obj) obj$name==''))
   assigned.names <- GroupAssignNames(group.obj, length(missing.inds))
   lapply(seq_along(missing.inds), function(i) {
@@ -93,6 +103,11 @@ AddWGroup <- function(group.obj, new.obj) {
     obj$dm <- ToAffine(FromAffine(obj$dm, group.obj$dm), dm)
     obj
   })
+  
+  if (new.obj$name %in% GroupNames(group.obj)) {
+    message('New object name ', new.obj$name, ' conflicts with existing names. Abort.')
+    stop()
+  }
 
   if (new.obj$name=='')
     new.obj$name <- GroupAssignNames(group.obj)
@@ -105,12 +120,23 @@ AddWGroup <- function(group.obj, new.obj) {
 }
 
 GroupCheckNameUnique <- function(group.obj) {
-  all.nms <- GroupAllNames(group.obj)
-  length(all.nms)==length(unique(all.nms))
+  if (!('WGroup' %in% class(group.obj)))
+    return(TRUE)
+  all.nms <- GroupNames(group.obj)
+  if (length(all.nms)!=length(unique(all.nms)))
+    return(FALSE)
+  for(child in group.obj$children)
+    if (!GroupCheckNameUnique(child))
+      return(FALSE)
+  return(TRUE)
 }
 
 GroupCheckNameValid <- function(group.obj) {
   all(GroupAllNames(group.obj)!='')
+}
+
+GroupNames <- function(group.obj) {
+  sapply(group.obj$children, function(x) x$name)
 }
 
 GroupAllNames <- function(group.obj) {
@@ -124,7 +150,7 @@ GroupAllNames <- function(group.obj) {
 
 GroupAssignNames <- function(group.obj, n=1) {
   i <- 0
-  all.names <- GroupAllNames(group.obj)
+  all.names <- GroupNames(group.obj)
   assigned <- NULL
   repeat{
     i <- i+1
@@ -145,19 +171,60 @@ GroupAssignNames <- function(group.obj, n=1) {
 #' @param i integer indexing element
 #' @export
 `[.WGroup` <- function(x, i) {
+  if(is.numeric(i))
+    return(x$children[i])
   for (xx in x$children) {
-    if (xx$name == i)
+    if (xx$name == i[1]) {
+      if (length(i)>1 && 'WGroup' %in% class(xx))
+        return(xx[i[2:length(i)]])
       return(xx)
-    else if ('WGroup' %in% class(xx)) {
-      xxx <- xx[i]
-      if (!is.null(xxx))
-        return(xxx)
     }
   }
   return(NULL)
 }
 
+GroupDeepGet <- function(x, nm, force.unique=TRUE) {
+  objs <- list()
+  for (xx in x$children) {
+    if (xx$name == nm)
+      objs[[length(objs)+1]] <- xx
+    if ('WGroup' %in% class(xx))
+      objs <- c(objs, GroupDeepGet(xx, nm, force.unique=FALSE))
+  }
+  if (force.unique) {
+    if (length(objs) > 1) {
+      message('The name ',nm,' is ambiguous. Please provide full path.')
+      stop()
+    }
+    return(objs[[1]])
+  } else {
+    return (objs)
+  }
+}
+
+.GroupNameGet <- function(x, nm) {
+  if (length(nm)==1) {
+    if (!is.null(x[nm]))
+      return(x[nm])
+    else
+      return(GroupDeepGet(x, nm))
+  } else {
+    return(x[nm])
+  }
+}
+
+GroupNameGet <- function(x, nm) {
+  obj <- .GroupNameGet(x, nm)
+  if (is.null(obj)) {
+    message('Object: ',nm,' unfound.')
+    stop()
+  }
+  return(obj)
+}
+
 GetParentIn <- function(x, ancestor) {
+  if (is.null(x$name)) # is root
+    return(NULL)
   if ('WGroup' %in% class(ancestor)) {
     for (child in ancestor$children) {
       if (child$name==x$name)
@@ -233,6 +300,9 @@ print.WGroup <- function(group, mar=c(0.03,0.03,0.03,0.03),
                         width=unit(group$dm$width,'npc'),
                         height=unit(group$dm$height,'npc'),
                         just=c('left','bottom')))
+  if (layout.only) {
+    grid.rect(gp=gpar(col='green', lwd=5, alpha=0.6))
+  }
   for (child in group$children) {
     print(child, stand.alone=FALSE, cex=cex, layout.only=layout.only)
   }

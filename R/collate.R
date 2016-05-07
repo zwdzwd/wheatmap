@@ -12,9 +12,9 @@ WColumnBind <- function(..., nr=NULL, nc=NULL) {
   ## a function returns dm
   objs <- list(...)
   force(nr); force(nc);
-  function(group) {
+  structure(function(group) {
     objs <- lapply(objs, function(o) {
-      if (is.character(o)) group[o]
+      if (is.character(o)) GroupNameGet(group, o)
       else o
     })
     dms <- lapply(objs, function(o) DimToTop(o, group))
@@ -30,7 +30,7 @@ WColumnBind <- function(..., nr=NULL, nc=NULL) {
 
     dm$column.split <- lapply(dms, function(.dm) ToAffine(.dm, dm))
     WObject(dm=dm)
-  }
+  }, class='WGenerator')
 }
 
 #' row bind non-overlapping objects
@@ -47,9 +47,9 @@ WRowBind <- function(..., nr=NULL, nc=NULL) {
   ## a function returns dm
   objs <- list(...)
   force(nr); force(nc);
-  function(group) {
+  structure(function(group) {
     objs <- lapply(objs, function(o) {
-      if (is.character(o)) group[o]
+      if (is.character(o)) GroupNameGet(group, o)
       else o
     })
     dms <- lapply(objs, function(o) DimToTop(o, group))
@@ -65,9 +65,9 @@ WRowBind <- function(..., nr=NULL, nc=NULL) {
 
     dm$row.split <- lapply(dms, function(.dm) ToAffine(.dm, dm))
     WObject(dm=dm)
-  }
+  }, class='WGenerator')
 }
 
-WObject <- function(parent=NULL,dm=NULL) {
-  structure(list(parent=parent, dm=dm), class='WObject')
+WObject <- function(dm=NULL, name='') {
+  structure(list(dm=dm, name=name), class='WObject')
 }

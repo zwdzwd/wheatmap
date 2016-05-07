@@ -58,24 +58,28 @@ WLegendInferDim <- function(m, x, group, dm=NULL,
 #' @param n.stops number of stops in computing continuous legend
 #' @return an object of class WLegend
 #' @export
-WLegendV <- function(x, dm=NULL, name='', n.stops=20, n.text=5, label.fontsize=16,
+WLegendV <- function(dm=NULL, x=NULL, name='', n.stops=20, n.text=5, label.fontsize=16,
                      width=NULL, height=NULL, h.aln=NULL, v.aln=NULL, ...) {
 
-  if (x$continuous) {
-    d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)
-    m <- matrix(d, dimnames=list(format(d, digits=2, trim=TRUE)))
-    heat.gen <- WHeatmap(m, dm=dm, name=name, cmp=CMPar(cm=x$cm), ...)
-  } else {
-    d <- x$cm$mapper
-    d <- d[order(names(d))]
-    m <- matrix(d, dimnames=list(names(d), NULL))
-    heat.gen <- WHeatmap(m, dm=dm, name=name, continuous=FALSE, ...)
-  }
-
+  kargs <- list(...)
+  kargs$m <- m
   force(x); force(m); force(name);
   force(n.stops); force(n.text); force(label.fontsize);
-  force(heat.gen);
+  force(heat.gen); force(kargs);
   structure(function(group) {
+    x <- Resolve(x, group)
+    if (x$continuous) {
+      d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)
+      kargs$data <- matrix(d, dimnames=list(format(d, digits=2, trim=TRUE)))
+      kargs$dm <- dm
+      heat.gen <- WHeatmap(m, dm=dm, name=name, cmp=CMPar(cm=x$cm), ...)
+    } else {
+      d <- x$cm$mapper
+      d <- d[order(names(d))]
+      m <- matrix(d, dimnames=list(names(d), NULL))
+      legend <- WHeatmap(m, dm=dm, name=name, continuous=FALSE, ...)
+    }
+    
     legend <- heat.gen(group)
     legend$dm <- WLegendInferDim(
       m, x, group, dm=dm,

@@ -200,6 +200,14 @@ TopOf <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v.s
   }, class='WDimGenerator')
 }
 
+getdim <- function(x) {
+  if('WDim' %in% class(x))
+    dm <- x
+  else
+    dm <- x$dm
+  cat(dm$left, ' ', dm$bottom, ' ', dm$width, ' ', dm$height,'\n')
+}
+
 #' Beneath
 #'
 #' Generate dimension beneath another object
