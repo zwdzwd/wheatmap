@@ -58,14 +58,24 @@ WGroup <- function(..., name='', nr=NULL, nc=NULL) {
     name=name,
     dm=dm), class='WGroup')
 
+  missing.inds <- which(sapply(objs, function(obj) obj$name==''))
+  assigned.names <- GroupAssignNames(group.obj, length(missing.inds))
+  lapply(seq_along(missing.inds), function(i) {
+    group.obj$children[[missing.inds[i]]]$name <<- assigned.names[i]
+  })
+
+  stopifnot(GroupCheckNameUnique(group.obj))
+  stopifnot(GroupCheckNameValid(group.obj))
+
   group.obj
 }
 
 CalcTextBounding.WGroup <- function(group.obj, top.group=NULL) {
-  browser()
   if (is.null(top.group)) top.group <- group.obj
   group.dmb <- DimInPoints(group.obj$dm)
-  dmb <- do.call(.DimGroup, lapply(group.obj$children, function(obj) CalcTextBounding(obj, top.group)))
+  dmb <- do.call(
+    .DimGroup, lapply(group.obj$children,
+                      function(obj) CalcTextBounding(obj, top.group)))
 #   dmb <- FromAffine(dmb, group.dmb)
   .DimGroup(dmb, group.dmb)
 }
@@ -85,7 +95,7 @@ AddWGroup <- function(group.obj, new.obj) {
   })
 
   if (new.obj$name=='')
-    GroupAssignName(group.obj)
+    new.obj$name <- GroupAssignNames(group.obj)
 
   ## new
   new.obj$dm <- ToAffine(new.obj$dm, dm)
@@ -94,7 +104,16 @@ AddWGroup <- function(group.obj, new.obj) {
   group.obj
 }
 
-GroupAllNames <- (group.obj) {
+GroupCheckNameUnique <- function(group.obj) {
+  all.nms <- GroupAllNames(group.obj)
+  length(all.nms)==length(unique(all.nms))
+}
+
+GroupCheckNameValid <- function(group.obj) {
+  all(GroupAllNames(group.obj)!='')
+}
+
+GroupAllNames <- function(group.obj) {
   do.call(c, lapply(group.obj$children, function(x){
     if ('WGroup' %in% class(x))
       GroupAllNames(x)
@@ -103,8 +122,20 @@ GroupAllNames <- (group.obj) {
   }))
 }
 
-GroupAssignName(group.obj) {
-  GroupAllNames(group.obj)
+GroupAssignNames <- function(group.obj, n=1) {
+  i <- 0
+  all.names <- GroupAllNames(group.obj)
+  assigned <- NULL
+  repeat{
+    i <- i+1
+    .name <- paste0('..internal.',i)
+    if (!(.name %in% all.names) && n<=1) {
+      assigned <- c(assigned, .name)
+      n <- n-1
+      break
+    }
+  }
+  assigned
 }
 
 #' subset WGroup
@@ -190,7 +221,6 @@ ScaleGroup <- function(group.obj, mar=c(0.03,0.03,0.03,0.03)) {
 print.WGroup <- function(group, mar=c(0.03,0.03,0.03,0.03),
                          stand.alone=TRUE, cex=1, layout.only=FALSE) {
 
-  browser()
   if (stand.alone) {
     res <- ScaleGroup(group, mar=mar)
     cex <- res$cex

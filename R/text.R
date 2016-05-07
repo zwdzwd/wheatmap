@@ -1,5 +1,6 @@
-
+#' @import grid
 NPCToPoints <- function(npc) {
+  library(grid)
   as.numeric(convertUnit(unit(npc,'npc'),'points'))
 }
 

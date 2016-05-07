@@ -30,11 +30,6 @@ row.data <- row.data[cc$row.clust$order]
 col.data <- col.data[cc$column.clust$order]
 ```
 
-We perform some cleaning to make sure nothing exists before
-```{r}
-ResetCanvas()
-```
-
 ```{r}
 a <- WHeatmap(cc$mat, name='h1')
 a <- a + WColorBarV(row.data, LeftOf('h1'), 'c1')
