@@ -1,52 +1,56 @@
 
-WLegendInferDim <- function(m, x, group, dm=NULL,
-                            width=NULL, height=NULL, h.aln=NULL, v.aln=NULL) {
+## WLegendInferDim <- function(m, x, group, dm=NULL,
+##                             width=NULL, height=NULL, h.aln=NULL, v.aln=NULL) {
 
-  nr = nrow(m)
-  nc = ncol(m)
-  if (is.null(dm))
-    dm <- WDim(0, 0, x$dm$width/x$dm$nc*nc, x$dm$height/x$dm$nr*nr)
+##   nr = nrow(m)
+##   nc = ncol(m)
+##   ## recover to specified dim
+##   if (is.null(dm))
+##     dm <- Resolve(dm, nr, nc, group)
+    
+  
+##   dm <- WDim(0, 0, x$dm$width/x$dm$nc*nc, x$dm$height/x$dm$nr*nr)
+  
+##   dm <- Resolve(dm, nr, nc, group)
+##   x <- ResolveToTopDim(x, group)
+##   h.aln <- ResolveToTopDim(h.aln, group)
+##   v.aln <- ResolveToTopDim(v.aln, group)
 
-  dm <- Resolve(dm, NULL, nr, nc, group)
-  x <- Resolve(x, group)
-  h.aln <- Resolve(h.aln, group)$dm
-  v.aln <- Resolve(v.aln, group)$dm
+##   ## specific to legend, we need to ensure
+##   ## the dimensions are not exotic
+##   if (nr==1) {
+##     if (is.null(height))
+##       dm$height <- x$height/x$nr
+##     else
+##       dm$height <- height
+##     if (is.null(width))
+##       dm$width <- 5*x$width/x$nc
+##     else
+##       dm$width <- width
+##   }
 
-  ## specific to legend, we need to ensure
-  ## the dimensions are not exotic
-  if (nr==1) {
-    if (is.null(height))
-      dm$height <- x$dm$height/x$dm$nr
-    else
-      dm$height <- height
-    if (is.null(width))
-      dm$width <- 5*x$dm$width/x$dm$nc
-    else
-      dm$width <- width
-  }
+##   if (nc==1) {
+##     if (is.null(width))
+##       dm$width <- x$width/x$nc
+##     else
+##       dm$width <- width
+##     if (is.null(height))
+##       dm$height <- 5*x$height/x$nr
+##     else
+##       dm$height <- height
+##   }
 
-  if (nc==1) {
-    if (is.null(width))
-      dm$width <- x$dm$width/x$dm$nc
-    else
-      dm$width <- width
-    if (is.null(height))
-      dm$height <- 5*x$dm$height/x$dm$nr
-    else
-      dm$height <- height
-  }
+##   if (!is.null(v.aln)) {
+##     dm$bottom <- v.aln$bottom
+##     dm$height <- v.aln$height
+##   }
 
-  if (!is.null(v.aln)) {
-    dm$bottom <- v.aln$bottom
-    dm$height <- v.aln$height
-  }
-
-  if (!is.null(h.aln)) {
-    dm$left <- h.aln$left
-    dm$width <- h.aln$width
-  }
-  dm
-}
+##   if (!is.null(h.aln)) {
+##     dm$left <- h.aln$left
+##     dm$width <- h.aln$width
+##   }
+##   dm
+## }
 
 
 #' WLegendV
@@ -58,8 +62,9 @@ WLegendInferDim <- function(m, x, group, dm=NULL,
 #' @param n.stops number of stops in computing continuous legend
 #' @return an object of class WLegend
 #' @export
-WLegendV <- function(dm=NULL, x=NULL, name='', n.stops=20, n.text=5, label.fontsize=16,
-                     width=NULL, height=NULL, h.aln=NULL, v.aln=NULL, ...) {
+WLegendV <- function(x=NULL, dm=NULL, name='',
+                     n.stops=20, n.text=5, label.fontsize=16,
+                     width=0.1, height=0.1, ...) {
 
   kargs <- list(...)
   kargs$dm <- dm
@@ -70,22 +75,26 @@ WLegendV <- function(dm=NULL, x=NULL, name='', n.stops=20, n.text=5, label.fonts
     x <- Resolve(x, group)
     if (x$continuous) {
       d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)
-      kargs$data <- matrix(d, dimnames=list(format(d, digits=2, trim=TRUE)))
+      kargs$data <- matrix(
+        d, dimnames=list(format(d, digits=2, trim=TRUE)))
     } else {
       d <- x$cm$mapper
       d <- d[order(names(d))]
-      kargs$data <- matrix(d, dimnames=list(names(d), NULL))
+      kargs$data <- matrix(names(d), dimnames=list(names(d), NULL))
       kargs$continuous <- FALSE
     }
     
     kargs$cm <- x$cm
-    legend <- do(WHeatmap, kargs)
-    legend$dm <- WLegendInferDim(
-      m, x, group, dm=dm,
-      width=width, height=height, h.aln=h.aln, v.aln=v.aln)
+    legend <- do.call(WHeatmap, kargs)(group)
+    nr <- nrow(kargs$data)
+    nc <- ncol(kargs$data)
+    legend$dm <- Resolve(dm, group, nr=nr, nc=nc,
+                         hard.dm=WDim(0,0,width*nc,height*nr))
     legend$yticklabels <- TRUE
     if (x$continuous)
       legend$yticklabels.n <- n.text
+    else
+      legend$yticklabels.n <- nr
     legend$yticklabel.fontsize <- label.fontsize
     legend$yticklabel.side <- 'r'
     legend$orientation <- 'v'
@@ -105,8 +114,9 @@ WLegendV <- function(dm=NULL, x=NULL, name='', n.stops=20, n.text=5, label.fonts
 #' @param n.stops number of stops in computing continuous legend
 #' @return WLegendH
 #' @export
-WLegendH <- function(x, dm=NULL, name='', n.stops=20, n.text=5, label.fontsize=16,
-                     width=NULL, height=NULL, h.aln=NULL, v.aln=NULL, ...) {
+WLegendH <- function(x=NULL, dm=NULL, name='',
+                     n.stops=20, n.text=5, label.fontsize=16,
+                     width=0.1, height=0.1, ...) {
 
   kargs <- list(...)
   kargs$dm <- dm
@@ -117,22 +127,26 @@ WLegendH <- function(x, dm=NULL, name='', n.stops=20, n.text=5, label.fontsize=1
     x <- Resolve(x, group)
     if (x$continuous) {
       d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)
-      kargs$data <- matrix(d, nrow=1, dimnames=list(format(d, digits=2, trim=TRUE)))
+      kargs$data <- matrix(
+        d, nrow=1, dimnames=list(format(d, digits=2, trim=TRUE)))
     } else {
       d <- x$cm$mapper
       d <- d[order(names(d))]
-      kargs$data <- matrix(d, dimnames=list(NULL, names(d)), nrow=1)
+      kargs$data <- matrix(names(d), dimnames=list(NULL, names(d)), nrow=1)
       kargs$continuous <- FALSE
     }
     
     kargs$cm <- x$cm
-    legend <- do(WHeatmap, kargs)
-    legend$dm <- WLegendInferDim(
-      m, x, group, dm=dm,
-      width=width, height=height, h.aln=h.aln, v.aln=v.aln)
+    legend <- do.call(WHeatmap, kargs)(group)
+    nr <- nrow(kargs$data)
+    nc <- ncol(kargs$data)
+    legend$dm <- Resolve(dm, group, nr=nr, nc=nc,
+                         hard.dm=WDim(0,0,width*nc,height*nr))
     legend$xticklabels <- TRUE
     if (x$continuous)
       legend$xticklabels.n <- n.text
+    else
+      legend$xticklabels.n <- nc
     legend$xticklabel.fontsize <- label.fontsize
     legend$xticklabel.side <- 'b'
     legend$orientation <- 'h'

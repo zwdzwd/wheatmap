@@ -1,11 +1,11 @@
 .TickLabelResample <- function(labels, ticklabels.n) {
-  text.height1 <- as.numeric(convertUnit(stringHeight('a'),'npc'))
-  total.height <- as.numeric(unit(1,'npc'))
+  text.height1 <- convertUnit(stringHeight('a'),'npc',valueOnly=TRUE)
+  total.height <- 1
   n.labels <- length(labels)
   if (!is.null(ticklabels.n))
     n.texts <- ticklabels.n
   else if (total.height*1.2 < text.height1*n.labels) {
-    n.texts <- floor(total.height/text.height1*0.4)
+    n.texts <- max(floor(total.height/text.height1*0.4),2)
   } else {
     n.texts <- n.labels
   }

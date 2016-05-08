@@ -13,8 +13,8 @@ Resolve.WGroup <- function(x, ...) x
 
 Resolve.WObject <- function(x, ...) x
 
-Resolve.WDimGenerator <- function(x, nr, nc, group) {
-  x(nr, nc, group)
+Resolve.WDimGenerator <- function(x, group, ...) {
+  x(group, ...)
   ## if (is.null(x$dm)) {
   ##   message('Error dm is NULL. Abort.')
   ##   stop()
@@ -30,7 +30,7 @@ Resolve.WDimGenerator <- function(x, nr, nc, group) {
 }
 
 Resolve.character <- function(x, group) {
-  group[x]
+  GroupNameGet(group, x)
 }
 
 LengthToTop <- function(obj, root, .length) {
@@ -134,12 +134,161 @@ WDim <- function(left=0, bottom=0, width=1, height=1, nr=1, nc=1,
 #   return(nm)
 # }
 
-.ResolveName <- function(x, group) {
+ResolveToTopDim <- function(x, group) {
   if (is.null(x))
     return(NULL)
   else
     return(DimToTop(Resolve(x, group), group))
 }
+
+TopLeftOf <- function(x=NULL,
+                      just=c('bottomright','topright','bottomleft','topleft'),
+                      v.pad=0.0, h.pad=0.0) {
+
+  just <- match.arg(just)
+  force(x); force(just); force(v.pad); force(h.pad);
+  structure(function(group, nr=1, nc=1, hard.dm=NULL) {
+    x <- ResolveToTopDim(x, group)
+    
+    if (is.null(hard.dm)) {
+      dm <- WDim()
+      dm$width <- x$width/x$nc*nc
+      dm$height <- x$height/x$nr*nr
+      dm$nc <- nc
+      dm$nr <- nr
+    } else {
+      dm <- hard.dm
+    }
+    
+    if (length(grep('right', just))>0) {
+      dm$left <- x$left - dm$width
+    } else {
+      dm$left <- x$left
+    }
+    dm$left <- dm$left + h.pad
+
+    if (length(grep('bottom', just))>0) {
+      dm$bottom <- x$bottom + x$height
+    } else {
+      dm$bottom <- x$bottom + x$height - dm$height
+    }
+    dm$bottom <- dm$bottom + v.pad
+    
+    dm
+  }, class='WDimGenerator')
+}
+
+TopRightOf <- function(x=NULL,
+                      just=c('bottomleft','topleft','bottomright','topright'),
+                      v.pad=0.0, h.pad=0.0) {
+
+  just <- match.arg(just)
+  force(x); force(just); force(v.pad); force(h.pad);
+  structure(function(group, nr=1, nc=1, hard.dm=NULL) {
+    x <- ResolveToTopDim(x, group)
+    
+    if (is.null(hard.dm)) {
+      dm <- WDim()
+      dm$width <- x$width/x$nc*nc
+      dm$height <- x$height/x$nr*nr
+      dm$nc <- nc
+      dm$nr <- nr
+    } else {
+      dm <- hard.dm
+    }
+
+    if (length(grep('right', just))>0) {
+      dm$left <- x$left + x$width - dm$width
+    } else {
+      dm$left <- x$left + x$width
+    }
+    dm$left <- dm$left + h.pad
+
+    if (length(grep('bottom', just))>0) {
+      dm$bottom <- x$bottom + x$height
+    } else {
+      dm$bottom <- x$bottom + x$height - dm$height
+    }
+    dm$bottom <- dm$bottom + v.pad
+    
+    dm
+  }, class='WDimGenerator')
+}
+
+BottomLeftOf <- function(x=NULL,
+                         just=c('bottomright','topright','bottomleft','topleft'),
+                         v.pad=0.0, h.pad=0.0) {
+
+  just <- match.arg(just)
+  force(x); force(just); force(v.pad); force(h.pad);
+  structure(function(group, nr=1, nc=1, hard.dm=NULL) {
+    x <- ResolveToTopDim(x, group)
+    
+    if (is.null(hard.dm)) {
+      dm <- WDim()
+      dm$width <- x$width/x$nc*nc
+      dm$height <- x$height/x$nr*nr
+      dm$nc <- nc
+      dm$nr <- nr
+    } else {
+      dm <- hard.dm
+    }
+
+    if (length(grep('right', just))>0) {
+      dm$left <- x$left - dm$width
+    } else {
+      dm$left <- x$left
+    }
+    dm$left <- dm$left + h.pad
+
+    if (length(grep('bottom', just))>0) {
+      dm$bottom <- x$bottom
+    } else {
+      dm$bottom <- x$bottom - dm$height
+    }
+    dm$bottom <- dm$bottom + v.pad
+    
+    dm
+  }, class='WDimGenerator')
+}
+
+BottomRightOf <- function(x=NULL,
+                          just=c('bottomleft','topleft','bottomright','topright'),
+                          v.pad=0.0, h.pad=0.0) {
+
+  just <- match.arg(just)
+  force(x); force(just); force(v.pad); force(h.pad);
+  structure(function(group, nr=1, nc=1, hard.dm=NULL) {
+    x <- ResolveToTopDim(x, group)
+    
+    if (is.null(hard.dm)) {
+      dm <- WDim()
+      dm$width <- x$width/x$nc*nc
+      dm$height <- x$height/x$nr*nr
+      dm$nc <- nc
+      dm$nr <- nr
+    } else {
+      dm <- hard.dm
+    }
+
+    if (length(grep('right', just))>0) {
+      dm$left <- x$left + x$width - dm$width
+    } else {
+      dm$left <- x$left + x$width
+    }
+    dm$left <- dm$left + h.pad
+
+    if (length(grep('bottom', just))>0) {
+      dm$bottom <- x$bottom
+    } else {
+      dm$bottom <- x$bottom - dm$height
+    }
+    dm$bottom <- dm$bottom + v.pad
+    
+    dm
+  }, class='WDimGenerator')
+}
+
 
 #' Top of
 #'
@@ -154,16 +303,17 @@ WDim <- function(left=0, bottom=0, width=1, height=1, nr=1, nc=1,
 #' @param v.scale.proportional when v.scale is provided, whether to make proportional to data
 #' @return a dimension generator on top of x
 #' @export
-TopOf <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v.scale=NULL, v.scale.proportional=FALSE) {
+TopOf <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02,
+                  h.aln=NULL, v.scale=NULL, v.scale.proportional=FALSE) {
 
   force(x); force(h.aln); force(v.scale);
   force(v.scale.proportional)
   force(height); force(pad); force(min.ratio);
-  structure(function(nr, nc, group) {
+  structure(function(group, nr=1, nc=1, hard.dm=NULL) {
 
-    x <- .ResolveName(x, group)
-    h.aln <- .ResolveName(h.aln, group)
-    v.scale <- .ResolveName(v.scale, group)
+    x <- ResolveToTopDim(x, group)
+    h.aln <- ResolveToTopDim(h.aln, group)
+    v.scale <- ResolveToTopDim(v.scale, group)
 
     dm <- x
     dm$nr <- nr
@@ -221,16 +371,17 @@ getdim <- function(x) {
 #' @param v.scale.proportional when v.scale is provided, whether to make proportional to data
 #' @return a dimension generator beneath x
 #' @export
-Beneath <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v.scale=NULL, v.scale.proportional=FALSE) {
+Beneath <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02,
+                    h.aln=NULL, v.scale=NULL, v.scale.proportional=FALSE) {
 
   force(x); force(h.aln); force(v.scale);
   force(v.scale.proportional)
   force(height); force(pad); force(min.ratio);
-  structure(function(nr, nc, group) {
+  structure(function(group, nr=1, nc=1, hard.dm=NULL) {
 
-    x <- .ResolveName(x, group)
-    h.aln <- .ResolveName(h.aln, group)
-    v.scale <- .ResolveName(v.scale, group)
+    x <- ResolveToTopDim(x, group)
+    h.aln <- ResolveToTopDim(h.aln, group)
+    v.scale <- ResolveToTopDim(v.scale, group)
 
     dm <- x
     dm$nr <- nr
@@ -280,16 +431,17 @@ Beneath <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02, h.aln=NULL, v
 #' @param h.scale.proportional when h.scale is provided, whether to make proportional to data
 #' @return a dimension to the left of x
 #' @export
-LeftOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.scale=NULL, h.scale.proportional=FALSE) {
+LeftOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02,
+                   v.aln=NULL, h.scale=NULL, h.scale.proportional=FALSE) {
 
   force(x); force(v.aln); force(h.scale);
   force(h.scale.proportional)
   force(width); force(pad); force(min.ratio);
-  structure(function(nr, nc, group) {
+  structure(function(group, nr=1, nc=1, hard.dm=NULL) {
 
-    x <- .ResolveName(x, group)
-    v.aln <- .ResolveName(v.aln, group)
-    h.scale <- .ResolveName(h.scale, group)
+    x <- ResolveToTopDim(x, group)
+    v.aln <- ResolveToTopDim(v.aln, group)
+    h.scale <- ResolveToTopDim(h.scale, group)
 
     dm <- x
     dm$nr <- nr
@@ -339,16 +491,17 @@ LeftOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.s
 #' @param h.scale.proportional when h.scale is provided, whether to make proportional to data
 #' @return a dimension to the right of x
 #' @export
-RightOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02, v.aln=NULL, h.scale=NULL, h.scale.proportional=FALSE) {
+RightOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02,
+                    v.aln=NULL, h.scale=NULL, h.scale.proportional=FALSE) {
 
   force(x); force(v.aln); force(h.scale);
   force(h.scale.proportional)
   force(width); force(pad); force(min.ratio);
-  structure(function(nr, nc, group) {
+  structure(function(group, nr=1, nc=1, hard.dm=NULL) {
 
-    x <- .ResolveName(x, group)
-    v.aln <- .ResolveName(v.aln, group)
-    h.scale <- .ResolveName(h.scale, group)
+    x <- ResolveToTopDim(x, group)
+    v.aln <- ResolveToTopDim(v.aln, group)
+    h.scale <- ResolveToTopDim(h.scale, group)
 
     dm <- x
     dm$nr <- nr

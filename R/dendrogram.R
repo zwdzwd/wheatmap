@@ -19,7 +19,7 @@ WDendrogram <- function(clust=NULL, dm=WDim(0,0,1,1), name='', facing=c("bottom"
   class(dd) <- 'WDendrogram'
   force(dd)
   structure(function(group) {
-    dd$dm <- Resolve(dm,1,1,group)
+    dd$dm <- Resolve(dm,group) # nr=1 nc=1
     dd
   }, class='WGenerator')
 }

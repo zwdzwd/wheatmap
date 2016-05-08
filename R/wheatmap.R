@@ -80,7 +80,7 @@ WHeatmap <- function(data=NULL, dm=NULL, name='', continuous=NULL,
 
   force(hm);
   structure(function(group) {
-    hm$dm <- Resolve(hm$dm, nrow(hm$data), ncol(hm$data), group)
+    hm$dm <- Resolve(hm$dm, group, nr=nrow(hm$data), nc=ncol(hm$data))
     ## split if dimension indicates so
     if (!is.null(hm$dm$column.split) || !is.null(hm$dm$row.split)) {
       return(SplitWHeatmap(hm, hm$dm, cm, group))
@@ -201,12 +201,18 @@ CalcTextBounding.WHeatmap <- function(hm, group) {
 #' @return \code{NULL}
 #' @import grid
 #' @export
-print.WHeatmap <- function(hm, cex=1, layout.only=FALSE, stand.alone=FALSE) {
+print.WHeatmap <- function(hm, cex=1, layout.only=FALSE, stand.alone=TRUE) {
   library(grid)
+  
+  if (stand.alone) {
+    group <- WGroup(hm)
+    print(group)
+    return(group)
+  }
+  
   pushViewport(viewport(x=unit(hm$dm$left,'npc'), y=unit(hm$dm$bottom,'npc'),
                        width=unit(hm$dm$width,'npc'), height=unit(hm$dm$height,'npc'),
                        just=c('left','bottom')))
-
   if (layout.only) {
     grid.rect(gp=gpar(col='red'))
     grid.text(hm$name)

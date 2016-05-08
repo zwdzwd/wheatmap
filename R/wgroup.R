@@ -172,7 +172,7 @@ GroupAssignNames <- function(group.obj, n=1) {
 #' @export
 `[.WGroup` <- function(x, i) {
   if(is.numeric(i))
-    return(x$children[i])
+    return(x$children[[i]])
   for (xx in x$children) {
     if (xx$name == i[1]) {
       if (length(i)>1 && 'WGroup' %in% class(xx))

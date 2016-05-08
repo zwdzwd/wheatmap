@@ -7,6 +7,7 @@
     group <- Resolve(group, NULL)
     group <- WGroup(group)
   }
+
   p <- Resolve(p, group)
   group <- AddWGroup(group, p)
   group
