@@ -35,7 +35,7 @@ a <- WHeatmap(cc$mat, name='h1')
 a <- a + WColorBarV(row.data, LeftOf('h1'), 'c1')
 a <- a + WColorBarH(col.data, TopOf('h1'), 'c2')
 a <- a + WDendrogram(cc$row.clust, LeftOf('c1'), facing='right') + WDendrogram(cc$column.clust, TopOf('c2'), facing='bottom')
-a <-
+a
 
 ```
 
@@ -128,7 +128,7 @@ a
 
 Let's add legend
 ```{r}
-a <- a + WLegendV('c1', RightOf('h6.1.3'), 'l1')
+a + WLegendV('c1', BottomRightOf('h6.1.3'), 'l1')
 a <- a + WLegendV('c2', TopOf('l1', pad=0.1), 'l2')
 a <- a + WLegendV('c3', TopOf('l2', pad=0.1), n.text=3)
 a
