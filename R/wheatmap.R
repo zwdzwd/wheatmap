@@ -105,7 +105,7 @@ SplitWHeatmap <- function(hm, dm, cm, group) {
   } else {
     row.split <- dm$row.split
   }
-  
+
   all.nc <- sapply(column.split, function(dm) dm$nc)
   all.nr <- sapply(row.split, function(dm) dm$nr)
   sum.nc <- sum(all.nc)
@@ -203,21 +203,19 @@ CalcTextBounding.WHeatmap <- function(hm, group) {
 #' @export
 print.WHeatmap <- function(hm, cex=1, layout.only=FALSE, stand.alone=TRUE) {
   library(grid)
-  
+
   if (stand.alone) {
     group <- WGroup(hm)
     print(group)
     return(group)
   }
-  
+
+  if (layout.only)
+    return(.print.layout(hm))
+
   pushViewport(viewport(x=unit(hm$dm$left,'npc'), y=unit(hm$dm$bottom,'npc'),
                        width=unit(hm$dm$width,'npc'), height=unit(hm$dm$height,'npc'),
                        just=c('left','bottom')))
-  if (layout.only) {
-    grid.rect(gp=gpar(col='red'))
-    grid.text(hm$name)
-    return (upViewport())
-  }
 
   nc = ncol(hm$data)
   nr = nrow(hm$data)

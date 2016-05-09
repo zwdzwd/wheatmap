@@ -7,10 +7,10 @@
 ##   ## recover to specified dim
 ##   if (is.null(dm))
 ##     dm <- Resolve(dm, nr, nc, group)
-    
-  
+
+
 ##   dm <- WDim(0, 0, x$dm$width/x$dm$nc*nc, x$dm$height/x$dm$nr*nr)
-  
+
 ##   dm <- Resolve(dm, nr, nc, group)
 ##   x <- ResolveToTopDim(x, group)
 ##   h.aln <- ResolveToTopDim(h.aln, group)
@@ -83,13 +83,13 @@ WLegendV <- function(x=NULL, dm=NULL, name='',
       kargs$data <- matrix(names(d), dimnames=list(names(d), NULL))
       kargs$continuous <- FALSE
     }
-    
+
     kargs$cm <- x$cm
     legend <- do.call(WHeatmap, kargs)(group)
     nr <- nrow(kargs$data)
     nc <- ncol(kargs$data)
     legend$dm <- Resolve(dm, group, nr=nr, nc=nc,
-                         hard.dm=WDim(0,0,width*nc,height*nr))
+                         hard.dm=WDim(0,0,width*nc,height*nr,nr=nr,nc=nc))
     legend$yticklabels <- TRUE
     if (x$continuous)
       legend$yticklabels.n <- n.text
@@ -135,13 +135,15 @@ WLegendH <- function(x=NULL, dm=NULL, name='',
       kargs$data <- matrix(names(d), dimnames=list(NULL, names(d)), nrow=1)
       kargs$continuous <- FALSE
     }
-    
+
     kargs$cm <- x$cm
     legend <- do.call(WHeatmap, kargs)(group)
     nr <- nrow(kargs$data)
     nc <- ncol(kargs$data)
+    ## when dm is from TopOf etc use nr and nc
+    ## when dm is from TopLeftOf etc use hard.dm
     legend$dm <- Resolve(dm, group, nr=nr, nc=nc,
-                         hard.dm=WDim(0,0,width*nc,height*nr))
+                         hard.dm=WDim(0,0,width*nc,height*nr, nr=nr, nc=nc))
     legend$xticklabels <- TRUE
     if (x$continuous)
       legend$xticklabels.n <- n.text

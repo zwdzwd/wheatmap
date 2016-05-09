@@ -30,15 +30,12 @@ WDendrogram <- function(clust=NULL, dm=WDim(0,0,1,1), name='', facing=c("bottom"
 #'
 #' @export
 print.WDendrogram <- function(dend, stand.alone=TRUE, layout.only=FALSE, cex=1) {
+  if (layout.only)
+    return(.print.layout(dend))
   pushViewport(viewport(x=unit(dend$dm$left,'npc'), y=unit(dend$dm$bottom,'npc'),
                         width=unit(dend$dm$width,'npc'), height=unit(dend$dm$height,'npc'),
                         just=c('left','bottom'), gp=gpar(col='black')))
-  if (layout.only) {
-    grid.rect(gp=gpar(col='red'))
-    grid.text(dend$name)
-  } else {
-    grid.dendrogram(as.dendrogram(dend$clust), facing=dend$facing)
-  }
+  grid.dendrogram(as.dendrogram(dend$clust), facing=dend$facing)
   upViewport()
 }
 

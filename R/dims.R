@@ -149,7 +149,7 @@ TopLeftOf <- function(x=NULL,
   force(x); force(just); force(v.pad); force(h.pad);
   structure(function(group, nr=1, nc=1, hard.dm=NULL) {
     x <- ResolveToTopDim(x, group)
-    
+
     if (is.null(hard.dm)) {
       dm <- WDim()
       dm$width <- x$width/x$nc*nc
@@ -159,7 +159,7 @@ TopLeftOf <- function(x=NULL,
     } else {
       dm <- hard.dm
     }
-    
+
     if (length(grep('right', just))>0) {
       dm$left <- x$left - dm$width
     } else {
@@ -173,7 +173,7 @@ TopLeftOf <- function(x=NULL,
       dm$bottom <- x$bottom + x$height - dm$height
     }
     dm$bottom <- dm$bottom + v.pad
-    
+
     dm
   }, class='WDimGenerator')
 }
@@ -186,7 +186,7 @@ TopRightOf <- function(x=NULL,
   force(x); force(just); force(v.pad); force(h.pad);
   structure(function(group, nr=1, nc=1, hard.dm=NULL) {
     x <- ResolveToTopDim(x, group)
-    
+
     if (is.null(hard.dm)) {
       dm <- WDim()
       dm$width <- x$width/x$nc*nc
@@ -210,7 +210,7 @@ TopRightOf <- function(x=NULL,
       dm$bottom <- x$bottom + x$height - dm$height
     }
     dm$bottom <- dm$bottom + v.pad
-    
+
     dm
   }, class='WDimGenerator')
 }
@@ -223,7 +223,7 @@ BottomLeftOf <- function(x=NULL,
   force(x); force(just); force(v.pad); force(h.pad);
   structure(function(group, nr=1, nc=1, hard.dm=NULL) {
     x <- ResolveToTopDim(x, group)
-    
+
     if (is.null(hard.dm)) {
       dm <- WDim()
       dm$width <- x$width/x$nc*nc
@@ -247,7 +247,7 @@ BottomLeftOf <- function(x=NULL,
       dm$bottom <- x$bottom - dm$height
     }
     dm$bottom <- dm$bottom + v.pad
-    
+
     dm
   }, class='WDimGenerator')
 }
@@ -260,7 +260,7 @@ BottomRightOf <- function(x=NULL,
   force(x); force(just); force(v.pad); force(h.pad);
   structure(function(group, nr=1, nc=1, hard.dm=NULL) {
     x <- ResolveToTopDim(x, group)
-    
+
     if (is.null(hard.dm)) {
       dm <- WDim()
       dm$width <- x$width/x$nc*nc
@@ -284,7 +284,7 @@ BottomRightOf <- function(x=NULL,
       dm$bottom <- x$bottom - dm$height
     }
     dm$bottom <- dm$bottom + v.pad
-    
+
     dm
   }, class='WDimGenerator')
 }
