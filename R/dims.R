@@ -38,7 +38,7 @@ LengthToTop <- function(obj, root, .length) {
   if (is.null(parent)) {
     return(.length)
   }
-  .length <- .length * parent$dm$width
+  .length <- .length * max(obj$dm$width, obj$dm$height) # take max here, may be optimized.
   return(LengthToTop(parent, root, .length))
 }
 

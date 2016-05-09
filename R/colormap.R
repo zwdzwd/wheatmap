@@ -79,6 +79,8 @@ MapToContinuousColors <- function(data, cmp=CMPar(), given.cm=NULL) {
       ## use display.brewer.all for the brewer colors
       library(RColorBrewer)
       ## note that brewer.n cannot be >8 typically
+      if (brewer.n < 3)
+        brewer.n <- 3
       stop.points <- brewer.pal(brewer.n, brewer.name)
     } else {
       library(colorspace)
@@ -133,7 +135,11 @@ MapToDiscreteColors <- function(data, cmp=CMPar(), given.cm=NULL) {
   library(colorspace)
   alphabet <- as.character(unique(as.vector(data)))
   if (!is.null(brewer.name) && length(alphabet)<=brewer.pal.info[brewer.name,'maxcolors']) {
-    mapped.colors <- brewer.pal(length(alphabet), brewer.name)
+    ## use grey scale for binary and unary data
+    if (length(alphabet)<3)
+      mapped.colors <- c('#C0C0C0','#808080')[1:length(alphabet)]
+    else
+      mapped.colors <- brewer.pal(length(alphabet), brewer.name)
   } else {
     mapped.colors <- get(colorspace.name)(length(alphabet))
   }

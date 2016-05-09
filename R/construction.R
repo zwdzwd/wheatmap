@@ -2,6 +2,11 @@
 #' @export
 `+.WGroup` <- function(group, p) {
 
+  if ('WCustomize' %in% class(p)) {
+    group <- p(group)
+    return (group)
+  }
+  
   ## first plotting object
   if (!('WGroup' %in% class(group))) {
     group <- Resolve(group, NULL)
@@ -15,6 +20,9 @@
 
 #' @export
 `+.WHeatmap` <- `+.WGroup`
+
+#' @export
+`+.WCustomize` <- `+.WGroup`
 
 #' @export
 `+.WGenerator` <- `+.WGroup`

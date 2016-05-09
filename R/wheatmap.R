@@ -56,7 +56,7 @@ WHeatmap <- function(data=NULL, dm=NULL, name='', continuous=NULL,
   if (is.null(continuous)) {
     if (!is.null(cm))
       hm$continuous <- cm$continuous
-    else if (is.numeric(data) && length(unique(data)) < 8)
+    else if (!is.numeric(data) || length(unique(data)) < 5)
       hm$continuous <- FALSE
     else
       hm$continuous <- TRUE

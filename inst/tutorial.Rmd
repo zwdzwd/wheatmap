@@ -96,8 +96,6 @@ a
 
 We then add another matrix that span two objects under c4. And a vertial 2-column heatmap on the left that span 2 elements.
 ```{r}
-load_all('~/tools/wheatmap/wheatmap/')
-
 a <- a + WHeatmap(
   matrix(rep(c(8:1,1:8),4),nrow=4), 
   Beneath('c4', h.aln=WColumnBind('h1','c3')), 'h3')
@@ -141,7 +139,6 @@ Each object has members with unique names. One can specify a name or have wheatm
 Wheatmap automatically de-cluttered the labels when there are too many. Below is an example of too many labels:
 
 ```{r}
-load_all('~/tools/wheatmap/wheatmap/')
 m <- matrix((1:1000)/1000, nrow=100)
 rownames(m) <- paste0('row', 1:100)
 WHeatmap(m, yticklabels = TRUE) + WLegendV(NULL, RightOf(), height=0.5)
@@ -160,7 +157,15 @@ WHeatmap(cc$mat, name='h1',
 The **LeftOf**, **TopOf**, **RightOf** and **Beneath** are for placing new object by anchoring to the edge of existing object.
 
 ```{r}
-WHeatmap(matrix(1:1)) + WHeatmap(matrix(1:2), RightOf()) + WHeatmap(matrix(1:3), RightOf())
+WHeatmap(matrix(1:1)) +
+  WHeatmap(matrix(1:2), RightOf()) +
+  WHeatmap(matrix(1:3), RightOf()) + 
+  WLegendV(NULL, BottomRightOf(h.pad=0.1), label.fontsize = 20, width=0.2, yticklabel.pad=0.05)
+```
+
+and the layout looks like
+```{r}
+
 ```
 
 ## Anchor by corner

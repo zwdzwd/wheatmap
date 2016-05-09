@@ -1,5 +1,5 @@
 #' Convert from absolute coordinates to affine coordinates
-#' 
+#'
 #' @param dm dimension on the same coordinate system
 #' as the affine system (absolute coordinates)
 #' @param dm.sys dimension of the affine system
@@ -14,7 +14,7 @@ ToAffine <- function(dm, dm.sys) {
 }
 
 #' Convert from affine coordinates to absolute coordinates
-#' 
+#'
 #' @param dm.affine dimension on affine coordinates (relative coordinates)
 #' @param dm.sys dimension of the affine system
 #' @return dimension on the same coordinate system
@@ -38,7 +38,7 @@ FromAffine <- function(dm.affine, dm.sys) {
 #' @param nc number of columns
 #' @return an object of class WGroup
 #' @export
-WGroup <- function(..., name='', group.dm=WDim(), affine=FALSE, nr=NULL, nc=NULL) {
+WGroup <- function(..., name='', group.dm=WDim(), mar=WMar(), affine=FALSE, nr=NULL, nc=NULL) {
   ## row and column.split must be a set separately ??
   objs <- list(...)
 
@@ -69,6 +69,7 @@ WGroup <- function(..., name='', group.dm=WDim(), affine=FALSE, nr=NULL, nc=NULL
   group.obj <- structure(list(
     children=objs,
     name=name,
+    mar=mar,
     dm=group.dm), class='WGroup')
 
   ## assign names if missing
@@ -270,18 +271,15 @@ ly <- function(x) print(x, layout.only=TRUE)
 #' Scale group to incorporate text on margins
 #' @param group.obj group object that needs to be scaled
 #' @return scaled group obj
-ScaleGroup <- function(group.obj, mar=c(0.03,0.03,0.03,0.03)) {
+ScaleGroup <- function(group.obj) {
 
-  mar.bottom = mar[1]
-  mar.left = mar[2]
-  mar.top = mar[3]
-  mar.right = mar[4]
+  mar <- group.obj$mar
 
   dmb <- CalcTextBounding(group.obj)
-  dmb$left <- dmb$left - dmb$width*mar.left
-  dmb$bottom <- dmb$bottom - dmb$height*mar.bottom
-  dmb$width <- dmb$width*(1+mar.left+mar.right)
-  dmb$height <- dmb$height*(1+mar.bottom+mar.top)
+  dmb$left <- dmb$left - dmb$width*mar$left
+  dmb$bottom <- dmb$bottom - dmb$height*mar$bottom
+  dmb$width <- dmb$width*(1+mar$left+mar$right)
+  dmb$height <- dmb$height*(1+mar$bottom+mar$top)
   group.dmb <- DimInPoints(group.obj$dm)
   group.obj$dm <- ToAffine(group.dmb, dmb)
   cex <- c(group.dmb$width / dmb$width,
@@ -307,11 +305,10 @@ ScaleGroup <- function(group.obj, mar=c(0.03,0.03,0.03,0.03)) {
 #' @param cex for scale fonts
 #' @import grid
 #' @export
-print.WGroup <- function(group, mar=c(0.03,0.03,0.03,0.03),
-                         stand.alone=TRUE, cex=1, layout.only=FALSE) {
+print.WGroup <- function(group, stand.alone=TRUE, cex=1, layout.only=FALSE) {
 
   if (stand.alone) {
-    res <- ScaleGroup(group, mar=mar)
+    res <- ScaleGroup(group)
     cex <- res$cex
     group <- res$group
     grid.newpage()
