@@ -1,4 +1,4 @@
-# Wheatmap
+# WHeatmap
 
 WHeatmap designs a set of languages and a layer system that allows arbitrary positioning of heatmaps programmatically.
 
