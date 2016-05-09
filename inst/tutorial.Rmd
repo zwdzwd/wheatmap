@@ -1,13 +1,11 @@
 ---
-title: "Tutorial of Wheatmap"
-output: 
-    pdf_document:
-        toc: true
+title: "Short introduction to WHeatmap"
+output:
+  html_document:
+    toc: yes
 ---
 
-This is a tutorial on the usage of wheatmap for generating complex heatmaps in a procedure way.
-
-A heatmap is easy to generate in R. There are many packages like heatmap2, heatmap3, heatmap.plus and ComplexHeatmaps. But many times, I found myself in a situation of plotting a set of heatmaps in a procedure way. And none-of the above packages are nimble enough to allow multiple heatmaps be positioned arbitrarily. So I wrote this package for that purpose.
+There are many packages that can generate heatmaps in R. WHeatmap designs a set of languages and a layer system that allows arbitrary positioning of heatmaps programmatically. This is a tutorial on the usage of wheatmap for generating complex heatmaps in a procedure way.
 
 ## Preparation
 
@@ -154,26 +152,25 @@ WHeatmap(cc$mat, name='h1',
 
 ## Anchor by edge
 
-The **LeftOf**, **TopOf**, **RightOf** and **Beneath** are for placing new object by anchoring to the edge of existing object.
+The **LeftOf**, **TopOf**, **RightOf** and **Beneath** are for placing a new object by anchoring to the edge of an existing object.
 
 ```{r}
 WHeatmap(matrix(1:1)) +
   WHeatmap(matrix(1:2), RightOf()) +
-  WHeatmap(matrix(1:3), RightOf()) + 
-  WLegendV(NULL, BottomRightOf(h.pad=0.1), label.fontsize = 20, width=0.2, yticklabel.pad=0.05)
-```
-
-and the layout looks like
-```{r}
-
+  WHeatmap(matrix(c('fred','frank','brad','frank','fred','frank'), ncol=2), RightOf()) + 
+  WLegendV(NULL, BottomRightOf(h.pad=0.1), label.fontsize = 20, yticklabel.pad=0.05) +
+  WCustomize(mar.right=0.1)
 ```
 
 ## Anchor by corner
 
-The **TopLeftOf** 
+The **BottomRightOf**, **BottomLeftOf**, **TopLeftOf** and **TopRightOf** are for placing a new object by anchoring to the corner of an existing object.
+
 ```{r}
-WHeatmap(matrix(1:9,nrow=3)) + 
+a <- WHeatmap(matrix(1:9,nrow=3)) + 
   WHeatmap(matrix(1:16,nrow=4), BottomRightOf(just='topleft')) + 
   WHeatmap(matrix(1:9,nrow=3), BottomLeftOf(just='topright')) + 
   WHeatmap(matrix(1:16,nrow=4), TopLeftOf(just='bottomright'))
+a
+ly(a)
 ```

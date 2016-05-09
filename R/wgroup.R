@@ -195,6 +195,12 @@ GroupAssignNames <- function(group.obj, n=1) {
   return(NULL)
 }
 
+#' Get an plotting object from a group's descendants
+#'
+#' @param x a WGroup object
+#' @param nm name
+#' @param force.unique assume the name is unique in the descendants and get one object instead of a list
+#' @return if `force.unique==FALSE` return a list. Otherwise, one plotting object.
 GroupDeepGet <- function(x, nm, force.unique=TRUE) {
   objs <- list()
   for (xx in x$children) {
@@ -291,8 +297,10 @@ ScaleGroup <- function(group.obj) {
 
 .print.layout <- function(x) {
   pad <- 0.01
-  pushViewport(viewport(x=unit(x$dm$left+x$dm$width*pad,'npc'), y=unit(x$dm$bottom+x$dm$height*pad,'npc'),
-                        width=unit(x$dm$width*(1-2*pad),'npc'), height=unit(x$dm$height*(1-2*pad),'npc'),
+  pushViewport(viewport(x=unit(x$dm$left+x$dm$width*pad,'npc'),
+                        y=unit(x$dm$bottom+x$dm$height*pad,'npc'),
+                        width=unit(x$dm$width*(1-2*pad),'npc'),
+                        height=unit(x$dm$height*(1-2*pad),'npc'),
                         just=c('left','bottom')))
   grid.rect(gp=gpar(col='red', lty='dashed', fill=NA))
   grid.text(x$name, gp=gpar(col='red'))

@@ -2,15 +2,15 @@
 #' @export
 `+.WGroup` <- function(group, p) {
 
-  if ('WCustomize' %in% class(p)) {
-    group <- p(group)
-    return (group)
-  }
-  
   ## first plotting object
   if (!('WGroup' %in% class(group))) {
     group <- Resolve(group, NULL)
     group <- WGroup(group)
+  }
+
+  if ('WCustomize' %in% class(p)) {
+    group <- p(group)
+    return (group)
   }
 
   p <- Resolve(p, group)

@@ -54,8 +54,10 @@ WLegendV <- function(x=NULL, dm=NULL, name='',
     else
       legend$yticklabels.n <- nr
     legend$yticklabel.fontsize <- label.fontsize
-    legend$yticklabel.side <- 'r'
-    legend$orientation <- 'v'
+    if (is.null(kargs$yticklabel.side))
+      legend$yticklabel.side <- 'r'
+    if (is.null(kargs$orientation))
+      legend$orientation <- 'v'
     class(legend) <- c('WLegendV', class(legend))
     legend
   }, class='WGenerator')
@@ -114,8 +116,10 @@ WLegendH <- function(x=NULL, dm=NULL, name='',
     else
       legend$xticklabels.n <- nc
     legend$xticklabel.fontsize <- label.fontsize
-    legend$xticklabel.side <- 'b'
-    legend$orientation <- 'h'
+    if (is.null(kargs$xticklabel.side))
+      legend$xticklabel.side <- 'b'
+    if (is.null(kargs$orientation))
+      legend$orientation <- 'h'
     class(legend) <- c('WLegendH', class(legend))
     legend
   }, class='WGenerator')

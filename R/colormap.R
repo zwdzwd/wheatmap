@@ -1,3 +1,10 @@
+## colorspace.name:
+## diverge_hcl, diverge_hsv, terrain_hcl,
+## heat_hcl, sequential_hcl and rainbow_hcl
+
+## brewer.name
+## see display.brewer.all() for the brewer colors
+
 #' Color Map Parameters
 #'
 #' Create color map parameters
@@ -15,9 +22,9 @@
 #' @return an object of class CMPar
 #' @export
 CMPar <- function(dmin = NULL, dmax = NULL, # color scale max and min
-                  brewer.name='Accent', brewer.n=3,
-                  colorspace.name='rainbow_hcl', colorspace.n=2,
-                  cmap='jet',
+                  brewer.name=NULL, brewer.n=3,
+                  colorspace.name=NULL, colorspace.n=2,
+                  cmap=NULL,
                   stop.points=NULL, # color names at stop points
                   grey.scale=FALSE) {
   cmp <- lapply(formals(), eval)
@@ -72,6 +79,11 @@ MapToContinuousColors <- function(data, cmp=CMPar(), given.cm=NULL) {
   }
 
   if (is.null(stop.points)) {
+    if (!is.null(cmap) &&
+        !is.null(brewer.name) &&
+        !is.null(colorspace.name)) {
+      cmap <- 'jet'
+    }
     if (!is.null(cmap)) {
       data(colormap)
       stop.points <- get(paste0(cmap,'.stops'))
@@ -134,12 +146,23 @@ MapToDiscreteColors <- function(data, cmp=CMPar(), given.cm=NULL) {
   library(RColorBrewer)
   library(colorspace)
   alphabet <- as.character(unique(as.vector(data)))
-  if (!is.null(brewer.name) && length(alphabet)<=brewer.pal.info[brewer.name,'maxcolors']) {
+  if (!is.null(cmap) &&
+      !is.null(brewer.name) &&
+      !is.null(colorspace.name)) {
+    brewer.name <- 'Accent'
+  }
+
+  if (!is.null(brewer.name) &&
+      length(alphabet)<=brewer.pal.info[brewer.name,'maxcolors']) {
     ## use grey scale for binary and unary data
     if (length(alphabet)<3)
       mapped.colors <- c('#C0C0C0','#808080')[1:length(alphabet)]
     else
       mapped.colors <- brewer.pal(length(alphabet), brewer.name)
+  } else if (!is.null(cmap)) {
+    data(colormap)
+    stop.points <- get(paste0(cmap,'.stops'))
+    mapped.colors <- colorRamp(stop.points, alpha=TRUE)(length(alphabet))
   } else {
     mapped.colors <- get(colorspace.name)(length(alphabet))
   }

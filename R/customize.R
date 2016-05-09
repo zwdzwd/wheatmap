@@ -1,3 +1,15 @@
+#' Customize an existing plot
+#'
+#' @param mar.left left margin [0.03]
+#' @param mar.right right margin [0.03]
+#' @param mar.bottom bottom margin [0.03]
+#' @param mar.top top margin [0.03]
+#' @return an object of class WCustomize
+#' @examples
+#' WHeatmap(matrix(c('fred','frank','brad',
+#'                 'frank','fred','frank'), ncol=2)) +
+#'   WLegendV(NULL, RightOf(), label.fontsize = 20) +
+#'   WCustomize(mar.right=0.1)
 #' @export
 WCustomize <- function(mar.left=NULL, mar.right=NULL, mar.top=NULL, mar.bottom=NULL) {
   wc <- list()
