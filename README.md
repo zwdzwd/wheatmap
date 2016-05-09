@@ -4,8 +4,11 @@ WHeatmap designs a set of languages and a layer system that allows arbitrary pos
 
 It makes plotting complex heatmaps using natural human language.
 
-For example,
-![This complex layout](inst/README.plot1.png) can be generated simply by
+For example, the following complex layout
+
+![This complex layout](inst/README.plot1.png) 
+
+can be generated simply by
 
 ```R
 WHeatmap(matrix(1:12,nrow=2), cmp=CMPar(brewer.name='Greens'), name='a') + 
