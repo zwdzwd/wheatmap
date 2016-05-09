@@ -121,11 +121,9 @@ a
 Let's add legend
 ```{r}
 a <- a + WLegendV('c1', BottomRightOf('h6.1.3', h.pad=0.01), 'l1')
-a.1 <- a + WLegendV('c2', TopOf('l1', pad = 0.1), 'l2')
-a.2 <- a.1 + WLegendV('c3', RightOf('l1', pad=0.1), n.text=3)
-a.2
-a.3 <- a.1 + WLegendV('c3', BottomRightOf('l1', just='bottomleft', h.pad=0.1), height=0.06, n.text = 10)
-a.3
+a <- a + WLegendV('c2', TopOf('l1', pad = 0.1), 'l2')
+a <- a + WLegendV('c3', RightOf('l1', pad=0.1), n.text=3)
+a
 ```
 
 ## Show layout and refer to objects
@@ -152,11 +150,25 @@ WHeatmap(m, yticklabels = TRUE) + WLegendV(NULL, RightOf(), height=0.5)
 ## Text and labels
 
 ```{r}
-WHeatmap(cc$mat, name='h1', yticklabels = TRUE, xticklabels = TRUE, xticklabel.side = 't', xticklabel.fontsize = 25, yticklabel.fontsize=20)
+WHeatmap(cc$mat, name='h1', 
+         yticklabels = TRUE, yticklabel.fontsize=20,
+         xticklabels = TRUE, xticklabel.side = 't', xticklabel.fontsize = 25)
 ```
 
-## Anchor to corner
+## Anchor by edge
+
+The **LeftOf**, **TopOf**, **RightOf** and **Beneath** are for placing new object by anchoring to the edge of existing object.
 
 ```{r}
-WHeatmap(matrix(1:9,nrow=3)) + WHeatmap(matrix(1:16,nrow=4), BottomRightOf(just='topleft')) + WHeatmap(matrix(1:9,nrow=3), BottomLeftOf(just='topright')) + WHeatmap(matrix(1:16,nrow=4), TopLeftOf(just='bottomright'))
+WHeatmap(matrix(1:1)) + WHeatmap(matrix(1:2), RightOf()) + WHeatmap(matrix(1:3), RightOf())
+```
+
+## Anchor by corner
+
+The **TopLeftOf** 
+```{r}
+WHeatmap(matrix(1:9,nrow=3)) + 
+  WHeatmap(matrix(1:16,nrow=4), BottomRightOf(just='topleft')) + 
+  WHeatmap(matrix(1:9,nrow=3), BottomLeftOf(just='topright')) + 
+  WHeatmap(matrix(1:16,nrow=4), TopLeftOf(just='bottomright'))
 ```
