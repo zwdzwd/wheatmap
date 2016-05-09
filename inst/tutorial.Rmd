@@ -30,15 +30,6 @@ row.data <- row.data[cc$row.clust$order]
 col.data <- col.data[cc$column.clust$order]
 ```
 
-```{r}
-a <- WHeatmap(cc$mat, name='h1')
-a <- a + WColorBarV(row.data, LeftOf('h1'), 'c1')
-a <- a + WColorBarH(col.data, TopOf('h1'), 'c2')
-a <- a + WDendrogram(cc$row.clust, LeftOf('c1'), facing='right') + WDendrogram(cc$column.clust, TopOf('c2'), facing='bottom')
-a
-
-```
-
 ## Final results
 
 The end result of our tutorial can be done by the "one"-liner
@@ -51,15 +42,15 @@ WHeatmap(cc$mat, name='h1') +
   WColorBarV(1:4, RightOf('h1'), 'c3', continuous=TRUE) +
   WHeatmap(m2, RightOf('c3'), 'h2') +
   WColorBarH(rep(c(1,2,3),each=4), 
-             Beneath(WGroupColumn('h1', 'c3', 'h2')), 'c4', 
+             Beneath(WColumnBind('h1', 'c3', 'h2')), 'c4', 
              cmp=CMPar(brewer.name='Set2'), continuous=FALSE) +
   WHeatmap(matrix(rep(c(8:1,1:8),4),nrow=4), 
-           Beneath('c4', h.aln=WGroupColumn('h1','c3')), 'h3') +
-  WHeatmap(matrix(rep(1:10),ncol=2),LeftOf(WGroupRow('c4.1.1','h3.1.1'))) +
+           Beneath('c4', h.aln=WColumnBind('h1','c3')), 'h3') +
+  WHeatmap(matrix(rep(1:10),ncol=2),LeftOf(WRowBind('c4.1.1','h3.1.1'))) +
   WHeatmap(matrix(1:4,nrow=2), RightOf('h3', h.scale='h2'), 'h4') +
   WHeatmap(matrix(1:24,nrow=3), Beneath('h3'), 'h5') +
   WHeatmap(matrix(24:1,nrow=2), 
-           Beneath('h5', h.aln=WGroupColumn('h1','c3','h2')), 'h6') +
+           Beneath('h5', h.aln=WColumnBind('h1','c3','h2')), 'h6') +
   WLegendV('c1', RightOf('h6.1.3'), 'l1') +
   WLegendV('c2', TopOf('l1', pad=0.1), 'l2') +
   WLegendV('c3', TopOf('l2', pad=0.1), n.text=3)

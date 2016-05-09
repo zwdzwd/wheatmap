@@ -63,7 +63,7 @@
 #' @return an object of class WLegend
 #' @export
 WLegendV <- function(x=NULL, dm=NULL, name='',
-                     n.stops=20, n.text=5, label.fontsize=16,
+                     n.stops=20, n.text=5, label.fontsize=12,
                      width=0.1, height=0.1, ...) {
 
   kargs <- list(...)
@@ -73,7 +73,8 @@ WLegendV <- function(x=NULL, dm=NULL, name='',
   force(n.stops); force(n.text); force(label.fontsize);
   structure(function(group) {
     if (is.null(x))
-      x <- group.children[[length(group$children)]]
+      x <- group$children[[length(group$children)]]$name
+    
     x <- Resolve(x, group)
     if (x$continuous) {
       d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)
@@ -117,15 +118,19 @@ WLegendV <- function(x=NULL, dm=NULL, name='',
 #' @return WLegendH
 #' @export
 WLegendH <- function(x=NULL, dm=NULL, name='',
-                     n.stops=20, n.text=5, label.fontsize=16,
+                     n.stops=20, n.text=5, label.fontsize=12,
                      width=0.1, height=0.1, ...) {
 
   kargs <- list(...)
   kargs$dm <- dm
   kargs$name <- name
+  
   force(x); force(kargs);
   force(n.stops); force(n.text); force(label.fontsize);
   structure(function(group) {
+    if (is.null(x))
+      x <- group$children[[length(group$children)]]$name
+
     x <- Resolve(x, group)
     if (x$continuous) {
       d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)

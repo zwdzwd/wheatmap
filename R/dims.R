@@ -148,6 +148,8 @@ TopLeftOf <- function(x=NULL,
   just <- match.arg(just)
   force(x); force(just); force(v.pad); force(h.pad);
   structure(function(group, nr=1, nc=1, hard.dm=NULL) {
+    if (is.null(x))
+      x <- group$children[[length(group$children)]]$name
     x <- ResolveToTopDim(x, group)
 
     if (is.null(hard.dm)) {
@@ -181,10 +183,12 @@ TopLeftOf <- function(x=NULL,
 TopRightOf <- function(x=NULL,
                       just=c('bottomleft','topleft','bottomright','topright'),
                       v.pad=0.0, h.pad=0.0) {
-
+  
   just <- match.arg(just)
   force(x); force(just); force(v.pad); force(h.pad);
   structure(function(group, nr=1, nc=1, hard.dm=NULL) {
+    if (is.null(x))
+      x <- group$children[[length(group$children)]]$name
     x <- ResolveToTopDim(x, group)
 
     if (is.null(hard.dm)) {
@@ -222,6 +226,8 @@ BottomLeftOf <- function(x=NULL,
   just <- match.arg(just)
   force(x); force(just); force(v.pad); force(h.pad);
   structure(function(group, nr=1, nc=1, hard.dm=NULL) {
+    if (is.null(x))
+      x <- group$children[[length(group$children)]]$name
     x <- ResolveToTopDim(x, group)
 
     if (is.null(hard.dm)) {
@@ -259,6 +265,8 @@ BottomRightOf <- function(x=NULL,
   just <- match.arg(just)
   force(x); force(just); force(v.pad); force(h.pad);
   structure(function(group, nr=1, nc=1, hard.dm=NULL) {
+    if (is.null(x))
+      x <- group$children[[length(group$children)]]$name
     x <- ResolveToTopDim(x, group)
 
     if (is.null(hard.dm)) {
@@ -310,7 +318,8 @@ TopOf <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02,
   force(v.scale.proportional)
   force(height); force(pad); force(min.ratio);
   structure(function(group, nr=1, nc=1, hard.dm=NULL) {
-
+    if (is.null(x))
+      x <- group$children[[length(group$children)]]$name
     x <- ResolveToTopDim(x, group)
     h.aln <- ResolveToTopDim(h.aln, group)
     v.scale <- ResolveToTopDim(v.scale, group)
@@ -378,7 +387,8 @@ Beneath <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02,
   force(v.scale.proportional)
   force(height); force(pad); force(min.ratio);
   structure(function(group, nr=1, nc=1, hard.dm=NULL) {
-
+    if (is.null(x))
+      x <- group$children[[length(group$children)]]$name
     x <- ResolveToTopDim(x, group)
     h.aln <- ResolveToTopDim(h.aln, group)
     v.scale <- ResolveToTopDim(v.scale, group)
@@ -438,7 +448,8 @@ LeftOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02,
   force(h.scale.proportional)
   force(width); force(pad); force(min.ratio);
   structure(function(group, nr=1, nc=1, hard.dm=NULL) {
-
+    if (is.null(x))
+      x <- group$children[[length(group$children)]]$name
     x <- ResolveToTopDim(x, group)
     v.aln <- ResolveToTopDim(v.aln, group)
     h.scale <- ResolveToTopDim(h.scale, group)
@@ -498,7 +509,8 @@ RightOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02,
   force(h.scale.proportional)
   force(width); force(pad); force(min.ratio);
   structure(function(group, nr=1, nc=1, hard.dm=NULL) {
-
+    if (is.null(x))
+      x <- group$children[[length(group$children)]]$name
     x <- ResolveToTopDim(x, group)
     v.aln <- ResolveToTopDim(v.aln, group)
     h.scale <- ResolveToTopDim(h.scale, group)
