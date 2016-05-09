@@ -44,7 +44,7 @@ WGroup <- function(..., name='', group.dm=WDim(), affine=FALSE, nr=NULL, nc=NULL
   if (!affine) {
     dms <- lapply(objs, function(o) o$dm)
     dm <- do.call(.DimGroup, dms) ## bounding box coordinates before scaling
-  
+
     if (is.null(nc))
       dm$nc <- max(sapply(objs, function(o) o$dm$nc))
     else
@@ -53,12 +53,12 @@ WGroup <- function(..., name='', group.dm=WDim(), affine=FALSE, nr=NULL, nc=NULL
       dm$nr <- max(sapply(objs, function(o) o$dm$nr))
     else
       dm$nr <- nr
-  
+
     objs <- lapply(objs, function(obj) {
       obj$dm <- ToAffine(obj$dm, dm)
       obj
     })
-    
+
     group.dm <- dm
   }
 
@@ -103,7 +103,7 @@ AddWGroup <- function(group.obj, new.obj) {
     obj$dm <- ToAffine(FromAffine(obj$dm, group.obj$dm), dm)
     obj
   })
-  
+
   if (new.obj$name %in% GroupNames(group.obj)) {
     message('New object name ', new.obj$name, ' conflicts with existing names. Abort.')
     stop()
@@ -279,6 +279,17 @@ ScaleGroup <- function(group.obj, mar=c(0.03,0.03,0.03,0.03)) {
   list(cex=cex, group=group.obj)
 }
 
+
+.print.layout <- function(x) {
+  pad <- 0.01
+  pushViewport(viewport(x=unit(x$dm$left+x$dm$width*pad,'npc'), y=unit(x$dm$bottom+x$dm$height*pad,'npc'),
+                        width=unit(x$dm$width*(1-2*pad),'npc'), height=unit(x$dm$height*(1-2*pad),'npc'),
+                        just=c('left','bottom')))
+  grid.rect(gp=gpar(col='red', lty='dashed', fill=NA))
+  grid.text(x$name, gp=gpar(col='red'))
+  return (upViewport())
+}
+
 #' Draw WGroup
 #'
 #' @param group plot to display
@@ -301,7 +312,8 @@ print.WGroup <- function(group, mar=c(0.03,0.03,0.03,0.03),
                         height=unit(group$dm$height,'npc'),
                         just=c('left','bottom')))
   if (layout.only) {
-    grid.rect(gp=gpar(col='green', lwd=5, alpha=0.6))
+    grid.rect(gp=gpar(col='green', lwd=5, alpha=0.6, fill=NULL))
+    grid.text(group$name, gp=gpar(col='green', alpha=1))
   }
   for (child in group$children) {
     print(child, stand.alone=FALSE, cex=cex, layout.only=layout.only)
