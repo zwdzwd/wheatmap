@@ -72,6 +72,8 @@ WLegendV <- function(x=NULL, dm=NULL, name='',
   force(x); force(kargs);
   force(n.stops); force(n.text); force(label.fontsize);
   structure(function(group) {
+    if (is.null(x))
+      x <- group.children[[length(group$children)]]
     x <- Resolve(x, group)
     if (x$continuous) {
       d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)
