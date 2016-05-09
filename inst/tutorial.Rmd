@@ -51,9 +51,10 @@ WHeatmap(cc$mat, name='h1') +
   WHeatmap(matrix(1:24,nrow=3), Beneath('h3'), 'h5') +
   WHeatmap(matrix(24:1,nrow=2), 
            Beneath('h5', h.aln=WColumnBind('h1','c3','h2')), 'h6') +
-  WLegendV('c1', RightOf('h6.1.3'), 'l1') +
-  WLegendV('c2', TopOf('l1', pad=0.1), 'l2') +
-  WLegendV('c3', TopOf('l2', pad=0.1), n.text=3)
+  WLegendV('c1', BottomRightOf('h6.1.3', h.pad=0.01), 'l1') +
+  WLegendV('c2', TopOf('l1', pad = 0.1), 'l2') +
+  WLegendV('c3', RightOf('l1', pad=0.1), n.text=3, label.fontsize = 10)
+
 ```
 
 ## Step by step construction
@@ -152,4 +153,10 @@ WHeatmap(m, yticklabels = TRUE) + WLegendV(NULL, RightOf(), height=0.5)
 
 ```{r}
 WHeatmap(cc$mat, name='h1', yticklabels = TRUE, xticklabels = TRUE, xticklabel.side = 't', xticklabel.fontsize = 25, yticklabel.fontsize=20)
+```
+
+## Anchor to corner
+
+```{r}
+WHeatmap(matrix(1:9,nrow=3)) + WHeatmap(matrix(1:16,nrow=4), BottomRightOf(just='topleft')) + WHeatmap(matrix(1:9,nrow=3), BottomLeftOf(just='topright')) + WHeatmap(matrix(1:16,nrow=4), TopLeftOf(just='bottomright'))
 ```

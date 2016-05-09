@@ -1,66 +1,19 @@
 
-## WLegendInferDim <- function(m, x, group, dm=NULL,
-##                             width=NULL, height=NULL, h.aln=NULL, v.aln=NULL) {
-
-##   nr = nrow(m)
-##   nc = ncol(m)
-##   ## recover to specified dim
-##   if (is.null(dm))
-##     dm <- Resolve(dm, nr, nc, group)
-
-
-##   dm <- WDim(0, 0, x$dm$width/x$dm$nc*nc, x$dm$height/x$dm$nr*nr)
-
-##   dm <- Resolve(dm, nr, nc, group)
-##   x <- ResolveToTopDim(x, group)
-##   h.aln <- ResolveToTopDim(h.aln, group)
-##   v.aln <- ResolveToTopDim(v.aln, group)
-
-##   ## specific to legend, we need to ensure
-##   ## the dimensions are not exotic
-##   if (nr==1) {
-##     if (is.null(height))
-##       dm$height <- x$height/x$nr
-##     else
-##       dm$height <- height
-##     if (is.null(width))
-##       dm$width <- 5*x$width/x$nc
-##     else
-##       dm$width <- width
-##   }
-
-##   if (nc==1) {
-##     if (is.null(width))
-##       dm$width <- x$width/x$nc
-##     else
-##       dm$width <- width
-##     if (is.null(height))
-##       dm$height <- 5*x$height/x$nr
-##     else
-##       dm$height <- height
-##   }
-
-##   if (!is.null(v.aln)) {
-##     dm$bottom <- v.aln$bottom
-##     dm$height <- v.aln$height
-##   }
-
-##   if (!is.null(h.aln)) {
-##     dm$left <- h.aln$left
-##     dm$width <- h.aln$width
-##   }
-##   dm
-## }
-
-
 #' WLegendV
 #'
 #' a vertical legend
 #'
-#' @param x a plotting object
-#' @param label.fontsize label fontsize
+#' @param x a name or a plotting object, if NULL use the last plotting object
+#' @param dm position
+#' @param name name of the plotted legend
+#' @param label.fontsize label font size
 #' @param n.stops number of stops in computing continuous legend
-#' @return an object of class WLegend
+#' @param n.text number of text labels in continuous legend
+#' @param width width of each unit in plotted legend
+#' @param height height of each unit in plotted legend
+#' @return an object of class WLegendV
+#' @examples
+#' WHeatmap(matrix(1:4,nrow=2))+WLegendV(NULL, RightOf())
 #' @export
 WLegendV <- function(x=NULL, dm=NULL, name='',
                      n.stops=20, n.text=5, label.fontsize=12,
@@ -91,6 +44,8 @@ WLegendV <- function(x=NULL, dm=NULL, name='',
     legend <- do.call(WHeatmap, kargs)(group)
     nr <- nrow(kargs$data)
     nc <- ncol(kargs$data)
+    ## when dm is from TopOf etc use nr and nc
+    ## when dm is from TopLeftOf etc use hard.dm
     legend$dm <- Resolve(dm, group, nr=nr, nc=nc,
                          hard.dm=WDim(0,0,width*nc,height*nr,nr=nr,nc=nc))
     legend$yticklabels <- TRUE
@@ -110,12 +65,17 @@ WLegendV <- function(x=NULL, dm=NULL, name='',
 #'
 #' a horizontal legend
 #'
-#' @param x a plotting object
-#' @param v.aln vertical alignment
-#' @param h.aln horizontal alignment
-#' @param label.fontsize label fontsize
+#' @param x a name or a plotting object, if NULL use the last plotting object
+#' @param dm position
+#' @param name name of the plotted legend
+#' @param label.fontsize label font size
 #' @param n.stops number of stops in computing continuous legend
-#' @return WLegendH
+#' @param n.text number of text labels in continuous legend
+#' @param width width of each unit in plotted legend
+#' @param height height of each unit in plotted legend
+#' @return an object of class WLegendH
+#' @examples
+#' WHeatmap(matrix(1:4,nrow=2))+WLegendH(NULL, Beneath())
 #' @export
 WLegendH <- function(x=NULL, dm=NULL, name='',
                      n.stops=20, n.text=5, label.fontsize=12,
@@ -124,13 +84,11 @@ WLegendH <- function(x=NULL, dm=NULL, name='',
   kargs <- list(...)
   kargs$dm <- dm
   kargs$name <- name
-  
   force(x); force(kargs);
   force(n.stops); force(n.text); force(label.fontsize);
   structure(function(group) {
     if (is.null(x))
       x <- group$children[[length(group$children)]]$name
-
     x <- Resolve(x, group)
     if (x$continuous) {
       d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)
@@ -142,7 +100,6 @@ WLegendH <- function(x=NULL, dm=NULL, name='',
       kargs$data <- matrix(names(d), dimnames=list(NULL, names(d)), nrow=1)
       kargs$continuous <- FALSE
     }
-
     kargs$cm <- x$cm
     legend <- do.call(WHeatmap, kargs)(group)
     nr <- nrow(kargs$data)

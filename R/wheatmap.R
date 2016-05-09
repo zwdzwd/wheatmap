@@ -180,11 +180,11 @@ CalcTextBounding.WHeatmap <- function(hm, group) {
   if (!is.null(hm$xticklabels)) {
     if (hm$xticklabel.side=='b') {
       bottom <- bottom - max(sapply(
-        rownames(hm$data), function(t) text.width(t, hm$xticklabel.fontsize))) -
+        colnames(hm$data), function(t) text.width(t, hm$xticklabel.fontsize))) -
         NPCToPoints(LengthToTop(hm, group, hm$xticklabel.pad))
     } else {
       top <- top + max(sapply(
-        rownames(hm$data), function(t) text.width(t, hm$xticklabel.fontsize))) +
+        colnames(hm$data), function(t) text.width(t, hm$xticklabel.fontsize))) +
         NPCToPoints(LengthToTop(hm, group, hm$xticklabel.pad))
     }
   }

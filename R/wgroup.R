@@ -1,7 +1,9 @@
-
-#' @param dm absolute coordinate
-#' @param dm.sys the affine system
-#' @return dm.affine on the affine coordiante
+#' Convert from absolute coordinates to affine coordinates
+#' 
+#' @param dm dimension on the same coordinate system
+#' as the affine system (absolute coordinates)
+#' @param dm.sys dimension of the affine system
+#' @return dimension on affine coordinates (relative coordinates)
 ToAffine <- function(dm, dm.sys) {
   dm.affine <- dm
   dm.affine$left <- (dm$left - dm.sys$left) / dm.sys$width
@@ -11,9 +13,11 @@ ToAffine <- function(dm, dm.sys) {
   dm.affine
 }
 
-#' @param obj object on affine coordinate
-#' @param dm.sys the affine system
-#' @return object on absolute coordinate
+#' Convert from affine coordinates to absolute coordinates
+#' 
+#' @param dm.affine dimension on affine coordinates (relative coordinates)
+#' @param dm.sys dimension of the affine system
+#' @return dimension on the same coordinate system
 FromAffine <- function(dm.affine, dm.sys) {
   dm <- dm.affine
   dm$left <- dm.sys$left + dm.affine$left * dm.sys$width
@@ -24,14 +28,14 @@ FromAffine <- function(dm.affine, dm.sys) {
   dm
 }
 
-#' Create a WGroup
+#' Construct a WGroup
 #'
-#' Children must be registered already
-#'
-#' @param dm dimension
+#' @param ... plotting objects to be grouped
+#' @param name name of the group
+#' @param group.dm group dimension
+#' @param affine whether the group members are on affine coordinates already
 #' @param nr number of rows
 #' @param nc number of columns
-#' @param affine member is on affine coordinate
 #' @return an object of class WGroup
 #' @export
 WGroup <- function(..., name='', group.dm=WDim(), affine=FALSE, nr=NULL, nc=NULL) {
@@ -80,6 +84,7 @@ WGroup <- function(..., name='', group.dm=WDim(), affine=FALSE, nr=NULL, nc=NULL
   group.obj
 }
 
+## calculate bounding box including texts
 CalcTextBounding.WGroup <- function(group.obj, top.group=NULL) {
   if (is.null(top.group)) top.group <- group.obj
   group.dmb <- DimInPoints(group.obj$dm)
@@ -90,7 +95,12 @@ CalcTextBounding.WGroup <- function(group.obj, top.group=NULL) {
   .DimGroup(dmb, group.dmb)
 }
 
-## new.obj should be registered already
+#' Add a plotting object to a group
+#'
+#' The object to be added are in the same coordinate system as the group.
+#' @param group.obj WGroup object to be added to
+#' @param new.obj plotting object to be added
+#' @return a WGroup object where new.obj is added.
 AddWGroup <- function(group.obj, new.obj) {
   dm <- .DimGroup(group.obj$dm, new.obj$dm)
   dm$nc <- max(group.obj$dm$nc, new.obj$dm$nc)
@@ -119,6 +129,7 @@ AddWGroup <- function(group.obj, new.obj) {
   group.obj
 }
 
+#' Check whether group names are unique
 GroupCheckNameUnique <- function(group.obj) {
   if (!('WGroup' %in% class(group.obj)))
     return(TRUE)
