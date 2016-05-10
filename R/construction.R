@@ -2,7 +2,7 @@
 #' merge plotting objects
 #' 
 #' @export
-`+.WGroup` <- function(group, p) {
+`+.WObject` <- function(group, p) {
 
   ## first plotting object
   if (!('WGroup' %in% class(group))) {
@@ -20,11 +20,11 @@
   group
 }
 
-#' @export
-`+.WHeatmap` <- `+.WGroup`
+## #' @export
+## `+.WHeatmap` <- `+.WGroup`
 
-#' @export
-`+.WCustomize` <- `+.WGroup`
+## #' @export
+## `+.WCustomize` <- `+.WGroup`
 
-#' @export
-`+.WGenerator` <- `+.WGroup`
+## #' @export
+## `+.WGenerator` <- `+.WGroup`

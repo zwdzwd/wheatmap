@@ -60,7 +60,7 @@ WLegendV <- function(x=NULL, dm=NULL, name='',
       legend$orientation <- 'v'
     class(legend) <- c('WLegendV', class(legend))
     legend
-  }, class='WGenerator')
+  }, class=c('WGenerator','WObject'))
 }
 
 #' WLegendH
@@ -122,5 +122,5 @@ WLegendH <- function(x=NULL, dm=NULL, name='',
       legend$orientation <- 'h'
     class(legend) <- c('WLegendH', class(legend))
     legend
-  }, class='WGenerator')
+  }, class=c('WGenerator','WObject'))
 }

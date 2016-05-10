@@ -30,7 +30,7 @@ WColumnBind <- function(..., nr=NULL, nc=NULL) {
 
     dm$column.split <- lapply(dms, function(.dm) ToAffine(.dm, dm))
     WObject(dm=dm)
-  }, class='WGenerator')
+  }, class=c('WGenerator','WObject'))
 }
 
 #' row bind non-overlapping objects
@@ -65,7 +65,7 @@ WRowBind <- function(..., nr=NULL, nc=NULL) {
 
     dm$row.split <- lapply(dms, function(.dm) ToAffine(.dm, dm))
     WObject(dm=dm)
-  }, class='WGenerator')
+  }, class=c('WGenerator','WObject'))
 }
 
 WObject <- function(dm=NULL, name='') {

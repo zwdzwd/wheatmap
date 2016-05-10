@@ -27,5 +27,5 @@ WCustomize <- function(mar.left=NULL, mar.right=NULL, mar.top=NULL, mar.bottom=N
     if (!is.null(wc$mar.bottom))
       group$mar$bottom <- wc$mar.bottom
     group
-  }, class = 'WCustomize')
+  }, class = c('WCustomize', 'WObject'))
 }

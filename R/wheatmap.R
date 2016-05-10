@@ -83,7 +83,7 @@ WHeatmap <- function(data=NULL, dm=NULL, name='', continuous=NULL,
   else
     hm$cm <- MapToDiscreteColors(hm$data, cmp=hm$cmp, given.cm=cm)
 
-  class(hm) <- 'WHeatmap'
+  class(hm) <- c('WHeatmap', 'WObject')
   if (!is.null(sub.name))
     class(hm) <- c(sub.name, class(hm))
 
@@ -95,7 +95,7 @@ WHeatmap <- function(data=NULL, dm=NULL, name='', continuous=NULL,
       return(SplitWHeatmap(hm, hm$dm, cm, group))
     }
     hm
-  }, class='WGenerator')
+  }, class=c('WGenerator', 'WObject'))
 }
 
 SplitWHeatmap <- function(hm, dm, cm, group) {

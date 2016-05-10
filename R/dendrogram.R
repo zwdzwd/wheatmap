@@ -16,12 +16,12 @@ WDendrogram <- function(clust=NULL, dm=WDim(0,0,1,1), name='', facing=c("bottom"
   invisible(lapply(names(as.list(match.call()))[-1], function (nm) {
     dd[[nm]] <<- get(nm)
   }))
-  class(dd) <- 'WDendrogram'
+  class(dd) <- c('WDendrogram', 'WObject')
   force(dd)
   structure(function(group) {
     dd$dm <- Resolve(dm,group) # nr=1 nc=1
     dd
-  }, class='WGenerator')
+  }, class=c('WGenerator', 'WObject'))
 }
 
 #' print a dendrogram

@@ -12,7 +12,7 @@ WColorBarV <- function(data, ...) {
     cb$orientation <- 'v'
     cb$cmp$cmap <- NULL
     cb
-  }, class='WGenerator')
+  }, class=c('WGenerator','WObject'))
 }
 
 #' WColorBarH
@@ -29,7 +29,7 @@ WColorBarH <- function(data, ...) {
     cb$orientation <- 'h'
     cb$cmp$cmap <- NULL
     cb
-  }, class='WGenerator')
+  }, class=c('WGenerator','WObject'))
 }
 
 

@@ -70,7 +70,7 @@ WGroup <- function(..., name='', group.dm=WDim(), mar=WMar(), affine=FALSE, nr=N
     children=objs,
     name=name,
     mar=mar,
-    dm=group.dm), class='WGroup')
+    dm=group.dm), class=c('WGroup', 'WObject'))
 
   ## assign names if missing
   missing.inds <- which(sapply(objs, function(obj) obj$name==''))

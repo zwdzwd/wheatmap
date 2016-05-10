@@ -13,3 +13,5 @@ Resolve <- function(x, ...) {
 CalcTextBounding <- function(x, ...) {
   UseMethod('CalcTextBounding', x)
 }
+
+
