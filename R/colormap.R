@@ -81,9 +81,9 @@ MapToContinuousColors <- function(data, cmp=CMPar(), given.cm=NULL) {
   }
 
   if (is.null(stop.points)) {
-    if (!is.null(cmap) &&
-        !is.null(brewer.name) &&
-        !is.null(colorspace.name)) {
+    if (is.null(cmap) &&
+        is.null(brewer.name) &&
+        is.null(colorspace.name)) {
       cmap <- 'jet'
     }
     if (!is.null(cmap)) {
@@ -148,9 +148,9 @@ MapToDiscreteColors <- function(data, cmp=CMPar(), given.cm=NULL) {
   library(RColorBrewer)
   library(colorspace)
   alphabet <- as.character(unique(as.vector(data)))
-  if (!is.null(cmap) &&
-      !is.null(brewer.name) &&
-      !is.null(colorspace.name)) {
+  if (is.null(cmap) &&
+      is.null(brewer.name) &&
+      is.null(colorspace.name)) {
     brewer.name <- 'Accent'
   }
 
