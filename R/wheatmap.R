@@ -43,7 +43,7 @@ WHeatmap <- function(data=NULL, dm=NULL, name='', continuous=NULL,
                      ## graph parameters
                      gp = NULL) {
 
-  ifnot('matrix' %in% class(data)) {
+  if(!('matrix' %in% class(data))) {
     data <- tryCatch({
       as.matrix(data)
     }, error = function(e) {
