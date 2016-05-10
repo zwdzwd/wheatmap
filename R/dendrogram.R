@@ -24,10 +24,13 @@ WDendrogram <- function(clust=NULL, dm=WDim(0,0,1,1), name='', facing=c("bottom"
   }, class='WGenerator')
 }
 
-#' WPlot
+#' print a dendrogram
 #'
-#' WPlot
-#'
+#' @param dend a dendrogram
+#' @param stand.alone whether the re-scale should occur when the plot is stand alone
+#' @param layout.only plot layout only
+#' @param cex factor to scale texts
+#' @return NULL
 #' @export
 print.WDendrogram <- function(dend, stand.alone=TRUE, layout.only=FALSE, cex=1) {
   if (layout.only)
@@ -42,11 +45,7 @@ print.WDendrogram <- function(dend, stand.alone=TRUE, layout.only=FALSE, cex=1) 
 #' @export
 plot.WDendrogram <- print.WDendrogram
 
-#' Calculate Text Ranges
-#'
-#' Calculate Text Ranges
-#'
-#' @export
+## Calculate Text Ranges
 CalcTextBounding.WDendrogram <- function(dd, group) {
   dm <- DimToTop(dd, group)
   dm$left <- NPCToPoints(dm$left)

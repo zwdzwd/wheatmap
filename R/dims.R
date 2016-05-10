@@ -33,6 +33,7 @@ Resolve.character <- function(x, group) {
   GroupNameGet(group, x)
 }
 
+## float length to top level
 LengthToTop <- function(obj, root, .length) {
   parent <- GetParentIn(obj, root)
   if (is.null(parent)) {
@@ -42,6 +43,7 @@ LengthToTop <- function(obj, root, .length) {
   return(LengthToTop(parent, root, .length))
 }
 
+## float dimension to top level
 DimToTop <- function(obj, root, dm=NULL) {
   if (is.null(dm)) {
     dm <- obj$dm
@@ -54,6 +56,7 @@ DimToTop <- function(obj, root, dm=NULL) {
   return(DimToTop(parent, root, dm))
 }
 
+## describe a dimension in points
 DimInPoints <- function(dm) {
   dm.new <- dm
   dm.new$left <- NPCToPoints(dm$left)
@@ -116,24 +119,6 @@ WDim <- function(left=0, bottom=0, width=1, height=1, nr=1, nc=1,
 }
 
 
-# .WResolveName <- function(nm, group) {
-#   if ('function' %in% class(nm)) {
-#     x <- nm(group)
-#     return(x)
-#   }
-#   if (is.character(nm)) {
-#     if (is.null(group)) {
-#       message('No group provided. This is a bug.')
-#       stop()
-#     }
-#     x <- group[nm]
-#     if (is.null(x))
-#       message('Name not found: ', x, '. Make sure objects are named.')
-#     return(x)
-#   }
-#   return(nm)
-# }
-
 ResolveToTopDim <- function(x, group) {
   if (is.null(x))
     return(NULL)
@@ -141,6 +126,15 @@ ResolveToTopDim <- function(x, group) {
     return(DimToTop(Resolve(x, group), group))
 }
 
+#' Top left of
+#'
+#' Place a new object to the top left corner of another.
+#' @param x target object, either a name, a object or NULL which refers to the last plotting object
+#' @param just the part from the new object that should be attached to from c(bottomright, topright, bottomleft, topleft)
+#' @param v.pad vertical translational padding [0.0]
+#' @param h.pad horizontal translational padding [0.0]
+#' @return a WDimGenerator
+#' @export
 TopLeftOf <- function(x=NULL,
                       just=c('bottomright','topright','bottomleft','topleft'),
                       v.pad=0.0, h.pad=0.0) {
@@ -180,6 +174,15 @@ TopLeftOf <- function(x=NULL,
   }, class='WDimGenerator')
 }
 
+#' Top right of
+#'
+#' Place a new object to the top right corner of another.
+#' @param x target object, either a name, a object or NULL which refers to the last plotting object
+#' @param just the part from the new object that should be attached to from c(bottomright, topright, bottomleft, topleft)
+#' @param v.pad vertical translational padding [0.0]
+#' @param h.pad horizontal translational padding [0.0]
+#' @return a WDimGenerator
+#' @export
 TopRightOf <- function(x=NULL,
                       just=c('bottomleft','topleft','bottomright','topright'),
                       v.pad=0.0, h.pad=0.0) {
@@ -219,6 +222,15 @@ TopRightOf <- function(x=NULL,
   }, class='WDimGenerator')
 }
 
+#' Bottom left of
+#'
+#' Place a new object to the bottom left corner of another.
+#' @param x target object, either a name, a object or NULL which refers to the last plotting object
+#' @param just the part from the new object that should be attached to from c(bottomright, topright, bottomleft, topleft)
+#' @param v.pad vertical translational padding [0.0]
+#' @param h.pad horizontal translational padding [0.0]
+#' @return a WDimGenerator
+#' @export
 BottomLeftOf <- function(x=NULL,
                          just=c('bottomright','topright','bottomleft','topleft'),
                          v.pad=0.0, h.pad=0.0) {
@@ -258,6 +270,15 @@ BottomLeftOf <- function(x=NULL,
   }, class='WDimGenerator')
 }
 
+#' Bottom right of
+#'
+#' Place a new object to the bottom right corner of another.
+#' @param x target object, either a name, a object or NULL which refers to the last plotting object
+#' @param just the part from the new object that should be attached to from c(bottomright, topright, bottomleft, topleft)
+#' @param v.pad vertical translational padding [0.0]
+#' @param h.pad horizontal translational padding [0.0]
+#' @return a WDimGenerator
+#' @export
 BottomRightOf <- function(x=NULL,
                           just=c('bottomleft','topleft','bottomright','topright'),
                           v.pad=0.0, h.pad=0.0) {

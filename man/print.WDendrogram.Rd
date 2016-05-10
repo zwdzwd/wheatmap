@@ -2,12 +2,21 @@
 % Please edit documentation in R/dendrogram.R
 \name{print.WDendrogram}
 \alias{print.WDendrogram}
-\title{WPlot}
+\title{print a dendrogram}
 \usage{
 \method{print}{WDendrogram}(dend, stand.alone = TRUE, layout.only = FALSE,
   cex = 1)
 }
+\arguments{
+\item{dend}{a dendrogram}
+
+\item{stand.alone}{whether the re-scale should occur when the plot is stand alone}
+
+\item{layout.only}{plot layout only}
+
+\item{cex}{factor to scale texts}
+}
 \description{
-WPlot
+print a dendrogram
 }
 

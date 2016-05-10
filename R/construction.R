@@ -1,4 +1,6 @@
 
+#' merge plotting objects
+#' 
 #' @export
 `+.WGroup` <- function(group, p) {
 
