@@ -64,6 +64,8 @@ ColorMap <- function(continuous=TRUE,
 #'
 #' @param data numeric vector
 #' @param cmp an color map parameter object of class CMPar
+#' @import colorspace
+#' @import RColorBrewer
 #' @return an object of ColorMap
 #' @export
 MapToContinuousColors <- function(data, cmp=CMPar(), given.cm=NULL) {

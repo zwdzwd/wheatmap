@@ -3,17 +3,18 @@
 #' Create a heatmap
 #'
 #' @param data data matrix
-#' @param dm plotting dimension c(left, bottom, width, height)
-#' @param continuous whether the data is on continuous scale
-#' @param cmp an object of CMPar class
+#' @param dm plotting dimension (a WDim or a WDimGenerator object)
 #' @param name name of the plot
+#' @param continuous whether the data should be treated as continuous or discrete
+#' @param cmp a CMPar object, for tunning color mapping parameters
+#' @param cm a given color map
+#' @param xticklabels xtick label
+#' @param xticklabels.n number of xtick labels to plot (resample for aethetics by default)
 #' @return one or a list of heatmaps (depends on whether dimension is split)
 #' @export
 WHeatmap <- function(data=NULL, dm=NULL, name='', continuous=NULL,
                      cmp = CMPar(), # colormapping parameters
                      cm = NULL,
-
-                     parent=NULL,
 
                      ## titles
                      title = NULL, title.fontsize=12, title.pad=0.005, title.side='l',

@@ -29,4 +29,6 @@ The layout looks like
 
 ![this](inst/README.plot2.png)
 
+In order to cross-refer panels in the plot, one has to use a unique name. This name can be given through the `name=` option and user has to make sure the uniqueness of the names from existing objects in the plot. If not specified, wheatmap can generate a unique name and that name is visible from `ly()` function. A special `NULL` tag can be used to refer to the last plotted object.
+
 More of this package can be known from [here](https://github.com/zwdzwd/wheatmap/blob/master/inst/tutorial.pdf).
