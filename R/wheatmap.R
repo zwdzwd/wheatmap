@@ -43,7 +43,15 @@ WHeatmap <- function(data=NULL, dm=NULL, name='', continuous=NULL,
                      ## graph parameters
                      gp = NULL) {
 
-  stopifnot('matrix' %in% class(data))
+  ifnot('matrix' %in% class(data)) {
+    data <- tryCatch({
+      as.matrix(data)
+    }, error = function(e) {
+      message('data argument must be matrix-like. Abort.')
+      stop()
+    })
+  }
+    
 
   hm <- lapply(formals(), eval)
   invisible(lapply(names(as.list(match.call()))[-1], function (nm) {
