@@ -4,6 +4,14 @@ WHeatmap designs a set of languages and a layer system that allows arbitrary pos
 
 It makes plotting complex heatmaps using plain English such as **TopOf**, **RightOf** and **BottomLeftOf** etc.
 
+To install from github using devtools,
+```R
+library(devtools)
+install_github('zwdzwd/wheatmap')
+
+library(wheatmap)
+```
+
 For example, the following complex layout
 
 ![This complex layout](inst/README.plot1.png) 
