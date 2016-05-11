@@ -14,6 +14,8 @@ WGroup(..., name = "", group.dm = WDim(), mar = WMar(), affine = FALSE,
 
 \item{group.dm}{group dimension}
 
+\item{mar}{a WMar object}
+
 \item{affine}{whether the group members are on affine coordinates already}
 
 \item{nr}{number of rows}
@@ -21,7 +23,7 @@ WGroup(..., name = "", group.dm = WDim(), mar = WMar(), affine = FALSE,
 \item{nc}{number of columns}
 }
 \value{
-an object of class WGroup
+a WGroup object
 }
 \description{
 Construct a WGroup

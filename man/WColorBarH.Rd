@@ -8,6 +8,8 @@ WColorBarH(data, ...)
 }
 \arguments{
 \item{data}{numeric vector}
+
+\item{...}{additional options to WHeatmap}
 }
 \value{
 an object of class WColorBarH

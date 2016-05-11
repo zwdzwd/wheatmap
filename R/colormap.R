@@ -9,7 +9,6 @@
 #'
 #' Create color map parameters
 #'
-#' @param cm existing color maps
 #' @param dmin minimum for continuous color map
 #' @param dmax maximum for continuous color map
 #' @param brewer.name palette name for RColorbrewer
@@ -38,7 +37,7 @@ CMPar <- function(dmin = NULL, dmax = NULL, # color scale max and min
 #'
 #' Create color maps
 #'
-#' @param discrete whether colormap is discrete
+#' @param continuous whether colormap is continuous
 #' @param colors colors for each data point
 #' @param dmin miminum in continuous color map
 #' @param dmax maximum in continuous color map
@@ -60,18 +59,14 @@ ColorMap <- function(continuous=TRUE,
 
 #' map data to continuous color
 #'
-#' map data to continuous color
-#'
 #' @param data numeric vector
 #' @param cmp an color map parameter object of class CMPar
+#' @param given.cm given colormap
 #' @import colorspace
 #' @import RColorBrewer
 #' @return an object of ColorMap
 #' @export
 MapToContinuousColors <- function(data, cmp=CMPar(), given.cm=NULL) {
-
-  attach(cmp)
-  on.exit(detach(cmp))
 
   if (!is.null(given.cm)) {
     given.cm$colors <- apply(
@@ -80,39 +75,38 @@ MapToContinuousColors <- function(data, cmp=CMPar(), given.cm=NULL) {
     return(given.cm)
   }
 
-  if (is.null(stop.points)) {
-    if (is.null(cmap) &&
-        is.null(brewer.name) &&
-        is.null(colorspace.name)) {
-      cmap <- 'jet'
+  if (is.null(cmp$stop.points)) {
+    if (is.null(cmp$cmap) &&
+        is.null(cmp$brewer.name) &&
+        is.null(cmp$colorspace.name)) {
+      cmp$cmap <- 'jet'
     }
-    if (!is.null(cmap)) {
-      data(colormap)
-      stop.points <- get(paste0(cmap,'.stops'))
-    } else if (!is.null(brewer.name)) {
+    if (!is.null(cmp$cmap)) {
+      ## get(cmp$cmap)
+      ## data(cmp$cmap)
+      cmp$stop.points <- get(paste0(cmp$cmap,'.stops'))
+    } else if (!is.null(cmp$brewer.name)) {
       ## use display.brewer.all for the brewer colors
-      library(RColorBrewer)
       ## note that brewer.n cannot be >8 typically
-      if (brewer.n < 3)
-        brewer.n <- 3
-      stop.points <- brewer.pal(brewer.n, brewer.name)
+      if (cmp$brewer.n < 3)
+        cmp$brewer.n <- 3
+      cmp$stop.points <- brewer.pal(cmp$brewer.n, cmp$brewer.name)
     } else {
-      library(colorspace)
       ## colorspace.name can be
       ## diverge_hcl, diverge_hsv, terrain_hcl, heat_hcl, sequential_hcl and rainbow_hcl
       ## colorspace.n can be very large
-      stop.points <- get(colorspace.name)(colorspace.n)
+      cmp$stop.points <- get(cmp$colorspace.name)(cmp$colorspace.n)
     }
   }
 
   ## cap data
-  if (!is.null(dmax))
-    data[data>=dmax] <- dmax
-  if (!is.null(dmin))
-    data[data<=dmin] <- dmin
+  if (!is.null(cmp$dmax))
+    data[data>=cmp$dmax] <- cmp$dmax
+  if (!is.null(cmp$dmin))
+    data[data<=cmp$dmin] <- cmp$dmin
 
-  .dmax <- max(dmax, data)
-  .dmin <- min(dmin, data)
+  .dmax <- max(cmp$dmax, data)
+  .dmin <- min(cmp$dmin, data)
   if (.dmax==.dmin) # when range==0
     .dmax <- .dmax+1
   data <- (data - .dmin) / (.dmax-.dmin)
@@ -120,53 +114,48 @@ MapToContinuousColors <- function(data, cmp=CMPar(), given.cm=NULL) {
   cm <- ColorMap(
     dmin = .dmin, dmax = .dmax,
     scaler = function(x) {(x-.dmin)/(.dmax-.dmin)},
-    mapper = colorRamp(stop.points, alpha=TRUE))
+    mapper = colorRamp(cmp$stop.points, alpha=TRUE))
   cm$colors = apply(cm$mapper(data), 1, function(x) do.call(rgb, c(as.list(x), maxColorValue=255)))
   cm
 }
 
 #' map data to discrete color
 #'
-#' map data to discrete color
-#'
 #' @param data numeric vector
 #' @param cmp an color map parameter object of class CMPar
+#' @param given.cm given color map
 #' @return an object of ColorMap
 #' @import RColorBrewer
 #' @import colorspace
 #' @export
 MapToDiscreteColors <- function(data, cmp=CMPar(), given.cm=NULL) {
 
-  attach(cmp)
-  on.exit(detach(cmp))
-
   if (!is.null(given.cm)) {
     given.cm$colors <- given.cm$mapper[as.character(data)]
     return(given.cm)
   }
 
-  library(RColorBrewer)
-  library(colorspace)
   alphabet <- as.character(unique(as.vector(data)))
-  if (is.null(cmap) &&
-      is.null(brewer.name) &&
-      is.null(colorspace.name)) {
-    brewer.name <- 'Accent'
+  if (is.null(cmp$cmap) &&
+      is.null(cmp$brewer.name) &&
+      is.null(cmp$colorspace.name)) {
+    cmp$brewer.name <- 'Accent'
   }
 
-  if (!is.null(brewer.name) &&
-      length(alphabet)<=brewer.pal.info[brewer.name,'maxcolors']) {
+  if (!is.null(cmp$brewer.name) &&
+      length(alphabet)<=brewer.pal.info[cmp$brewer.name,'maxcolors']) {
     ## use grey scale for binary and unary data
     if (length(alphabet)<3)
       mapped.colors <- c('#C0C0C0','#808080')[1:length(alphabet)]
     else
-      mapped.colors <- brewer.pal(length(alphabet), brewer.name)
-  } else if (!is.null(cmap)) {
-    data(colormap)
-    stop.points <- get(paste0(cmap,'.stops'))
+      mapped.colors <- brewer.pal(length(alphabet), cmp$brewer.name)
+  } else if (!is.null(cmp$cmap)) {
+    ## get(cmp$cmap)
+    ## data(cmp$cmap)
+    stop.points <- get(paste0(cmp$cmap,'.stops'))
     mapped.colors <- colorRamp(stop.points, alpha=TRUE)(length(alphabet))
   } else {
-    mapped.colors <- get(colorspace.name)(length(alphabet))
+    mapped.colors <- get(cmp$colorspace.name)(length(alphabet))
   }
 
   cm <- ColorMap(

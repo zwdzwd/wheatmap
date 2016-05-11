@@ -10,6 +10,8 @@ MapToContinuousColors(data, cmp = CMPar(), given.cm = NULL)
 \item{data}{numeric vector}
 
 \item{cmp}{an color map parameter object of class CMPar}
+
+\item{given.cm}{given colormap}
 }
 \value{
 an object of ColorMap

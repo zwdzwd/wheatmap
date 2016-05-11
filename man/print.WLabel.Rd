@@ -5,7 +5,18 @@
 \title{print WLabel}
 \usage{
 \method{print}{WLabel}(x, cex = 1, layout.only = FALSE,
-  stand.alone = TRUE)
+  stand.alone = TRUE, ...)
+}
+\arguments{
+\item{x}{a WLabel object}
+
+\item{cex}{factor to scale text}
+
+\item{layout.only}{plot layout only}
+
+\item{stand.alone}{plot label stand alone}
+
+\item{...}{additional options}
 }
 \description{
 print WLabel

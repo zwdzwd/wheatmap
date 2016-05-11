@@ -1,5 +1,6 @@
 #' Get dimensions
-#'
+#' 
+#' @param x WDim object or a plotting object
 #' @export
 getdim <- function(x) {
   if('WDim' %in% class(x))

@@ -4,17 +4,19 @@
 \alias{print.WDendrogram}
 \title{print a dendrogram}
 \usage{
-\method{print}{WDendrogram}(dend, stand.alone = TRUE, layout.only = FALSE,
-  cex = 1)
+\method{print}{WDendrogram}(x, stand.alone = TRUE, layout.only = FALSE,
+  cex = 1, ...)
 }
 \arguments{
-\item{dend}{a dendrogram}
+\item{x}{a dendrogram}
 
-\item{stand.alone}{whether the re-scale should occur when the plot is stand alone}
+\item{stand.alone}{plot is stand alone}
 
 \item{layout.only}{plot layout only}
 
-\item{cex}{factor to scale texts}
+\item{cex}{factor to scaling texts}
+
+\item{...}{additional options (ignored)}
 }
 \description{
 print a dendrogram

@@ -68,6 +68,3 @@ WRowBind <- function(..., nr=NULL, nc=NULL) {
   }, class=c('WGenerator','WObject'))
 }
 
-WObject <- function(dm=NULL, name='') {
-  structure(list(dm=dm, name=name), class='WObject')
-}

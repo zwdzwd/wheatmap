@@ -8,6 +8,8 @@ CalcTextBounding(x, ...)
 }
 \arguments{
 \item{x}{object}
+
+\item{...}{extra options}
 }
 \description{
 Calculate bounding box including texts.

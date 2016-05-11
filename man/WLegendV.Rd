@@ -23,6 +23,8 @@ WLegendV(x = NULL, dm = NULL, name = "", n.stops = 20, n.text = 5,
 \item{width}{width of each unit in plotted legend}
 
 \item{height}{height of each unit in plotted legend}
+
+\item{...}{additional options to WHeatmap}
 }
 \value{
 an object of class WLegendV

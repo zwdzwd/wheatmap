@@ -1,6 +1,5 @@
 #' @import grid
 NPCToPoints <- function(npc) {
-  library(grid)
   as.numeric(convertUnit(unit(npc,'npc'),'points'))
 }
 
@@ -12,20 +11,21 @@ DimNPCToPoints <- function(dm) {
   dm
 }
 
-#' text width and scale to specified font size
-#' @import grid
+## text width and scale to specified font size
+##
+## @param txt text string
+## @param fontsize font size
+## @import grid
 text.width <- function(txt, fontsize=NULL) {
-  library(grid)
   w <- convertUnit(stringWidth(paste0(txt)),'points', valueOnly=TRUE)
   if (!is.null(fontsize)) ## scale to the given font size
     w <- w / get.gpar('fontsize')$fontsize * fontsize * 1.1 # a magic number that just works 
   w
 }
 
-#' text height and scale to specified font size
-#' @import grid
+## text height and scale to specified font size
+## @import grid
 text.height <- function(txt, fontsize=NULL) {
-  library(grid)
   w <- convertUnit(stringHeight(txt),'points', valueOnly=TRUE)
   if (!is.null(fontsize)) ## scale to the given font size
     w <- w / get.gpar('fontsize')$fontsize * fontsize * 1.1 # a magic number that just works

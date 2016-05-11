@@ -4,13 +4,19 @@
 \alias{print.WGroup}
 \title{Draw WGroup}
 \usage{
-\method{print}{WGroup}(group, stand.alone = TRUE, cex = 1,
-  layout.only = FALSE)
+\method{print}{WGroup}(x, stand.alone = TRUE, cex = 1,
+  layout.only = FALSE, ...)
 }
 \arguments{
-\item{group}{plot to display}
+\item{x}{a WGroup}
 
-\item{cex}{for scale fonts}
+\item{stand.alone}{to plot stand alone}
+
+\item{cex}{factor for scaling fonts}
+
+\item{layout.only}{to plot layout only}
+
+\item{...}{additional options}
 }
 \description{
 Draw WGroup

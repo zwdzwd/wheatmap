@@ -3,6 +3,7 @@
 #' a vertical color bar
 #'
 #' @param data numeric vector
+#' @param ... additional options to WHeatmap
 #' @return an object of class WColorBarV
 #' @export
 WColorBarV <- function(data, ...) {
@@ -20,6 +21,7 @@ WColorBarV <- function(data, ...) {
 #' a horizontal color bar
 #'
 #' @param data numeric vector
+#' @param ... additional options to WHeatmap
 #' @return an object of class WColorBarH
 #' @export
 WColorBarH <- function(data, ...) {

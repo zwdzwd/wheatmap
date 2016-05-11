@@ -1,4 +1,12 @@
 #' construct a WLabel
+#'
+#' @param x text to be labeled
+#' @param dm position
+#' @param fontsize font size
+#' @param name name
+#' @param rot rotation
+#' @param color color of the label
+#' @return a WLabel object
 #' 
 #' @export
 WLabel <- function(x=NULL, dm=WDim(), name='', fontsize=12, rot=0, color='black') {
@@ -16,13 +24,19 @@ WLabel <- function(x=NULL, dm=WDim(), name='', fontsize=12, rot=0, color='black'
 }
 
 #' print WLabel
-#' 
+#'
+#' @param x a WLabel object
+#' @param cex factor to scale text
+#' @param layout.only plot layout only
+#' @param stand.alone plot label stand alone
+#' @param ... additional options
+#' @import grid
+#' @return NULL
 #' @export
-print.WLabel <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE) {
+print.WLabel <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE, ...) {
 
-  library(grid)
   if (stand.alone) {
-    group <- WGroup(hm)
+    group <- WGroup(x)
     print(group)
     return(group)
   }
@@ -31,7 +45,7 @@ print.WLabel <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE) {
     text.just <- rotate.just(x$dm$text.just, x$rot)
     grid.text(
       x, x=unit(x$dm$text.x,'npc'), y=unit(x$dm$text.y, 'npc'),
-      just=text.just, rot=x$rot, gp=gpar(fontsize=x$fontsize, col=x$color))
+      just=text.just, rot=x$rot, gp=gpar(fontsize=x$fontsize*cex, col=x$color))
   }
 }
 

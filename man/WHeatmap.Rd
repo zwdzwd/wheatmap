@@ -5,12 +5,11 @@
 \title{WHeatmap object}
 \usage{
 WHeatmap(data = NULL, dm = NULL, name = "", continuous = NULL,
-  cmp = CMPar(), cm = NULL, title = NULL, title.fontsize = 12,
-  title.pad = 0.005, title.side = "l", xticklabels = NULL,
-  xticklabels.n = NULL, xticklabel.side = "b", xticklabel.fontsize = 12,
-  xticklabel.rotat = 90, xticklabel.pad = 0.005, yticklabels = NULL,
-  yticklabels.n = NULL, yticklabel.side = "l", yticklabel.fontsize = 12,
-  yticklabel.pad = 0.005, alpha = 1, sub.name = NULL, gp = NULL)
+  cmp = CMPar(), cm = NULL, xticklabels = NULL, xticklabels.n = NULL,
+  xticklabel.side = "b", xticklabel.fontsize = 12, xticklabel.rotat = 90,
+  xticklabel.pad = 0.005, yticklabels = NULL, yticklabels.n = NULL,
+  yticklabel.side = "l", yticklabel.fontsize = 12, yticklabel.pad = 0.005,
+  sub.name = NULL, gp = NULL)
 }
 \arguments{
 \item{data}{data matrix}
@@ -25,9 +24,31 @@ WHeatmap(data = NULL, dm = NULL, name = "", continuous = NULL,
 
 \item{cm}{a given color map}
 
-\item{xticklabels}{xtick label}
+\item{xticklabels}{to plot xtick labels}
 
 \item{xticklabels.n}{number of xtick labels to plot (resample for aethetics by default)}
+
+\item{xticklabel.side}{xticklabel side (t or b)}
+
+\item{xticklabel.fontsize}{xticklabel font size}
+
+\item{xticklabel.rotat}{xticklabel rotation}
+
+\item{xticklabel.pad}{padding between xticklabel and x-axis}
+
+\item{yticklabels}{to plot ytick labels}
+
+\item{yticklabels.n}{number of ytick labels to plot (resample for aethetics by default)}
+
+\item{yticklabel.side}{yticklabel side (l or r)}
+
+\item{yticklabel.fontsize}{yticklabel font size}
+
+\item{yticklabel.pad}{padding between yticklabel and y-axis}
+
+\item{sub.name}{subclass name}
+
+\item{gp}{a list of graphical parameters}
 }
 \value{
 one or a list of heatmaps (depends on whether dimension is split)

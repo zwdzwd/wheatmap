@@ -8,13 +8,13 @@ both.cluster(mat, extra.row = NULL, extra.column = NULL,
   hc.method = "ward.D2")
 }
 \arguments{
+\item{mat}{input matrix}
+
 \item{extra.row}{extra row reordering}
 
 \item{extra.column}{extra column reordering}
 
 \item{hc.method}{method to use in hclust}
-
-\item{at}{input matrix}
 }
 \value{
 a list of clustered row, column and matrix

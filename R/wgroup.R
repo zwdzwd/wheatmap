@@ -55,7 +55,9 @@ YFromAffine <- function(y, dm.sys) {
 #' @param affine whether the group members are on affine coordinates already
 #' @param nr number of rows
 #' @param nc number of columns
-#' @return an object of class WGroup
+#' @param mar a WMar object
+#' @return a WGroup object
+#' 
 #' @export
 WGroup <- function(..., name='', group.dm=WDim(), mar=WMar(), affine=FALSE, nr=NULL, nc=NULL) {
   ## row and column.split must be a set separately ??
@@ -154,6 +156,9 @@ AddWGroup <- function(group.obj, new.obj) {
 }
 
 #' Check whether group names are unique
+#'
+#' @param group.obj a WGroup
+#' @return TRUE or FALSE
 GroupCheckNameUnique <- function(group.obj) {
   if (!('WGroup' %in% class(group.obj)))
     return(TRUE)
@@ -201,8 +206,7 @@ GroupAssignNames <- function(group.obj, n=1) {
 
 #' subset WGroup
 #'
-#' subset WGroup
-#'
+#' @param x a WGroup object
 #' @param i integer indexing element
 #' @export
 `[.WGroup` <- function(x, i) {
@@ -292,6 +296,8 @@ WFlatten <- function(.obs) {
 }
 
 #' show layout
+#'
+#' @param x plot
 #' @export
 ly <- function(x) print(x, layout.only=TRUE)
 
@@ -332,34 +338,36 @@ ScaleGroup <- function(group.obj) {
 
 #' Draw WGroup
 #'
-#' @param group plot to display
-#' @param cex for scale fonts
+#' @param x a WGroup
+#' @param cex factor for scaling fonts
+#' @param layout.only to plot layout only
+#' @param stand.alone to plot stand alone
+#' @param ... additional options
 #' @import grid
 #' @export
-print.WGroup <- function(group, stand.alone=TRUE, cex=1, layout.only=FALSE) {
+print.WGroup <- function(x, stand.alone=TRUE, cex=1, layout.only=FALSE, ...) {
 
   if (stand.alone) {
-    res <- ScaleGroup(group)
+    res <- ScaleGroup(x)
     cex <- res$cex
-    group <- res$group
+    x <- res$group
     grid.newpage()
   }
 
-  pushViewport(viewport(x=unit(group$dm$left,'npc'),
-                        y=unit(group$dm$bottom,'npc'),
-                        width=unit(group$dm$width,'npc'),
-                        height=unit(group$dm$height,'npc'),
+  pushViewport(viewport(x=unit(x$dm$left,'npc'),
+                        y=unit(x$dm$bottom,'npc'),
+                        width=unit(x$dm$width,'npc'),
+                        height=unit(x$dm$height,'npc'),
                         just=c('left','bottom')))
   if (layout.only) {
     grid.rect(gp=gpar(col='green', lwd=5, alpha=0.6, fill=NULL))
-    grid.text(group$name, gp=gpar(col='green', alpha=1))
+    grid.text(x$name, gp=gpar(col='green', alpha=1))
   }
-  for (child in group$children) {
+  for (child in x$children) {
     print(child, stand.alone=FALSE, cex=cex, layout.only=layout.only)
   }
   upViewport()
 }
 
-#' @export
 plot.WGroup <- print.WGroup
 

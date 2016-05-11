@@ -7,6 +7,8 @@
 \method{[}{WGroup}(x, i)
 }
 \arguments{
+\item{x}{a WGroup object}
+
 \item{i}{integer indexing element}
 }
 \description{

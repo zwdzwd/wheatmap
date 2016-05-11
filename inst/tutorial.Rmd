@@ -61,8 +61,8 @@ WHeatmap(cc$mat, name='h1') +
   WLabel('Rainbow colors', RightOf('l2', pad=0.08), rot=-90) +
   WLabel('a little\nhouse', color='black', 
          WPosition(1,2,'h4',data.coord=TRUE, just=c('center','center'))) + 
-  WRect(c(2,5),c(2,3),'h3.1.1',col='yellow') +
-  WRect(c(5,6),c(2,3),'h1',col='yellow')
+  WRect('h3.1.1', c(2,5),c(2,3),col='yellow') +
+  WRect('h1',c(5,6),c(2,3),col='yellow')
 ```
 
 ## Step by step construction
@@ -141,8 +141,8 @@ a
 
 And finally highlight some cells
 ```{r}
-a <- a + WRect(c(2,5),c(2,3),'h3.1.1',col='yellow')
-a <- a + WRect(c(5,6),c(2,3),'h1',col='yellow')
+a <- a + WRect('h3.1.1',c(2,5),c(2,3),col='yellow')
+a <- a + WRect('h1',c(5,6),c(2,3),col='yellow')
 a
 ```
 
@@ -206,5 +206,5 @@ ly(a)
 
 ## Highlights
 ```{r}
-WHeatmap(matrix(1:20,nrow=4)) + WRect(c(2,3),c(3,3), color='red', lwd=10)
+WHeatmap(matrix(1:20,nrow=4)) + WRect(NULL,c(2,3),c(3,3), color='red', lwd=10)
 ```

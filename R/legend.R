@@ -11,6 +11,7 @@
 #' @param n.text number of text labels in continuous legend
 #' @param width width of each unit in plotted legend
 #' @param height height of each unit in plotted legend
+#' @param ... additional options to WHeatmap
 #' @return an object of class WLegendV
 #' @examples
 #' WHeatmap(matrix(1:4,nrow=2))+WLegendV(NULL, RightOf())
@@ -75,6 +76,7 @@ WLegendV <- function(x=NULL, dm=NULL, name='',
 #' @param n.text number of text labels in continuous legend
 #' @param width width of each unit in plotted legend
 #' @param height height of each unit in plotted legend
+#' @param ... additional options to WHeatmap
 #' @return an object of class WLegendH
 #' @examples
 #' WHeatmap(matrix(1:4,nrow=2))+WLegendH(NULL, Beneath())

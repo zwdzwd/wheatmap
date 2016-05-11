@@ -1,3 +1,7 @@
+#' Resolve name to object
+#' 
+#' @param x the target
+#' @param ... extra options
 #' @export
 Resolve <- function(x, ...) {
   UseMethod('Resolve')
@@ -9,9 +13,7 @@ Resolve <- function(x, ...) {
 #'
 #' W.R.T lower left corner of the view port in the unit of points
 #' @param x object
-#' @export
+#' @param ... extra options
 CalcTextBounding <- function(x, ...) {
   UseMethod('CalcTextBounding', x)
 }
-
-

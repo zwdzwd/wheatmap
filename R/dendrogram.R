@@ -26,23 +26,23 @@ WDendrogram <- function(clust=NULL, dm=WDim(0,0,1,1), name='', facing=c("bottom"
 
 #' print a dendrogram
 #'
-#' @param dend a dendrogram
-#' @param stand.alone whether the re-scale should occur when the plot is stand alone
+#' @param x a dendrogram
+#' @param stand.alone plot is stand alone
 #' @param layout.only plot layout only
-#' @param cex factor to scale texts
+#' @param cex factor to scaling texts
+#' @param ... additional options (ignored)
 #' @return NULL
 #' @export
-print.WDendrogram <- function(dend, stand.alone=TRUE, layout.only=FALSE, cex=1) {
+print.WDendrogram <- function(x, stand.alone=TRUE, layout.only=FALSE, cex=1, ...) {
   if (layout.only)
-    return(.print.layout(dend))
-  pushViewport(viewport(x=unit(dend$dm$left,'npc'), y=unit(dend$dm$bottom,'npc'),
-                        width=unit(dend$dm$width,'npc'), height=unit(dend$dm$height,'npc'),
+    return(.print.layout(x))
+  pushViewport(viewport(x=unit(x$dm$left,'npc'), y=unit(x$dm$bottom,'npc'),
+                        width=unit(x$dm$width,'npc'), height=unit(x$dm$height,'npc'),
                         just=c('left','bottom'), gp=gpar(col='black')))
-  grid.dendrogram(as.dendrogram(dend$clust), facing=dend$facing)
+  grid.dendrogram(as.dendrogram(x$clust), facing=x$facing)
   upViewport()
 }
 
-#' @export
 plot.WDendrogram <- print.WDendrogram
 
 CalcTextBounding.WDendrogram <- function(dd, group) {
@@ -65,13 +65,14 @@ CalcTextBounding.WDendrogram <- function(dd, group) {
 #' @param dend a stats::dendrogram object.
 #' @param facing facing of the dendrogram.
 #' @param max_height maximum height of the dendrogram.
+#' @param order order
+#' @param ... additional options
 #' @import grid
 #' @source adapted from the ComplexHeatmap package authored by Zuguang Gu <z.gu@dkfz.de>
 #' @export
 grid.dendrogram = function(dend, facing = c("bottom", "top", "left", "right"),
                            max_height = NULL, order = c("normal", "reverse"), ...) {
 
-  library(grid)
   facing = match.arg(facing)[1]
 
   if(is.null(max_height)) {

@@ -8,6 +8,8 @@ ColorMap(continuous = TRUE, colors = NULL, dmin = NULL, dmax = NULL,
   scaler = NULL, mapper = NULL)
 }
 \arguments{
+\item{continuous}{whether colormap is continuous}
+
 \item{colors}{colors for each data point}
 
 \item{dmin}{miminum in continuous color map}
@@ -17,8 +19,6 @@ ColorMap(continuous = TRUE, colors = NULL, dmin = NULL, dmax = NULL,
 \item{scaler}{scaler function from data range to 0-1}
 
 \item{mapper}{function that maps data to color}
-
-\item{discrete}{whether colormap is discrete}
 }
 \value{
 an object of class ColorMap

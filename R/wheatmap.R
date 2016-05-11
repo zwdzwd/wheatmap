@@ -8,16 +8,24 @@
 #' @param continuous whether the data should be treated as continuous or discrete
 #' @param cmp a CMPar object, for tunning color mapping parameters
 #' @param cm a given color map
-#' @param xticklabels xtick label
+#' @param xticklabels to plot xtick labels
 #' @param xticklabels.n number of xtick labels to plot (resample for aethetics by default)
+#' @param xticklabel.side xticklabel side (t or b)
+#' @param xticklabel.fontsize xticklabel font size
+#' @param xticklabel.pad padding between xticklabel and x-axis
+#' @param xticklabel.rotat xticklabel rotation
+#' @param yticklabels to plot ytick labels
+#' @param yticklabels.n number of ytick labels to plot (resample for aethetics by default)
+#' @param yticklabel.side yticklabel side (l or r)
+#' @param yticklabel.fontsize yticklabel font size
+#' @param yticklabel.pad padding between yticklabel and y-axis
+#' @param gp a list of graphical parameters
+#' @param sub.name subclass name
 #' @return one or a list of heatmaps (depends on whether dimension is split)
 #' @export
 WHeatmap <- function(data=NULL, dm=NULL, name='', continuous=NULL,
                      cmp = CMPar(), # colormapping parameters
                      cm = NULL,
-
-                     ## titles
-                     title = NULL, title.fontsize=12, title.pad=0.005, title.side='l',
 
                      ## tick label on x-axis
                      xticklabels = NULL,
@@ -33,9 +41,6 @@ WHeatmap <- function(data=NULL, dm=NULL, name='', continuous=NULL,
                      yticklabel.side = 'l',
                      yticklabel.fontsize = 12,
                      yticklabel.pad = 0.005,
-
-                     ## alpha
-                     alpha = 1,
 
                      ## subclass name
                      sub.name = NULL,
@@ -153,7 +158,9 @@ SplitWHeatmap <- function(hm, dm, cm, group) {
 }
 
 #' Calculate Texting Bounding for WHeatmap
-#' @param hm object of class WHeatmap
+#' 
+#' @param hm an object of class WHeatmap
+#' @param group an object of class WGroup
 #' @return an object of class WDim in coordinate points
 #' @export
 CalcTextBounding.WHeatmap <- function(hm, group) {
@@ -206,67 +213,50 @@ CalcTextBounding.WHeatmap <- function(hm, group) {
 
 #' plot WHeatmap
 #'
-#' @param hm an object of class WHeatmap
+#' @param x a WHeatmap
+#' @param stand.alone plot is stand alone
+#' @param layout.only plot layout only
+#' @param cex factor to scaling texts
+#' @param ... additional options
 #' @return \code{NULL}
 #' @import grid
 #' @export
-print.WHeatmap <- function(hm, cex=1, layout.only=FALSE, stand.alone=TRUE) {
-  library(grid)
+print.WHeatmap <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE, ...) {
 
   if (stand.alone) {
-    group <- WGroup(hm)
+    group <- WGroup(x)
     print(group)
     return(group)
   }
 
   if (layout.only)
-    return(.print.layout(hm))
+    return(.print.layout(x))
 
-  pushViewport(viewport(x=unit(hm$dm$left,'npc'), y=unit(hm$dm$bottom,'npc'),
-                       width=unit(hm$dm$width,'npc'), height=unit(hm$dm$height,'npc'),
+  pushViewport(viewport(x=unit(x$dm$left,'npc'), y=unit(x$dm$bottom,'npc'),
+                       width=unit(x$dm$width,'npc'), height=unit(x$dm$height,'npc'),
                        just=c('left','bottom')))
 
-  nc = ncol(hm$data)
-  nr = nrow(hm$data)
-  x = (seq_len(nc)-1)/nc
-  y = (rev(seq_len(nr))-1)/nr
+  nc = ncol(x$data)
+  nr = nrow(x$data)
+  xc = (seq_len(nc)-1)/nc
+  yc = (rev(seq_len(nr))-1)/nr
   expand.index <- expand.grid(seq_len(nr), seq_len(nc))
-  grid.rect(x[expand.index[[2]]], y[expand.index[[1]]],
+  grid.rect(xc[expand.index[[2]]], yc[expand.index[[1]]],
             width=unit(1/nc, 'npc'), height=unit(1/nr, 'npc'),
-            gp=do.call('gpar', c(list(fill=hm$cm$colors), hm$gp)), just=c('left','bottom'))
+            gp=do.call('gpar', c(list(fill=x$cm$colors), x$gp)), just=c('left','bottom'))
 
   ## x tick labels
-  if (!is.null(hm$xticklabels)) {
-    .WPrintXTickLabels(hm, cex=cex)
+  if (!is.null(x$xticklabels)) {
+    .WPrintXTickLabels(x, cex=cex)
   }
 
   ## y tick labels
-  if (!is.null(hm$yticklabels)) {
-    .WPrintYTickLabels(hm, cex=cex)
+  if (!is.null(x$yticklabels)) {
+    .WPrintYTickLabels(x, cex=cex)
   }
 
   upViewport()
-
-  #   ## titles
-  #   if (!is.null(hm$title)) {
-  #     if (hm$title.side == 'l') {
-  #       .text.just = 'right'
-  #       .text.x = 1
-  #       .vpx = hm$dm$left - hm$title.pad
-  #     } else {
-  #       .text.just = 'left'
-  #       .text.x = 0
-  #       .vpx = hm$dm$left + hm$dm$width + hm$title.pad
-  #     }
-  #     pushViewport(viewport(x=unit(.vpx,'npc'), y=unit(hm$dm$bottom,'npc'),
-  #                           width=stringWidth(hm$title), height=unit(hm$dm$height,'npc'), just=c(.text.just,'bottom')))
-  #     grid.text(hm$title, x=unit(.text.x,'npc'), y=unit(0.5,'npc'), just=c(.text.just,'center'), gp=gpar(fontsize=hm$title.fontsize))
-  #     upViewport()
-  #   }
 }
 
-#' plot WHeatmap
-#'
-#' @param hm heatmap to plot
 plot.WHeatmap <- print.WHeatmap
 

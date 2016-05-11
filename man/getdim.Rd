@@ -6,6 +6,9 @@
 \usage{
 getdim(x)
 }
+\arguments{
+\item{x}{WDim object or a plotting object}
+}
 \description{
 Get dimensions
 }

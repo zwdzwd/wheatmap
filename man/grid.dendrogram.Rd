@@ -16,6 +16,10 @@ grid.dendrogram(dend, facing = c("bottom", "top", "left", "right"),
 \item{facing}{facing of the dendrogram.}
 
 \item{max_height}{maximum height of the dendrogram.}
+
+\item{order}{order}
+
+\item{...}{additional options}
 }
 \description{
 The dendrogram can be renderred. A viewport is created which contains the dendrogram.

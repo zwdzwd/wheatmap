@@ -4,8 +4,26 @@
 \alias{WRect}
 \title{construct a WRect}
 \usage{
-WRect(x.span = NULL, y.span = NULL, x = NULL, name = "",
-  color = "black", lwd = 3, fill = NA)
+WRect(x = NULL, x.span = NULL, y.span = NULL, color = "black",
+  lwd = 3, fill = NA, name = "")
+}
+\arguments{
+\item{x}{a plotting object or its name}
+
+\item{x.span}{x-axis/horizontal span (e.g., c(2,4))}
+
+\item{y.span}{y-axis/vertical span (e.g., c(5,9))}
+
+\item{color}{edge color}
+
+\item{lwd}{edge width}
+
+\item{fill}{fill color}
+
+\item{name}{name}
+}
+\value{
+a WRect object
 }
 \description{
 construct a WRect

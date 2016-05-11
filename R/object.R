@@ -1,6 +1,19 @@
+#' Construct a WObject
+#'
+#' @param dm position
+#' @param name name
+#' @return a WObject
+#' @export
+WObject <- function(dm=NULL, name='') {
+  structure(list(dm=dm, name=name), class='WObject')
+}
+
 
 #' merge plotting objects
-#' 
+#'
+#' @param group a WGroup or a plotting object
+#' @param p a new plotting object
+#' @return a WGroup
 #' @export
 `+.WObject` <- function(group, p) {
 
@@ -20,11 +33,3 @@
   group
 }
 
-## #' @export
-## `+.WHeatmap` <- `+.WGroup`
-
-## #' @export
-## `+.WCustomize` <- `+.WGroup`
-
-## #' @export
-## `+.WGenerator` <- `+.WGroup`

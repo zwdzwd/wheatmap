@@ -6,6 +6,12 @@
 \usage{
 GroupCheckNameUnique(group.obj)
 }
+\arguments{
+\item{group.obj}{a WGroup}
+}
+\value{
+TRUE or FALSE
+}
 \description{
 Check whether group names are unique
 }

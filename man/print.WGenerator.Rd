@@ -4,10 +4,12 @@
 \alias{print.WGenerator}
 \title{print a WGenerator}
 \usage{
-\method{print}{WGenerator}(xg)
+\method{print}{WGenerator}(x, ...)
 }
 \arguments{
-\item{xg}{a WGenerator object}
+\item{x}{a WGenerator object}
+
+\item{...}{additional options}
 }
 \value{
 the WGroup containing the plotting object

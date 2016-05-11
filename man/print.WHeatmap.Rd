@@ -4,11 +4,19 @@
 \alias{print.WHeatmap}
 \title{plot WHeatmap}
 \usage{
-\method{print}{WHeatmap}(hm, cex = 1, layout.only = FALSE,
-  stand.alone = TRUE)
+\method{print}{WHeatmap}(x, cex = 1, layout.only = FALSE,
+  stand.alone = TRUE, ...)
 }
 \arguments{
-\item{hm}{an object of class WHeatmap}
+\item{x}{a WHeatmap}
+
+\item{cex}{factor to scaling texts}
+
+\item{layout.only}{plot layout only}
+
+\item{stand.alone}{plot is stand alone}
+
+\item{...}{additional options}
 }
 \value{
 \code{NULL}

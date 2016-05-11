@@ -1,7 +1,16 @@
 #' construct a WRect
 #' 
+#' @param x a plotting object or its name
+#' @param x.span x-axis/horizontal span (e.g., c(2,4))
+#' @param y.span y-axis/vertical span (e.g., c(5,9))
+#' @param color edge color
+#' @param lwd edge width
+#' @param fill fill color
+#' @param name name
+#' @return a WRect object
+#' 
 #' @export
-WRect <- function(x.span=NULL, y.span=NULL, x=NULL, name='', color='black', lwd=3, fill=NA) {
+WRect <- function(x=NULL, x.span=NULL, y.span=NULL, color='black', lwd=3, fill=NA, name='') {
 
   rect <- lapply(formals(), eval)
   invisible(lapply(names(as.list(match.call()))[-1], function (nm) {
@@ -39,13 +48,18 @@ WRect <- function(x.span=NULL, y.span=NULL, x=NULL, name='', color='black', lwd=
 }
 
 #' print WRect
-#' 
+#'
+#' @param x a WRect object
+#' @param cex factor for scaling text
+#' @param layout.only print layout only
+#' @param stand.alone plot WRect standalone
+#' @param ... additional options
+#' @import grid
 #' @export
-print.WRect <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE) {
+print.WRect <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE, ...) {
 
-  library(grid)
   if (stand.alone) {
-    group <- WGroup(hm)
+    group <- WGroup(x)
     print(group)
     return(group)
   }

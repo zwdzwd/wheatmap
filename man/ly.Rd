@@ -6,6 +6,9 @@
 \usage{
 ly(x)
 }
+\arguments{
+\item{x}{plot}
+}
 \description{
 show layout
 }

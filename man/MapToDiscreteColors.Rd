@@ -10,6 +10,8 @@ MapToDiscreteColors(data, cmp = CMPar(), given.cm = NULL)
 \item{data}{numeric vector}
 
 \item{cmp}{an color map parameter object of class CMPar}
+
+\item{given.cm}{given color map}
 }
 \value{
 an object of ColorMap

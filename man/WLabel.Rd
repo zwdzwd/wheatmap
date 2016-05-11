@@ -7,6 +7,22 @@
 WLabel(x = NULL, dm = WDim(), name = "", fontsize = 12, rot = 0,
   color = "black")
 }
+\arguments{
+\item{x}{text to be labeled}
+
+\item{dm}{position}
+
+\item{name}{name}
+
+\item{fontsize}{font size}
+
+\item{rot}{rotation}
+
+\item{color}{color of the label}
+}
+\value{
+a WLabel object
+}
 \description{
 construct a WLabel
 }

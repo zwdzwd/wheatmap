@@ -7,7 +7,9 @@
 \method{CalcTextBounding}{WHeatmap}(hm, group)
 }
 \arguments{
-\item{hm}{object of class WHeatmap}
+\item{hm}{an object of class WHeatmap}
+
+\item{group}{an object of class WGroup}
 }
 \value{
 an object of class WDim in coordinate points

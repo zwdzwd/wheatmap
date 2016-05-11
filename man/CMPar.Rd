@@ -26,8 +26,6 @@ CMPar(dmin = NULL, dmax = NULL, brewer.name = NULL, brewer.n = 3,
 \item{stop.points}{custome stop points}
 
 \item{grey.scale}{whether to use grey scale}
-
-\item{cm}{existing color maps}
 }
 \value{
 an object of class CMPar

@@ -53,7 +53,7 @@ column.cluster <- function(mat, ..., hc.method='ward.D2') {
 #'
 #' row- and column-cluster a matrix
 #'
-#' @param at input matrix
+#' @param mat input matrix
 #' @param hc.method method to use in hclust
 #' @param extra.row extra row reordering
 #' @param extra.column extra column reordering
@@ -61,7 +61,6 @@ column.cluster <- function(mat, ..., hc.method='ward.D2') {
 #' @import stats
 #' @export
 both.cluster <- function(mat, extra.row=NULL, extra.column=NULL, hc.method='ward.D2') {
-  library(stats)
   d.row <- dist(mat)
   d.column <- dist(t(mat))
   r <- list()
