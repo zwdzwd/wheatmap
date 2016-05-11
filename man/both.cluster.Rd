@@ -4,9 +4,14 @@
 \alias{both.cluster}
 \title{row- and column-cluster a matrix}
 \usage{
-both.cluster(mat, hc.method = "ward.D2")
+both.cluster(mat, extra.row = NULL, extra.column = NULL,
+  hc.method = "ward.D2")
 }
 \arguments{
+\item{extra.row}{extra row reordering}
+
+\item{extra.column}{extra column reordering}
+
 \item{hc.method}{method to use in hclust}
 
 \item{at}{input matrix}

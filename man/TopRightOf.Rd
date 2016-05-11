@@ -4,13 +4,12 @@
 \alias{TopRightOf}
 \title{Top right of}
 \usage{
-TopRightOf(x = NULL, just = c("bottomleft", "topleft", "bottomright",
-  "topright"), v.pad = 0, h.pad = 0)
+TopRightOf(x = NULL, just = c("left", "bottom"), v.pad = 0, h.pad = 0)
 }
 \arguments{
 \item{x}{target object, either a name, a object or NULL which refers to the last plotting object}
 
-\item{just}{the part from the new object that should be attached to from c(bottomright, topright, bottomleft, topleft)}
+\item{just}{the part from the new object that should be attached to}
 
 \item{v.pad}{vertical translational padding [0.0]}
 

@@ -4,10 +4,12 @@
 \alias{column.cluster}
 \title{column cluster a matrix}
 \usage{
-column.cluster(mat, hc.method = "ward.D2")
+column.cluster(mat, ..., hc.method = "ward.D2")
 }
 \arguments{
 \item{mat}{input matrix}
+
+\item{...}{extra color bars or matrix that needs column reordered}
 
 \item{hc.method}{method to use in hclust}
 }

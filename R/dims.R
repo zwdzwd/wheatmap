@@ -1,3 +1,13 @@
+#' Get dimensions
+#'
+#' @export
+getdim <- function(x) {
+  if('WDim' %in% class(x))
+    dm <- x
+  else
+    dm <- x$dm
+  cat(dm$left, ' ', dm$bottom, ' ', dm$width, ' ', dm$height,'\n')
+}
 
 Resolve.WGenerator <- function(x, group) {
   x(group)
@@ -43,6 +53,26 @@ LengthToTop <- function(obj, root, .length) {
   return(LengthToTop(parent, root, .length))
 }
 
+## x is inside obj's dimension
+XToTop <- function(obj, root, x) {
+  parent <- GetParentIn(obj, root)
+  x <- XFromAffine(x, obj$dm)
+  if (is.null(parent)) {
+    return(x)
+  }
+  return(XToTop(parent, root, x))
+}
+
+## y is inside obj's dimension
+YToTop <- function(obj, root, y) {
+  parent <- GetParentIn(obj, root)
+  y <- YFromAffine(y, obj$dm)
+  if (is.null(parent)) {
+    return(y)
+  }
+  return(YToTop(parent, root, y))
+}
+
 ## float dimension to top level
 DimToTop <- function(obj, root, dm=NULL) {
   if (is.null(dm)) {
@@ -74,13 +104,20 @@ DimInPoints <- function(dm) {
 #' @param bottom bottom coordinate
 #' @param width width
 #' @param height height
+#' @param nr number of row
+#' @param nc number of column
+#' @param text.x x anchor for text
+#' @param text.y y anchor for text
+#' @param text.just just for text
 #' @param column.split a list of WDim objects for column split
 #' @param row.split a list of WDim objects for row split
 #' @export
 WDim <- function(left=0, bottom=0, width=1, height=1, nr=1, nc=1,
+                 text.x=0, text.y=0, text.just=c('center','center'),
                  column.split=NULL, row.split=NULL) {
   dm <- list(left=left, bottom=bottom, width=width, height=height, nr=nr, nc=nc,
-             column.split=column.split, row.split=row.split)
+             column.split=column.split, row.split=row.split,
+             text.x=0, text.y=0, text.just=text.just)
   class(dm) <- 'WDim'
   dm
 }
@@ -130,16 +167,17 @@ ResolveToTopDim <- function(x, group) {
 #'
 #' Place a new object to the top left corner of another.
 #' @param x target object, either a name, a object or NULL which refers to the last plotting object
-#' @param just the part from the new object that should be attached to from c(bottomright, topright, bottomleft, topleft)
+#' @param just the part from the new object that should be attached to
 #' @param v.pad vertical translational padding [0.0]
 #' @param h.pad horizontal translational padding [0.0]
 #' @return a WDimGenerator
 #' @export
 TopLeftOf <- function(x=NULL,
-                      just=c('bottomright','topright','bottomleft','topleft'),
+                      just=c('right','bottom'),
                       v.pad=0.0, h.pad=0.0) {
 
-  just <- match.arg(just)
+  stopifnot(just[1] %in% c('left','center','right'))
+  stopifnot(just[2] %in% c('bottom','center','top'))
   force(x); force(just); force(v.pad); force(h.pad);
   structure(function(group, nr=1, nc=1, hard.dm=NULL) {
     if (is.null(x))
@@ -156,19 +194,27 @@ TopLeftOf <- function(x=NULL,
       dm <- hard.dm
     }
 
-    if (length(grep('right', just))>0) {
+    if (just[1]=='right') {
       dm$left <- x$left - dm$width
+    } else if (just[1]=='center') {
+      dm$left <- x$left - dm$width/2
     } else {
       dm$left <- x$left
     }
     dm$left <- dm$left + h.pad
 
-    if (length(grep('bottom', just))>0) {
+    if (just[2]=='bottom') {
       dm$bottom <- x$bottom + x$height
+    } else if (just[2]=='center') {
+      dm$bottom <- x$bottom + x$height - dm$height/2
     } else {
       dm$bottom <- x$bottom + x$height - dm$height
     }
     dm$bottom <- dm$bottom + v.pad
+
+    dm$text.x <- x$left + h.pad
+    dm$text.y <- x$bottom + x$height + v.pad
+    dm$text.just <- just
 
     dm
   }, class='WDimGenerator')
@@ -178,16 +224,17 @@ TopLeftOf <- function(x=NULL,
 #'
 #' Place a new object to the top right corner of another.
 #' @param x target object, either a name, a object or NULL which refers to the last plotting object
-#' @param just the part from the new object that should be attached to from c(bottomright, topright, bottomleft, topleft)
+#' @param just the part from the new object that should be attached to
 #' @param v.pad vertical translational padding [0.0]
 #' @param h.pad horizontal translational padding [0.0]
 #' @return a WDimGenerator
 #' @export
 TopRightOf <- function(x=NULL,
-                      just=c('bottomleft','topleft','bottomright','topright'),
-                      v.pad=0.0, h.pad=0.0) {
-  
-  just <- match.arg(just)
+                       just=c('left','bottom'),
+                       v.pad=0.0, h.pad=0.0) {
+
+  stopifnot(just[1] %in% c('left','center','right'))
+  stopifnot(just[2] %in% c('bottom','center','top'))
   force(x); force(just); force(v.pad); force(h.pad);
   structure(function(group, nr=1, nc=1, hard.dm=NULL) {
     if (is.null(x))
@@ -204,19 +251,27 @@ TopRightOf <- function(x=NULL,
       dm <- hard.dm
     }
 
-    if (length(grep('right', just))>0) {
+    if (just[1]=='right') {
       dm$left <- x$left + x$width - dm$width
+    } else if (just[1]=='center') {
+      dm$left <- x$left + x$width - dm$width/2
     } else {
       dm$left <- x$left + x$width
     }
     dm$left <- dm$left + h.pad
 
-    if (length(grep('bottom', just))>0) {
+    if (just[2]=='bottom') {
       dm$bottom <- x$bottom + x$height
+    } else if (just[2]=='center') {
+      dm$bottom <- x$bottom + x$height - dm$height/2
     } else {
       dm$bottom <- x$bottom + x$height - dm$height
     }
     dm$bottom <- dm$bottom + v.pad
+
+    dm$text.x <- x$left + x$width + h.pad
+    dm$text.y <- x$bottom + x$height + v.pad
+    dm$text.just <- just
 
     dm
   }, class='WDimGenerator')
@@ -226,16 +281,17 @@ TopRightOf <- function(x=NULL,
 #'
 #' Place a new object to the bottom left corner of another.
 #' @param x target object, either a name, a object or NULL which refers to the last plotting object
-#' @param just the part from the new object that should be attached to from c(bottomright, topright, bottomleft, topleft)
+#' @param just the part from the new object that should be attached to
 #' @param v.pad vertical translational padding [0.0]
 #' @param h.pad horizontal translational padding [0.0]
 #' @return a WDimGenerator
 #' @export
 BottomLeftOf <- function(x=NULL,
-                         just=c('bottomright','topright','bottomleft','topleft'),
+                         just=c('right', 'bottom'),
                          v.pad=0.0, h.pad=0.0) {
 
-  just <- match.arg(just)
+  stopifnot(just[1] %in% c('left','center','right'))
+  stopifnot(just[2] %in% c('bottom','center','top'))
   force(x); force(just); force(v.pad); force(h.pad);
   structure(function(group, nr=1, nc=1, hard.dm=NULL) {
     if (is.null(x))
@@ -252,19 +308,27 @@ BottomLeftOf <- function(x=NULL,
       dm <- hard.dm
     }
 
-    if (length(grep('right', just))>0) {
+    if (just[1]=='right') {
       dm$left <- x$left - dm$width
+    } else if (just[1]=='center') {
+      dm$left <- x$left - dm$width/2
     } else {
       dm$left <- x$left
     }
     dm$left <- dm$left + h.pad
 
-    if (length(grep('bottom', just))>0) {
+    if (just[2]=='bottom') {
       dm$bottom <- x$bottom
+    } else if (just[2]=='center') {
+      dm$bottom <- x$bottom - dm$height/2
     } else {
       dm$bottom <- x$bottom - dm$height
     }
     dm$bottom <- dm$bottom + v.pad
+
+    dm$text.x <- x$left + h.pad
+    dm$text.y <- x$bottom + v.pad
+    dm$text.just <- just
 
     dm
   }, class='WDimGenerator')
@@ -274,16 +338,17 @@ BottomLeftOf <- function(x=NULL,
 #'
 #' Place a new object to the bottom right corner of another.
 #' @param x target object, either a name, a object or NULL which refers to the last plotting object
-#' @param just the part from the new object that should be attached to from c(bottomright, topright, bottomleft, topleft)
+#' @param just the part from the new object that should be attached to
 #' @param v.pad vertical translational padding [0.0]
 #' @param h.pad horizontal translational padding [0.0]
 #' @return a WDimGenerator
 #' @export
 BottomRightOf <- function(x=NULL,
-                          just=c('bottomleft','topleft','bottomright','topright'),
+                          just=c('left','bottom'),
                           v.pad=0.0, h.pad=0.0) {
 
-  just <- match.arg(just)
+  stopifnot(just[1] %in% c('left','center','right'))
+  stopifnot(just[2] %in% c('bottom','center','top'))
   force(x); force(just); force(v.pad); force(h.pad);
   structure(function(group, nr=1, nc=1, hard.dm=NULL) {
     if (is.null(x))
@@ -300,19 +365,27 @@ BottomRightOf <- function(x=NULL,
       dm <- hard.dm
     }
 
-    if (length(grep('right', just))>0) {
+    if (just[1]=='right') {
       dm$left <- x$left + x$width - dm$width
+    } else if (just[1]=='center') {
+      dm$left <- x$left + x$width - dm$width/2
     } else {
       dm$left <- x$left + x$width
     }
     dm$left <- dm$left + h.pad
 
-    if (length(grep('bottom', just))>0) {
+    if (just[2]=='bottom') {
       dm$bottom <- x$bottom
+    } else if (just[2]=='center') {
+      dm$bottom <- x$bottom - dm$height/2
     } else {
       dm$bottom <- x$bottom - dm$height
     }
     dm$bottom <- dm$bottom + v.pad
+
+    dm$text.x <- x$left + x$width + h.pad
+    dm$text.y <- x$bottom + v.pad
+    dm$text.just <- just
 
     dm
   }, class='WDimGenerator')
@@ -376,16 +449,12 @@ TopOf <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02,
     dm$width <- h.aln$width
     dm$column.split <- h.aln$column.split
 
+    dm$text.x <- x$left + x$width/2
+    dm$text.y <- x$bottom + x$height + pad
+    dm$text.just <- c('left','center')
+
     dm
   }, class='WDimGenerator')
-}
-
-getdim <- function(x) {
-  if('WDim' %in% class(x))
-    dm <- x
-  else
-    dm <- x$dm
-  cat(dm$left, ' ', dm$bottom, ' ', dm$width, ' ', dm$height,'\n')
 }
 
 #' Beneath
@@ -444,6 +513,10 @@ Beneath <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02,
     dm$left <- h.aln$left
     dm$width <- h.aln$width
     dm$column.split <- h.aln$column.split
+
+    dm$text.x <- x$left + x$width/2
+    dm$text.y <- x$bottom - pad
+    dm$text.just <- c('right','center')
 
     dm
   }, class='WDimGenerator')
@@ -506,6 +579,10 @@ LeftOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02,
     dm$height <- v.aln$height
     dm$row.split <- v.aln$row.split
 
+    dm$text.x <- x$left - pad
+    dm$text.y <- x$bottom + x$height/2
+    dm$text.just <- c('right','center')
+
     dm
   }, class='WDimGenerator')
 }
@@ -523,11 +600,11 @@ LeftOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02,
 #' @param h.scale.proportional when h.scale is provided, whether to make proportional to data
 #' @return a dimension to the right of x
 #' @export
-RightOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02,
+RightOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02, 
                     v.aln=NULL, h.scale=NULL, h.scale.proportional=FALSE) {
 
   force(x); force(v.aln); force(h.scale);
-  force(h.scale.proportional)
+  force(h.scale.proportional);
   force(width); force(pad); force(min.ratio);
   structure(function(group, nr=1, nc=1, hard.dm=NULL) {
     if (is.null(x))
@@ -567,7 +644,74 @@ RightOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02,
     dm$height <- v.aln$height
     dm$row.split <- v.aln$row.split
 
+    dm$text.x <- x$left + x$width + pad
+    dm$text.y <- x$bottom + x$height/2
+    dm$text.just <- c('left','center')
+
     dm
   }, class='WDimGenerator')
 }
 
+#' place an arbitrary position w.r.t a subplot
+#'
+#' @param anchor.x x coordinates
+#' @param anchor.y y coordinates
+#' @param x plotting object to anchor
+#' @param just adjustment of new plot
+#' @param data.coord whether the coordinates is in term of data
+#' @return a WDimGenerator object
+#' @export
+Position <- function(anchor.x, anchor.y, x=NULL, just=c('left','bottom'), data.coord=FALSE) {
+  stopifnot(just[1] %in% c('left','center','right'))
+  stopifnot(just[2] %in% c('bottom','center','top'))
+  force(anchor.x); force(anchor.y); force(x); force(just); force(data.coord);
+  structure(function(group, nr=1, nc=1, hard.dm=NULL) {
+    if (is.null(x))
+      x <- group$children[[length(group$children)]]$name
+
+    x <- Resolve(x, group)
+
+    ## resolve anchor positions to top level
+    if (data.coord) {
+      anchor.x <- (anchor.x - 0.5) / x$dm$nc
+      anchor.y <- (x$dm$nr - anchor.y + 0.5) / x$dm$nr
+    }
+
+    anchor.x <- XToTop(x, group, anchor.x)
+    anchor.y <- YToTop(x, group, anchor.y)
+
+    x <- DimToTop(x, group)
+
+    if (is.null(hard.dm)) {
+      dm <- WDim()
+      dm$width <- x$width/x$nc*nc
+      dm$height <- x$height/x$nr*nr
+      dm$nc <- nc
+      dm$nr <- nr
+    } else {
+      dm <- hard.dm
+    }
+
+    if (just[1]=='left') {
+      dm$left <- anchor.x
+    } else if (just[1]=='center') {
+      dm$left <- anchor.x - dm$width/2
+    } else {
+      dm$left <- anchor.x - dm$width
+    }
+
+    if (just[2]=='bottom') {
+      dm$bottom <- anchor.y
+    } else if (just[2]=='center') {
+      dm$bottom <- anchor.y - dm$height/2
+    } else {
+      dm$bottom <- anchor.y - dm$height
+    }
+
+    dm$text.x <- anchor.x
+    dm$text.y <- anchor.y
+    dm$text.just <- just
+
+    dm
+  }, class='WDimGenerator')
+}

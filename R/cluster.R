@@ -4,15 +4,23 @@
 #' row cluster a matrix
 #'
 #' @param mat input matrix
+#' @param ... extra color bars or matrix that needs row reordered.
 #' @param hc.method method to use in hclust
 #' @return a list of clustered row, column and matrix
 #' @export
-row.cluster <- function(mat, hc.method='ward.D2') {
+row.cluster <- function(mat, ..., hc.method='ward.D2') {
   d.row <- dist(mat)
   r <- list()
   r$row.clust <- hclust(d.row)
   r$column.clust <- NULL
-  r$mat <- mat[r$row.hc$order,]
+  r$mat <- mat[r$row.clust$order,]
+  r$extra <- lapply(list(...), function(x) {
+    if ('matrix' %in% class(x)) {
+      x[r$row.clust$order, ]
+    } else {
+      x[r$row.clust$order]
+    }
+  })
   r
 }
 
@@ -21,15 +29,23 @@ row.cluster <- function(mat, hc.method='ward.D2') {
 #' column cluster a matrix
 #'
 #' @param mat input matrix
+#' @param ... extra color bars or matrix that needs column reordered
 #' @param hc.method method to use in hclust
 #' @return a list of clustered row, column and matrix
 #' @export
-column.cluster <- function(mat, hc.method='ward.D2') {
+column.cluster <- function(mat, ..., hc.method='ward.D2') {
   d.column <- dist(t(mat))
   r <- list()
   r$row.clust <- NULL
   r$column.clust <- hclust(d.column)
   r$mat <- mat[,r$column.clust$order]
+  r$extra <- lapply(list(...), function(x) {
+    if ('matrix' %in% class(x)) {
+      x[,r$column.clust$order]
+    } else {
+      x[r$column.clust$order]
+    }
+  })
   r
 }
 
@@ -39,10 +55,12 @@ column.cluster <- function(mat, hc.method='ward.D2') {
 #'
 #' @param at input matrix
 #' @param hc.method method to use in hclust
+#' @param extra.row extra row reordering
+#' @param extra.column extra column reordering
 #' @return a list of clustered row, column and matrix
 #' @import stats
 #' @export
-both.cluster <- function(mat, hc.method='ward.D2') {
+both.cluster <- function(mat, extra.row=NULL, extra.column=NULL, hc.method='ward.D2') {
   library(stats)
   d.row <- dist(mat)
   d.column <- dist(t(mat))
@@ -50,6 +68,20 @@ both.cluster <- function(mat, hc.method='ward.D2') {
   r$row.clust <- hclust(d.row)
   r$column.clust <- hclust(d.column)
   r$mat <- mat[r$row.clust$order, r$column.clust$order]
+  r$extra <- c(
+    lapply(extra.row, function(x) {
+      if ('matrix' %in% class(x)) {
+        x[r$row.clust$order, ]
+      } else {
+        x[r$row.clust$order]
+      }
+    }), lapply(extra.column, function(x) {
+      if ('matrix' %in% class(x)) {
+        x[,r$column.clust$order]
+      } else {
+        x[r$column.clust$order]
+      }
+    }))
   r
 }
 

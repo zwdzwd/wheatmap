@@ -2,11 +2,11 @@
 % Please edit documentation in R/text.R
 \name{text.width}
 \alias{text.width}
-\title{font width and scale to specified font size}
+\title{text width and scale to specified font size}
 \usage{
 \method{text}{width}(txt, fontsize = NULL)
 }
 \description{
-font width and scale to specified font size
+text width and scale to specified font size
 }
 

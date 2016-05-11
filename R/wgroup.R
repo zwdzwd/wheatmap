@@ -10,6 +10,8 @@ ToAffine <- function(dm, dm.sys) {
   dm.affine$bottom <- (dm$bottom - dm.sys$bottom) / dm.sys$height
   dm.affine$width <- dm$width / dm.sys$width
   dm.affine$height <- dm$height / dm.sys$height
+  dm.affine$text.x <- XToAffine(dm$text.x, dm.sys)
+  dm.affine$text.y <- YToAffine(dm$text.y, dm.sys)
   dm.affine
 }
 
@@ -24,8 +26,25 @@ FromAffine <- function(dm.affine, dm.sys) {
   dm$bottom <- dm.sys$bottom + dm.affine$bottom * dm.sys$height
   dm$width <- dm.sys$width * dm.affine$width
   dm$height <- dm.sys$height * dm.affine$height
-
+  dm$text.x <- XFromAffine(dm$text.x, dm.sys)
+  dm$text.y <- YFromAffine(dm$text.y, dm.sys)
   dm
+}
+
+XToAffine <- function(x, dm.sys) {
+  (x - dm.sys$left) / dm.sys$width
+}
+
+YToAffine <- function(y, dm.sys) {
+  (y - dm.sys$bottom) / dm.sys$height
+}
+
+XFromAffine <- function(x, dm.sys) {
+  dm.sys$left + x * dm.sys$width
+}
+
+YFromAffine <- function(y, dm.sys) {
+  dm.sys$bottom + y * dm.sys$height
 }
 
 #' Construct a WGroup
@@ -92,7 +111,7 @@ CalcTextBounding.WGroup <- function(group.obj, top.group=NULL) {
   dmb <- do.call(
     .DimGroup, lapply(group.obj$children,
                       function(obj) CalcTextBounding(obj, top.group)))
-#   dmb <- FromAffine(dmb, group.dmb)
+  ## dmb <- FromAffine(dmb, group.dmb)
   .DimGroup(dmb, group.dmb)
 }
 
@@ -103,7 +122,11 @@ CalcTextBounding.WGroup <- function(group.obj, top.group=NULL) {
 #' @param new.obj plotting object to be added
 #' @return a WGroup object where new.obj is added.
 AddWGroup <- function(group.obj, new.obj) {
-  dm <- .DimGroup(group.obj$dm, new.obj$dm)
+
+  if ('WAnnotate' %in% class(new.obj)) # WLabel does not contribute to dimensions
+    dm <- group.obj$dm
+  else
+    dm <- .DimGroup(group.obj$dm, new.obj$dm)
   dm$nc <- max(group.obj$dm$nc, new.obj$dm$nc)
   dm$nr <- max(group.obj$dm$nr, new.obj$dm$nr)
 

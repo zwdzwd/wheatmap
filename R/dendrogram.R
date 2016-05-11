@@ -45,13 +45,9 @@ print.WDendrogram <- function(dend, stand.alone=TRUE, layout.only=FALSE, cex=1) 
 #' @export
 plot.WDendrogram <- print.WDendrogram
 
-## Calculate Text Ranges
 CalcTextBounding.WDendrogram <- function(dd, group) {
   dm <- DimToTop(dd, group)
-  dm$left <- NPCToPoints(dm$left)
-  dm$bottom <- NPCToPoints(dm$bottom)
-  dm$height <- NPCToPoints(dm$height)
-  dm$width <- NPCToPoints(dm$width)
+  dm <- DimNPCToPoints(dm)
   dm
 }
 

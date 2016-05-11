@@ -18,14 +18,15 @@ m2 <- matrix(1:16,nrow=4)
 dimnames(m) <- list(c('w','x','y','z'), c('a','b','c','d','e','f','g'))
 row.data <- c(1,2,3,1)
 col.data <- c(1:6,6)
-m
+m[,1:4]
 ```
 
-We perform some clustering
+We perform some clustering. Note that `cc$mat` is the matrix after clustering and keeps the row and column names so that one can use them for reordering other color bars. `cc$row.clust$order` and `cc$column.clust$order` also provide a integer reordering.
 ```{r}
 cc <- both.cluster(m)
 row.data <- row.data[cc$row.clust$order]
 col.data <- col.data[cc$column.clust$order]
+cc$mat[,1:4]
 ```
 
 ## Final results
@@ -51,8 +52,12 @@ WHeatmap(cc$mat, name='h1') +
            Beneath('h5', h.aln=WColumnBind('h1','c3','h2')), 'h6') +
   WLegendV('c1', BottomRightOf('h6.1.3', h.pad=0.01), 'l1') +
   WLegendV('c2', TopOf('l1', pad = 0.1), 'l2') +
-  WLegendV('c3', RightOf('l1', pad=0.1), n.text=3, label.fontsize = 10)
-
+  WLegendV('c3', RightOf('l1', pad=0.1), 'l3', n.text=3, label.fontsize = 10) + 
+  WLabel('Rainbow colors', RightOf('l2', pad=0.08), rot=-90) +
+  WLabel('a little\nhouse', color='black', 
+         Position(1,2,'h4',data.coord=TRUE, just=c('center','center'))) + 
+  WRect(c(2,5),c(2,3),'h3.1.1',col='yellow') +
+  WRect(c(5,6),c(2,3),'h1',col='yellow')
 ```
 
 ## Step by step construction
@@ -122,6 +127,20 @@ a <- a + WLegendV('c3', RightOf('l1', pad=0.1), n.text=3)
 a
 ```
 
+And add some text labels using relative and arbitrary position
+```{r}
+a <- a + WLabel('Rainbow colors', RightOf('l2', pad=0.08), rot=-90)
+a <- a + WLabel('a little\nhouse', color='black', Position(1,2,'h4',data.coord=TRUE, just=c('center','center')))
+a
+```
+
+And finally highlight some cells
+```{r}
+a <- a + WRect(c(2,5),c(2,3),'h3.1.1',col='yellow')
+a <- a + WRect(c(5,6),c(2,3),'h1',col='yellow')
+a
+```
+
 ## Show layout and refer to objects
 
 We can view the internal layout by the providing the `layout.only=TRUE` option. This is useful to see the labeling visually.
@@ -148,6 +167,10 @@ WHeatmap(m, yticklabels = TRUE) + WLegendV(NULL, RightOf(), height=0.5)
 WHeatmap(cc$mat, name='h1', 
          yticklabels = TRUE, yticklabel.fontsize=20,
          xticklabels = TRUE, xticklabel.side = 't', xticklabel.fontsize = 25)
+WHeatmap(matrix(1:9,nrow=3)) + WLabel('Wosai', RightOf(), fontsize=20)
+WHeatmap(matrix(1:9,nrow=3)) + WLabel('Wosai', LeftOf(), fontsize=20)
+WHeatmap(matrix(1:9,nrow=3)) + WLabel('Wosai', TopLeftOf(just=c('center','bottom')), fontsize=20, color='blue')
+WHeatmap(matrix(1:9,nrow=3)) + WLabel('Wosai', Position(0.25,0.5,just=c('center','bottom')), fontsize=20, color='yellow')
 ```
 
 ## Anchor by edge
@@ -168,9 +191,15 @@ The **BottomRightOf**, **BottomLeftOf**, **TopLeftOf** and **TopRightOf** are fo
 
 ```{r}
 a <- WHeatmap(matrix(1:9,nrow=3)) + 
-  WHeatmap(matrix(1:16,nrow=4), BottomRightOf(just='topleft')) + 
-  WHeatmap(matrix(1:9,nrow=3), BottomLeftOf(just='topright')) + 
-  WHeatmap(matrix(1:16,nrow=4), TopLeftOf(just='bottomright'))
+  WHeatmap(matrix(1:16,nrow=4), BottomRightOf(just=c('left','top'))) + 
+  WHeatmap(matrix(1:9,nrow=3), BottomLeftOf(just=c('right','top'))) + 
+  WHeatmap(matrix(1:16,nrow=4), TopLeftOf(just=c('right','bottom')))
 a
 ly(a)
+```
+
+
+## Highlights
+```{r}
+WHeatmap(matrix(1:20,nrow=4)) + WRect(c(2,3),c(3,3), color='red', lwd=10)
 ```
