@@ -4,11 +4,11 @@
 \alias{WRect}
 \title{construct a WRect}
 \usage{
-WRect(x = NULL, x.span = NULL, y.span = NULL, color = "black",
+WRect(obj = NULL, x.span = NULL, y.span = NULL, color = "black",
   lwd = 3, fill = NA, name = "")
 }
 \arguments{
-\item{x}{a plotting object or its name}
+\item{obj}{a plotting object or its name}
 
 \item{x.span}{x-axis/horizontal span (e.g., c(2,4))}
 
