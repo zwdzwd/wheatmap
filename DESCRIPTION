@@ -8,3 +8,4 @@ Description: Plot heatmap in a sequential manner.
 License: MIT license
 LazyData: TRUE
 RoxygenNote: 5.0.1
+Imports: grid, stats, colorspace, RColorBrewer
