@@ -661,7 +661,7 @@ RightOf <- function(x=NULL, width=NULL, pad=0.01, min.ratio=0.02,
 #' @param data.coord whether the coordinates is in term of data
 #' @return a WDimGenerator object
 #' @export
-Position <- function(anchor.x, anchor.y, x=NULL, just=c('left','bottom'), data.coord=FALSE) {
+WPosition <- function(anchor.x, anchor.y, x=NULL, just=c('left','bottom'), data.coord=FALSE) {
   stopifnot(just[1] %in% c('left','center','right'))
   stopifnot(just[2] %in% c('bottom','center','top'))
   force(anchor.x); force(anchor.y); force(x); force(just); force(data.coord);

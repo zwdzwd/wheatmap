@@ -9,10 +9,15 @@ There are many packages that can generate heatmaps in R. WHeatmap designs a set 
 
 ## Preparation
 
+package can be installed from
+```{r eval=FALSE}
+library(devtools)
+install_github('zwdzwd/wheatmap')
+```
+
 We start with some data
 ```{r}
-library(devtools)
-load_all('~/tools/wheatmap/wheatmap/')
+library(wheatmap)
 m <- cbind(matrix(rnorm(20),nrow=4), 5+matrix(rnorm(8),nrow=4))
 m2 <- matrix(1:16,nrow=4)
 dimnames(m) <- list(c('w','x','y','z'), c('a','b','c','d','e','f','g'))
@@ -55,7 +60,7 @@ WHeatmap(cc$mat, name='h1') +
   WLegendV('c3', RightOf('l1', pad=0.1), 'l3', n.text=3, label.fontsize = 10) + 
   WLabel('Rainbow colors', RightOf('l2', pad=0.08), rot=-90) +
   WLabel('a little\nhouse', color='black', 
-         Position(1,2,'h4',data.coord=TRUE, just=c('center','center'))) + 
+         WPosition(1,2,'h4',data.coord=TRUE, just=c('center','center'))) + 
   WRect(c(2,5),c(2,3),'h3.1.1',col='yellow') +
   WRect(c(5,6),c(2,3),'h1',col='yellow')
 ```
@@ -130,7 +135,7 @@ a
 And add some text labels using relative and arbitrary position
 ```{r}
 a <- a + WLabel('Rainbow colors', RightOf('l2', pad=0.08), rot=-90)
-a <- a + WLabel('a little\nhouse', color='black', Position(1,2,'h4',data.coord=TRUE, just=c('center','center')))
+a <- a + WLabel('a little\nhouse', color='black', WPosition(1,2,'h4',data.coord=TRUE, just=c('center','center')))
 a
 ```
 
@@ -170,7 +175,7 @@ WHeatmap(cc$mat, name='h1',
 WHeatmap(matrix(1:9,nrow=3)) + WLabel('Wosai', RightOf(), fontsize=20)
 WHeatmap(matrix(1:9,nrow=3)) + WLabel('Wosai', LeftOf(), fontsize=20)
 WHeatmap(matrix(1:9,nrow=3)) + WLabel('Wosai', TopLeftOf(just=c('center','bottom')), fontsize=20, color='blue')
-WHeatmap(matrix(1:9,nrow=3)) + WLabel('Wosai', Position(0.25,0.5,just=c('center','bottom')), fontsize=20, color='yellow')
+WHeatmap(matrix(1:9,nrow=3)) + WLabel('Wosai', WPosition(0.25,0.5,just=c('center','bottom')), fontsize=20, color='yellow')
 ```
 
 ## Anchor by edge
