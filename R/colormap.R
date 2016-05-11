@@ -64,6 +64,7 @@ ColorMap <- function(continuous=TRUE,
 #' @param given.cm given colormap
 #' @import colorspace
 #' @import RColorBrewer
+#' @importFrom grDevices rgb colorRamp
 #' @return an object of ColorMap
 #' @export
 MapToContinuousColors <- function(data, cmp=CMPar(), given.cm=NULL) {
@@ -127,6 +128,7 @@ MapToContinuousColors <- function(data, cmp=CMPar(), given.cm=NULL) {
 #' @return an object of ColorMap
 #' @import RColorBrewer
 #' @import colorspace
+#' @importFrom grDevices rgb colorRamp
 #' @export
 MapToDiscreteColors <- function(data, cmp=CMPar(), given.cm=NULL) {
 
