@@ -1,4 +1,4 @@
-# WHeatmap
+# WHeatmap [![Travis-CI Build Status](https://travis-ci.org/zwdzwd/wheatmap.svg?branch=master)](https://travis-ci.org/zwdzwd/wheatmap)
 
 WHeatmap designs a set of languages and a layer system that allows arbitrary positioning of heatmaps programmatically.
 
