@@ -5,7 +5,7 @@
 \title{construct a WRect}
 \usage{
 WRect(x.span = NULL, y.span = NULL, x = NULL, name = "",
-  color = "black", lwd = 5, fill = NA)
+  color = "black", lwd = 3, fill = NA)
 }
 \description{
 construct a WRect
