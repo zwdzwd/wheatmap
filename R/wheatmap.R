@@ -8,13 +8,13 @@
 #' @param continuous whether the data should be treated as continuous or discrete
 #' @param cmp a CMPar object, for tunning color mapping parameters
 #' @param cm a given color map
-#' @param xticklabels to plot xtick labels
+#' @param xticklabels to plot xtick labels, one may supply characters to plot just a subset of xtick labels
 #' @param xticklabels.n number of xtick labels to plot (resample for aethetics by default)
 #' @param xticklabel.side xticklabel side (t or b)
 #' @param xticklabel.fontsize xticklabel font size
 #' @param xticklabel.pad padding between xticklabel and x-axis
 #' @param xticklabel.rotat xticklabel rotation
-#' @param yticklabels to plot ytick labels
+#' @param yticklabels to plot ytick labels, one may supply characters to plot just a subset of ytick labels
 #' @param yticklabels.n number of ytick labels to plot (resample for aethetics by default)
 #' @param yticklabel.side yticklabel side (l or r)
 #' @param yticklabel.fontsize yticklabel font size

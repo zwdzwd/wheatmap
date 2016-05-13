@@ -24,7 +24,7 @@ WHeatmap(data = NULL, dm = NULL, name = "", continuous = NULL,
 
 \item{cm}{a given color map}
 
-\item{xticklabels}{to plot xtick labels}
+\item{xticklabels}{to plot xtick labels, one may supply characters to plot just a subset of xtick labels}
 
 \item{xticklabels.n}{number of xtick labels to plot (resample for aethetics by default)}
 
@@ -36,7 +36,7 @@ WHeatmap(data = NULL, dm = NULL, name = "", continuous = NULL,
 
 \item{xticklabel.pad}{padding between xticklabel and x-axis}
 
-\item{yticklabels}{to plot ytick labels}
+\item{yticklabels}{to plot ytick labels, one may supply characters to plot just a subset of ytick labels}
 
 \item{yticklabels.n}{number of ytick labels to plot (resample for aethetics by default)}
 

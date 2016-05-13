@@ -25,7 +25,10 @@
     .text.y = 1 + hm$xticklabel.pad
     .text.rot = 90
   }
-  sample.inds <- .TickLabelResample(labels, hm$xticklabels.n)
+  if (!is.logical(hm$xticklabels))
+    sample.inds <- which(labels %in% hm$xticklabels)
+  else
+    sample.inds <- .TickLabelResample(labels, hm$xticklabels.n)
   grid.text(labels[sample.inds],
             x=x.mid[sample.inds], y=unit(.text.y,'npc'), rot=.text.rot,
             just=c(.text.just, 'center'), gp=gpar(fontsize=hm$xticklabel.fontsize*cex))
@@ -42,7 +45,10 @@
     .text.just = 'left'
     .text.x = 1 + hm$yticklabel.pad
   }
-  sample.inds <- .TickLabelResample(labels, hm$yticklabels.n)
+  if (!is.logical(hm$yticklabels))
+    sample.inds <- which(labels %in% hm$yticklabels)
+  else
+    sample.inds <- .TickLabelResample(labels, hm$yticklabels.n)
   grid.text(labels[sample.inds],
             x=unit(.text.x,'npc'), y=y.mid[sample.inds],
             just=c(.text.just,'center'), gp=gpar(fontsize=hm$yticklabel.fontsize*min(cex)))
