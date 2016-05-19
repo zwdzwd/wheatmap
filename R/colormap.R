@@ -100,6 +100,7 @@ MapToContinuousColors <- function(data, cmp=CMPar(), given.cm=NULL) {
     }
   }
 
+  browser()
   ## cap data
   if (!is.null(cmp$dmax))
     data[data>=cmp$dmax] <- cmp$dmax
@@ -116,7 +117,11 @@ MapToContinuousColors <- function(data, cmp=CMPar(), given.cm=NULL) {
     dmin = .dmin, dmax = .dmax,
     scaler = function(x) {(x-.dmin)/(.dmax-.dmin)},
     mapper = colorRamp(cmp$stop.points, alpha=TRUE))
-  cm$colors = apply(cm$mapper(data), 1, function(x) do.call(rgb, c(as.list(x), maxColorValue=255)))
+  cm$colors = apply(cm$mapper(data), 1, function(x) {
+    if (any(is.na(x)))
+      x <- col2rgb('#C0C0C0', alpha=TRUE)
+    do.call(rgb, c(as.list(x), maxColorValue=255))
+  })
   cm
 }
 
