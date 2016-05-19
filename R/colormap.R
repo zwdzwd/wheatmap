@@ -106,8 +106,8 @@ MapToContinuousColors <- function(data, cmp=CMPar(), given.cm=NULL) {
   if (!is.null(cmp$dmin))
     data[data<=cmp$dmin] <- cmp$dmin
 
-  .dmax <- max(cmp$dmax, data)
-  .dmin <- min(cmp$dmin, data)
+  .dmax <- max(cmp$dmax, data, na.rm=TRUE)
+  .dmin <- min(cmp$dmin, data, na.rm=TRUE)
   if (.dmax==.dmin) # when range==0
     .dmax <- .dmax+1
   data <- (data - .dmin) / (.dmax-.dmin)
