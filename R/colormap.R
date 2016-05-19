@@ -100,7 +100,6 @@ MapToContinuousColors <- function(data, cmp=CMPar(), given.cm=NULL) {
     }
   }
 
-  browser()
   ## cap data
   if (!is.null(cmp$dmax))
     data[data>=cmp$dmax] <- cmp$dmax
