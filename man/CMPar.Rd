@@ -6,7 +6,8 @@
 \usage{
 CMPar(dmin = NULL, dmax = NULL, brewer.name = NULL, brewer.n = 3,
   colorspace.name = NULL, colorspace.n = 2, cmap = NULL,
-  stop.points = NULL, grey.scale = FALSE)
+  label2color = NULL, use.data = FALSE, stop.points = NULL,
+  grey.scale = FALSE)
 }
 \arguments{
 \item{dmin}{minimum for continuous color map}
@@ -22,6 +23,12 @@ CMPar(dmin = NULL, dmax = NULL, brewer.name = NULL, brewer.n = 3,
 \item{colorspace.n}{number of stops in colorspace palettes}
 
 \item{cmap}{customized colormap name}
+
+\item{label2color}{a named vector or list that defines label to color mapping
+explicitly for discrete color mapping}
+
+\item{use.data}{use data as color, data must be either common color names
+or hexdecimal color names}
 
 \item{stop.points}{custome stop points}
 
