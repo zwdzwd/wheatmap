@@ -11,6 +11,10 @@
 #'
 #' @param dmin minimum for continuous color map
 #' @param dmax maximum for continuous color map
+#' @param use.data use data as color, data must be either common color names
+#' or hexdecimal color names
+#' @param label2color a named vector or list that defines label to color mapping
+#' explicitly for discrete color mapping
 #' @param brewer.name palette name for RColorbrewer
 #' @param brewer.n number of stop points in RColorbrewer for continuous color map
 #' @param colorspace.name colorspace name
@@ -23,7 +27,7 @@
 CMPar <- function(dmin = NULL, dmax = NULL, # color scale max and min
                   brewer.name=NULL, brewer.n=3,
                   colorspace.name=NULL, colorspace.n=2,
-                  cmap=NULL,
+                  cmap=NULL, label2color=NULL, use.data=FALSE,
                   stop.points=NULL, # color names at stop points
                   grey.scale=FALSE) {
   cmp <- lapply(formals(), eval)
@@ -148,7 +152,12 @@ MapToDiscreteColors <- function(data, cmp=CMPar(), given.cm=NULL) {
     cmp$brewer.name <- 'Accent'
   }
 
-  if (!is.null(cmp$brewer.name) &&
+  ## when label2color is explicitly set
+  if (cmp$use.data) {
+    mapped.colors <- alphabet
+  } else if (!is.null(cmp$label2color)) {
+    mapped.colors <- cmp$label2color[alphabet]
+  } else if (!is.null(cmp$brewer.name) &&
       length(alphabet)<=brewer.pal.info[cmp$brewer.name,'maxcolors']) {
     ## use grey scale for binary and unary data
     if (length(alphabet)<3)
