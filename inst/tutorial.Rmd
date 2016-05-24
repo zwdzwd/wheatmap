@@ -208,17 +208,3 @@ ly(a)
 ```{r}
 WHeatmap(matrix(1:20,nrow=4)) + WRect(NULL,c(2,3),c(3,3), color='red', lwd=10)
 ```
-
-```{r}
-library(devtools)
-load_all('~/tools/wheatmap//wheatmap')
-a <- matrix(rnorm(100),nrow=10)
-d <- both.cluster(a)
-WHeatmap(d$mat,name='a') + WDendrogram(d$column.clust, RightOf('a'), facing = 'left') + WLegendV('a',BottomRightOf())
-WHeatmap(d$mat,name='a') + WDendrogram(d$column.clust, RightOf('a'), facing = 'left') + WLegendV('a',BottomRightOf(h.pad=0.05), height=0.02)
-
-WHeatmap(d$mat,name='a') + WDendrogram(d$column.clust, RightOf('a'), facing = 'left') + WLegendV('a',BottomRightOf(h.pad=0.05, just=c('left','top')), height=0.02)
-
-WHeatmap(d$mat,name='a') + WDendrogram(d$column.clust, RightOf('a'), facing = 'left') + WLegendV('a',BottomRightOf(h.pad=0.05, just=c('left','top')), height=0.02)
-
-```

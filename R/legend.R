@@ -33,7 +33,7 @@ WLegendV <- function(x=NULL, dm=NULL, name='',
     if (x$continuous) {
       d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)
       kargs$data <- matrix(
-        d, dimnames=list(format(d, digits=2, trim=TRUE)), NULL)
+        d, dimnames=list(format(d, digits=2, trim=TRUE)))
     } else {
       d <- x$cm$mapper
       d <- d[order(names(d))]
