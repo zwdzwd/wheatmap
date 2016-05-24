@@ -47,12 +47,15 @@ p + WLegendV('a',BottomRightOf(h.pad=0.05, just=c('left','top')), height=0.02)
 ```
 
 So far we have covered vertical legend. Let's look at horizontal legend.
+
 ```{r}
 p + WLegendH('a',BottomRightOf(h.pad=0.05, just=c('left','top')))
 ```
 
 Note that if we use edge anchor to place the legend, the legend will be the same length or height as the anchored object. For example, this is how `RightOf` looks like
+
 ```{r}
 p + WLegendV('a',RightOf(pad=0.05, width=0.05), height=100000, width=9999)
 ```
+
 Also note that `RightOf` do not have `v.pad` and `h.pad`. It only has `pad` which is the horizontal padding. There is only `width` and no `height`. The `height` and `width` option specified to `WLegendV` here are ignored.
