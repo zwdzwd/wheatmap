@@ -18,7 +18,7 @@
 #' @export
 WLegendV <- function(x=NULL, dm=NULL, name='',
                      n.stops=20, n.text=5, label.fontsize=12,
-                     width=0.1, height=0.1, ...) {
+                     width=0.05, height=0.02, ...) {
 
   kargs <- list(...)
   kargs$dm <- dm
@@ -33,7 +33,7 @@ WLegendV <- function(x=NULL, dm=NULL, name='',
     if (x$continuous) {
       d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)
       kargs$data <- matrix(
-        d, dimnames=list(format(d, digits=2, trim=TRUE)))
+        d, dimnames=list(format(d, digits=2, trim=TRUE)), NULL)
     } else {
       d <- x$cm$mapper
       d <- d[order(names(d))]
@@ -83,7 +83,7 @@ WLegendV <- function(x=NULL, dm=NULL, name='',
 #' @export
 WLegendH <- function(x=NULL, dm=NULL, name='',
                      n.stops=20, n.text=5, label.fontsize=12,
-                     width=0.1, height=0.1, ...) {
+                     width=0.02, height=0.05, ...) {
 
   kargs <- list(...)
   kargs$dm <- dm
@@ -97,7 +97,7 @@ WLegendH <- function(x=NULL, dm=NULL, name='',
     if (x$continuous) {
       d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)
       kargs$data <- matrix(
-        d, nrow=1, dimnames=list(format(d, digits=2, trim=TRUE)))
+        d, nrow=1, dimnames=list(NULL, format(d, digits=2, trim=TRUE)))
     } else {
       d <- x$cm$mapper
       d <- d[order(names(d))]
