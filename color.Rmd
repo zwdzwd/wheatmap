@@ -25,10 +25,18 @@ WColorBarH(1:10)
 
 # discrete color map
 
-Even if you specify the color name, it just ignore them and assign its own colors. One can override by telling WHeatmap the data is color name using the `cmp=CMPar(use.data=T)` option.
-
+Even if you specify the color name, it just ignore them and assign its own colors. 
 ```{r}
-WColorBarV(rep(c('black','red','blue'),3)) +
-  WColorBarV(rep(c('black','red','blue'),3),RightOf(),cmp=CMPar(use.data=T)) +
-  WLegendV(NULL, BottomRightOf(h.pad=0.05), height=0.1)
+a <- WColorBarV(rep(c('black','red','blue'),3))
+a
+```
+
+One can override by telling WHeatmap the data is color name using the `cmp=CMPar(use.data=T)` option.
+```{r}
+a + WColorBarV(rep(c('black','red','blue'),3),name='a',RightOf(),cmp=CMPar(use.data=T)) + WLegendV(NULL, BottomRightOf(h.pad=0.05), height=0.1)
+```
+
+One can also specify a color mapping manually:
+```{r}
+a + WColorBarV(rep(c('Fred','Frank','Froy'),3),RightOf(),cmp=CMPar(label2color=c(Fred='green',Frank='red',Froy='yellow'))) + WLegendV(NULL, BottomRightOf(h.pad=0.05), height=0.1)
 ```
