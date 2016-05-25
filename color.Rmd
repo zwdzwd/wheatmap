@@ -1,0 +1,34 @@
+---
+title: "Color Guide"
+author: "Wanding Zhou"
+date: "May 25, 2016"
+output: html_document
+---
+
+This document illustrate how to use color in WHeatmap.
+
+```{r setup, include=FALSE}
+## library(devtools)
+## load_all('~/tools/wheatmap/wheatmap')
+```
+
+```{r prepare}
+library(wheatmap)
+```
+
+# continous color map
+
+Usually wheatmap sets colors automatically
+```{r}
+WColorBarH(1:10)
+```
+
+# discrete color map
+
+Even if you specify the color name, it just ignore them and assign its own colors. One can override by telling WHeatmap the data is color name using the `cmp=CMPar(use.data=T)` option.
+
+```{r}
+WColorBarV(rep(c('black','red','blue'),3)) +
+  WColorBarV(rep(c('black','red','blue'),3),RightOf(),cmp=CMPar(use.data=T)) +
+  WLegendV(NULL, BottomRightOf(h.pad=0.05), height=0.1)
+```
