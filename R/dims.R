@@ -452,7 +452,7 @@ TopOf <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02,
 
     dm$text.x <- x$left + x$width/2
     dm$text.y <- x$bottom + x$height + pad
-    dm$text.just <- c('left','center')
+    dm$text.just <- c('center','bottom')
 
     dm
   }, class='WDimGenerator')
@@ -517,7 +517,7 @@ Beneath <- function(x=NULL, height=NULL, pad=0.01, min.ratio=0.02,
 
     dm$text.x <- x$left + x$width/2
     dm$text.y <- x$bottom - pad
-    dm$text.just <- c('right','center')
+    dm$text.just <- c('center','top')
 
     dm
   }, class='WDimGenerator')
