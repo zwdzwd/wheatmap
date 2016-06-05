@@ -171,6 +171,8 @@ MapToDiscreteColors <- function(data, cmp=CMPar(), given.cm=NULL) {
     stop.points <- get(paste0(cmp$cmap,'.stops'))
     mapped.colors <- colorRamp(stop.points, alpha=TRUE)(length(alphabet))
   } else {
+    if (is.null(cmp$colorspace.name))
+      cmp$colorspace.name <- 'rainbow_hcl'
     mapped.colors <- get(cmp$colorspace.name)(length(alphabet))
   }
 

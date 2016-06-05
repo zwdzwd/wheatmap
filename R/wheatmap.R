@@ -175,13 +175,23 @@ CalcTextBounding.WHeatmap <- function(hm, group) {
 
   if (!is.null(hm$yticklabels)) {
     if (hm$yticklabel.side=='l') {
-      left <- left - max(sapply(
-        rownames(hm$data), function(t) text.width(t, hm$yticklabel.fontsize))) -
-        NPCToPoints(LengthToTop(hm, group, hm$yticklabel.pad))
+      if (is.null(rownames(hm$data))) {
+        .text.margin <- 0
+      } else {
+        .text.margin <- max(sapply(
+          rownames(hm$data), function(t) text.width(t, hm$yticklabel.fontsize))) -
+            NPCToPoints(LengthToTop(hm, group, hm$yticklabel.pad))
+      }
+      left <- left - .text.margin
     } else {
-      right <- right + max(sapply(
-        rownames(hm$data), function(t) text.width(t, hm$yticklabel.fontsize))) +
-        NPCToPoints(LengthToTop(hm, group, hm$yticklabel.pad))
+      if (is.null(rownames(hm$data))) {
+        .text.margin <- 0
+      } else {
+        .text.margin <- max(sapply(
+          rownames(hm$data), function(t) text.width(t, hm$yticklabel.fontsize))) +
+            NPCToPoints(LengthToTop(hm, group, hm$yticklabel.pad))
+      }
+      right <- right + .text.margin
     }
   }
 
@@ -195,13 +205,23 @@ CalcTextBounding.WHeatmap <- function(hm, group) {
 
   if (!is.null(hm$xticklabels)) {
     if (hm$xticklabel.side=='b') {
-      bottom <- bottom - max(sapply(
-        colnames(hm$data), function(t) text.width(t, hm$xticklabel.fontsize))) -
-        NPCToPoints(LengthToTop(hm, group, hm$xticklabel.pad))
+      if (is.null(colnames(hm$data))) {
+        .text.margin <- 0
+      } else {
+        .text.margin <- max(sapply(
+          colnames(hm$data), function(t) text.width(t, hm$xticklabel.fontsize))) -
+            NPCToPoints(LengthToTop(hm, group, hm$xticklabel.pad))
+      }
+      bottom <- bottom - .text.margin
     } else {
-      top <- top + max(sapply(
-        colnames(hm$data), function(t) text.width(t, hm$xticklabel.fontsize))) +
-        NPCToPoints(LengthToTop(hm, group, hm$xticklabel.pad))
+      if (is.null(colnames(hm$data))) {
+        .text.margin <- 0
+      } else {
+        .text.margin <- max(sapply(
+          colnames(hm$data), function(t) text.width(t, hm$xticklabel.fontsize))) +
+            NPCToPoints(LengthToTop(hm, group, hm$xticklabel.pad))
+      }
+      top <- top + .text.margin
     }
   }
   dm$left <- left

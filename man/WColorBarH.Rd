@@ -4,12 +4,21 @@
 \alias{WColorBarH}
 \title{WColorBarH}
 \usage{
-WColorBarH(data, ...)
+WColorBarH(data, ..., label = NULL, label.side = "r", label.fontsize = 12,
+  label.pad = 0.005)
 }
 \arguments{
 \item{data}{numeric vector}
 
 \item{...}{additional options to WHeatmap}
+
+\item{label}{colorbar label}
+
+\item{label.side}{l (for left) or r (for right)}
+
+\item{label.fontsize}{label font size}
+
+\item{label.pad}{label padding}
 }
 \value{
 an object of class WColorBarH
