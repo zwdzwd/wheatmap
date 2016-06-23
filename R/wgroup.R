@@ -363,6 +363,7 @@ print.WGroup <- function(x, stand.alone=TRUE, cex=1, layout.only=FALSE, ...) {
     grid.rect(gp=gpar(col='green', lwd=5, alpha=0.6, fill=NULL))
     grid.text(x$name, gp=gpar(col='green', alpha=1))
   }
+
   for (child in x$children) {
     print(child, stand.alone=FALSE, cex=cex, layout.only=layout.only)
   }
