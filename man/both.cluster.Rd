@@ -5,7 +5,7 @@
 \title{row- and column-cluster a matrix}
 \usage{
 both.cluster(mat, extra.row = NULL, extra.column = NULL,
-  hc.method = "ward.D2")
+  hc.method = "ward.D2", dist.method = "euclidean")
 }
 \arguments{
 \item{mat}{input matrix}
@@ -15,6 +15,8 @@ both.cluster(mat, extra.row = NULL, extra.column = NULL,
 \item{extra.column}{extra column reordering}
 
 \item{hc.method}{method to use in hclust}
+
+\item{dist.method}{method to use in dist}
 }
 \value{
 a list of clustered row, column and matrix

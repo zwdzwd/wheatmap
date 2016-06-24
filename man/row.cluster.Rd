@@ -4,7 +4,7 @@
 \alias{row.cluster}
 \title{row cluster a matrix}
 \usage{
-row.cluster(mat, ..., hc.method = "ward.D2")
+row.cluster(mat, ..., hc.method = "ward.D2", dist.method = "euclidean")
 }
 \arguments{
 \item{mat}{input matrix}
@@ -12,6 +12,8 @@ row.cluster(mat, ..., hc.method = "ward.D2")
 \item{...}{extra color bars or matrix that needs row reordered.}
 
 \item{hc.method}{method to use in hclust}
+
+\item{dist.method}{method to use in dist}
 }
 \value{
 a list of clustered row, column and matrix

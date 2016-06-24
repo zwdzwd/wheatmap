@@ -156,14 +156,14 @@ grid.dendrogram = function(dend, facing = c("bottom", "top", "left", "right"),
         env$y1 = c(env$y1, max_height - c(height, height, height, height))
       } else if(facing == "right") {
         env$x0 = c(env$x0, max_height - c(y1, height, y2, height))
-        env$y0 = c(env$y0, c(x1, x1, x2, x2))
+        env$y0 = c(env$y0, max_width - c(x1, x1, x2, x2))
         env$x1 = c(env$x1, max_height - c(height, height, height, height))
-        env$y1 = c(env$y1, c(x1, (x1+x2)/2, x2, (x1+x2)/2))
+        env$y1 = c(env$y1, max_width - c(x1, (x1+x2)/2, x2, (x1+x2)/2))
       } else if(facing == "left") {
         env$x0 = c(env$x0, c(y1, height, y2, height))
-        env$y0 = c(env$y0, c(x1, x1, x2, x2))
+        env$y0 = c(env$y0, max_width - c(x1, x1, x2, x2))
         env$x1 = c(env$x1, c(height, height, height, height))
-        env$y1 = c(env$y1, c(x1, (x1+x2)/2, x2, (x1+x2)/2))
+        env$y1 = c(env$y1, max_width - c(x1, (x1+x2)/2, x2, (x1+x2)/2))
       }
     } else {
       if(facing == "bottom") {
@@ -178,14 +178,14 @@ grid.dendrogram = function(dend, facing = c("bottom", "top", "left", "right"),
         env$y1 = c(env$y1, max_height - c(height, height, height, height))
       } else if(facing == "right") {
         env$x0 = c(env$x0, max_height - c(y1, height, y2, height))
-        env$y0 = c(env$y0, max_width - c(x1, x1, x2, x2))
+        env$y0 = c(env$y0, c(x1, x1, x2, x2))
         env$x1 = c(env$x1, max_height - c(height, height, height, height))
-        env$y1 = c(env$y1, max_width - c(x1, (x1+x2)/2, x2, (x1+x2)/2))
+        env$y1 = c(env$y1, c(x1, (x1+x2)/2, x2, (x1+x2)/2))
       } else if(facing == "left") {
         env$x0 = c(env$x0, c(y1, height, y2, height))
-        env$y0 = c(env$y0, max_width - c(x1, x1, x2, x2))
+        env$y0 = c(env$y0, c(x1, x1, x2, x2))
         env$x1 = c(env$x1, c(height, height, height, height))
-        env$y1 = c(env$y1, max_width - c(x1, (x1+x2)/2, x2, (x1+x2)/2))
+        env$y1 = c(env$y1, c(x1, (x1+x2)/2, x2, (x1+x2)/2))
       }
     }
     ## do it recursively
