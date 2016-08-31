@@ -16,7 +16,7 @@
 #' @param label2color a named vector or list that defines label to color mapping
 #' explicitly for discrete color mapping
 #' @param brewer.name palette name for RColorbrewer
-#' @param brewer.n number of stop points in RColorbrewer for continuous color map
+#' @param brewer.n number of stop points in RColorBrewer for continuous color map
 #' @param colorspace.name colorspace name
 #' @param colorspace.n number of stops in colorspace palettes
 #' @param cmap customized colormap name

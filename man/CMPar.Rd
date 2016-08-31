@@ -16,7 +16,7 @@ CMPar(dmin = NULL, dmax = NULL, brewer.name = NULL, brewer.n = 3,
 
 \item{brewer.name}{palette name for RColorbrewer}
 
-\item{brewer.n}{number of stop points in RColorbrewer for continuous color map}
+\item{brewer.n}{number of stop points in RColorBrewer for continuous color map}
 
 \item{colorspace.name}{colorspace name}
 
