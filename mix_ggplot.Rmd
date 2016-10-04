@@ -1,0 +1,13 @@
+---
+title: "Mix ggplot with wheatmap"
+output: html_document
+---
+
+The following plot a matrix of mixed ggplot and wheatmap.
+```{r}
+library(wheatmap)
+library(ggplot2)
+WMatrix(list(qplot(1:10,10:1), qplot(10:1,10:1), qplot(1:7,7:1), qplot(5:1,5:1), WHeatmap(matrix(1:4,nrow=2))), ncols=3)
+
+WHeatmap(matrix(1:4,nrow=2)) + WGG(qplot(rnorm(50,4,3),geom='density'), TopOf())
+```
