@@ -1,0 +1,217 @@
+---
+title: "TCGAprostate"
+author: "Wanding Zhou"
+date: "10/3/2016"
+output: html_document
+---
+
+```{r}
+library(wheatmap)
+source('~/wzlib/Rutils/wzlibarray.R')
+load('/primary/projects/laird/projects/2016_04_05_TCGA_pancan_renormalization/450k_level3/PRAD.rda')
+load('~/Dropbox/Public/GR.InfiniumMethylation/20160711//hm450//hm450.manifest.rda')
+# load('/secondary/projects/shen/projects/2016_09_02_TCGA_SNP6_copynumber/450k/LIHCcopynumber.rda')
+betas <- betas[grep('cg',rownames(betas)),]
+betas <- betas[(!(as.character(seqnames(hm450.manifest[rownames(betas)])) %in% c('chrX','chrY','chrM'))),]
+betas <- betas[apply(betas, 1, function(x) !all(is.na(x))),]
+PRADclin <- read.csv('~/tools/wheatmap//pages/PRADclinical.csv', check.names=F)
+
+PRADclinERGstatusAll <- apply(PRADclin, 1, function(x) {
+  if (x['ETV4_status'] != 'none') {
+    rr <- x['ETV4_status']
+  } else if (x['ETV1_status'] != 'none') {
+    rr <- x['ETV1_status']
+  } else if (x['ERG_status'] != 'none') {
+    rr <- x['ERG_status']
+  } else {
+    rr <- 'none'
+  }
+  rr
+})
+
+rownames(PRADclin) <- PRADclin$SAMPLE_ID
+samplesNormal <- colnames(betas)[substr(colnames(betas),14,14)=='1']
+samplesTumor <- colnames(betas)[substr(colnames(betas),14,14)=='0']
+samplesTumor <- samplesTumor[substr(samplesTumor,1,12) %in% substr(colnames(LIHCcopynumber),1,12)]
+samplesTumor <- samplesTumor[substr(samplesTumor,1,15) %in% rownames(PRADclin)]
+dim(betas)
+
+# LIHCcopynumber <- LIHCcopynumber[,colnames(LIHCcopynumber)[match(substr(samplesTumor,1,12), substr(colnames(LIHCcopynumber),1,12))]]
+# top.cnprobes <- names(sort(apply(LIHCcopynumber, 1, sd), decreasing=T))[1:500]
+# LIHCcopynumberSel <- row.cluster(LIHCcopynumber[top.cnprobes,])$mat
+
+allsd <- apply(betas, 1, function(x) sd(x))
+topprobes <- names(sort(allsd, decreasing = T))[1:500]
+
+# find polarized probes in normal
+topprobesHyper <- topprobes[apply(betas[topprobes, samplesNormal],1,function(x) {
+  (sum(x<0.3)>(0.8*length(x)))
+})]
+
+topprobesHypo <- topprobes[apply(betas[topprobes, samplesNormal],1,function(x) {
+  (sum(x>0.7)>(0.8*length(x)))
+})]
+head(PRADclin[substr(samplesTumor,1,15),])
+betasHyper <- betas[topprobesHyper,]
+betasHypo <- betas[topprobesHypo,]
+
+clusHyperT <- both.cluster(betas[topprobesHyper,samplesTumor])
+clusHyperN <- column.cluster(betas[topprobesHyper,samplesNormal])
+matHyperN <- clusHyperN$mat
+matHyperT <- clusHyperT$mat
+clusHypoN <- row.cluster(betas[topprobesHypo,colnames(matHyperN)])
+matHypoN <- clusHypoN$mat
+matHypoT <- betas[rownames(matHypoN), colnames(matHyperT)]
+
+head(PRADclin[,1:4])
+library(devtools)
+
+matHyperTc <- list()
+matHyperTc[[1]] <- matHyperT[,PRADclin[substr(colnames(matHyperT),1,15), 'ERG_status']=='fusion']
+matHyperTc[[2]] <- matHyperT[,PRADclin[substr(colnames(matHyperT),1,15), 'ETV1_status'] %in% c('fusion','high')]
+matHyperTc[[3]] <- matHyperT[,PRADclin[substr(colnames(matHyperT),1,15), 'ETV4_status'] %in% c('fusion','high')]
+matHyperTc[[4]] <- matHyperT[,PRADclin[substr(colnames(matHyperT),1,15), 'FLI1_status'] %in% c('fusion','high')]
+matHyperTc[[5]] <- matHyperT[,PRADclin[substr(colnames(matHyperT),1,15), 'SPOP_mut'] == 1]
+matHyperTc[[6]] <- matHyperT[,(PRADclin[substr(colnames(matHyperT),1,15), 'FOXA1_mut'] ==1) & (PRADclin[substr(colnames(matHyperT),1,15), 'SPOP_mut'] != 1)]
+matHyperTc[[7]] <- matHyperT[,PRADclin[substr(colnames(matHyperT),1,15), 'IDH1_mut'] == 1]
+matHyperTc[[8]] <- matHyperT[,!(colnames(matHyperT) %in% do.call(c, lapply(1:7, function(i) colnames(matHyperTc[[i]]))))]
+
+matHypoTc <- lapply(matHyperTc, function(hyper) matHypoT[,colnames(hyper)])
+
+load_all('~/tools/wheatmap/wheatmap')
+a <- WHeatmap(matHyperN, name='HyperN') + 
+  WHeatmap(matHyperTc[[1]], RightOf(pad = 0.3), name='HyperTc1') +
+  WHeatmap(matHyperTc[[2]], RightOf(pad = 0.04), name='HyperTc2') +
+  WHeatmap(matHyperTc[[3]], RightOf(pad = 0.04), name='HyperTc3') +
+  WHeatmap(matHyperTc[[4]], RightOf(pad = 0.04), name='HyperTc4') + 
+  WHeatmap(matHyperTc[[5]], RightOf(pad = 0.04), name='HyperTc5') + 
+  WHeatmap(matHyperTc[[6]], RightOf(pad = 0.04), name='HyperTc6') + 
+  WHeatmap(matHyperTc[[7]], RightOf(pad = 0.04), name='HyperTc7') + 
+  WColorBarV(as.character(hm450.manifest[rownames(matHyperN)]$designType), cmp=CMPar(label2color = c('I'='Tan', 'II'='DarkCyan')),
+             RightOf(pad=0.04, width = 0.2), name='designHyper', label='design types', label.side='t', label.fontsize=18) +
+  WColorBarV(as.character(seqnames(hm450.manifest[rownames(matHyperN)])), cmp=CMPar(colorspace.name = 'diverge_hcl'), 
+             RightOf(pad=0.02, width=0.2), name='chrmHyper', label='chromosomes', label.side='t', label.fontsize=18) +
+  WHeatmap(matHyperTc[[8]], RightOf(pad = 0.04, h.scale = 'HyperTc7', h.scale.proportional = T), name='HyperTc8') +
+  WLabel('most variable Hypermethylated loci', RightOf('HyperN', pad=0.08), rot=90, fontsize=20)
+
+a1 <- a +
+  WHeatmap(matHypoN, Beneath('HyperN', pad=0.01), name='HypoN') +
+  WHeatmap(matHypoTc[[1]], RightOf(pad=0.3), name='HypoTc1') + 
+  WHeatmap(matHypoTc[[2]], RightOf(pad=0.04), name='HypoTc2') + 
+  WHeatmap(matHypoTc[[3]], RightOf(pad=0.04), name='HypoTc3') + 
+  WHeatmap(matHypoTc[[4]], RightOf(pad=0.04), name='HypoTc4') + 
+  WHeatmap(matHypoTc[[5]], RightOf(pad=0.04), name='HypoTc5') + 
+  WHeatmap(matHypoTc[[6]], RightOf(pad=0.04), name='HypoTc6') + 
+  WHeatmap(matHypoTc[[7]], RightOf(pad=0.04), name='HypoTc7') + 
+  WColorBarV(as.character(hm450.manifest[rownames(matHypoN)]$designType), cmp=CMPar(label2color = c('I'='Tan', 'II'='DarkCyan')),
+             RightOf(pad=0.04, width = 0.2), name='designHypo') +
+  WColorBarV(as.character(seqnames(hm450.manifest[rownames(matHypoN)])), cmp=CMPar(colorspace.name = 'diverge_hcl'), 
+             RightOf(pad=0.02, width=0.2), name='chrmHypo') +
+  WHeatmap(matHypoTc[[8]], RightOf(pad=0.04, h.scale = 'HypoTc7', h.scale.proportional = T), name='HypoTc8') +
+  WLabel('Hypomethylated loci', BottomRightOf('HypoN', h.pad=0.08, just=c('left','bottom')), rot=90, fontsize=20)
+
+# a1
+a2 <- a1 + WLabel('Normals (n=19)', Beneath('HypoN', pad=0.015), fontsize=20) + WLabel('Tumors (n=333)', Beneath('HypoTc3', pad=0.015), fontsize=20)
+
+a3 <- a2 + WDendrogram(clusHyperT$row.clust, facing='left', RightOf('HyperTc8', width = 0.5)) + WDendrogram(clusHypoNr$row.clust, facing='right', LeftOf('HypoN', width = 0.5))
+
+b <- a3
+for (i in 1:8) {
+  b <- b + WColorBarH(as.character(PRADclin[substr(colnames(matHyperTc[[i]]),1,15), 'methylation_cluster']), TopOf(paste0('HyperTc',i)),
+                      cmp=CMPar(label2color = c('1'='IndianRed','2'='Gold','3'='MediumSeaGreen','4'='SkyBlue')), name=paste0('MethylClustC', i))
+  if (i==1) {
+    b <- b + WLabel('DNA methylation clusters', BottomLeftOf(just=c('right','bottom'), h.pad=-0.1, v.pad=0.005), fontsize=15)
+  }
+}
+
+b2 <- b
+for (i in 1:8) {
+  b2 <- b2 + WColorBarH(as.character(PRADclin[substr(colnames(matHyperTc[[i]]),1,15), 'SCNA_cluster']), TopOf(paste0('MethylClustC',i)), 
+                      cmp=CMPar(label2color = c('Quiet'='PowderBlue','Some_SCNA'='LightSteelBlue','More_SCNA'='SteelBlue')), name=paste0('SCNAClustC', i))
+  if (i==1) {
+    b2 <- b2 + WLabel('SCNA clusters', BottomLeftOf(just=c('right','bottom'), h.pad=-0.1, v.pad=0.005), fontsize=15)
+  }
+}
+
+b3 <- b2
+for (i in 1:8) {
+  b3 <- b3 + WColorBarH(as.character(PRADclin[substr(colnames(matHyperTc[[i]]),1,15), 'iCluster']), TopOf(paste0('SCNAClustC',i)), 
+                      cmp=CMPar(label2color = c('1'='Khaki','2'='SteelBlue','3'='OrangeRed')), name=paste0('iClustC', i))
+  if (i==1) {
+    b3 <- b3 + WLabel('iClusters', BottomLeftOf(just=c('right','bottom'), h.pad=-0.1, v.pad=0.005), fontsize=15)
+  }
+}
+
+b4 <- b3
+for (i in 1:8) {
+  b4 <- b4 + WColorBarH(PRADclin[substr(colnames(matHyperTc[[i]]),1,15), 'ABSOLUTE_purity'], TopOf(paste0('iClustC',i)), 
+                      cmp=CMPar(dmin=0.17, dmax=0.98, stop.points = c('white','red')), name=paste0('PurityC', i))
+  if (i==1) {
+    b4 <- b4 + WLabel('purity', BottomLeftOf(just=c('right','bottom'), h.pad=-0.1, v.pad=0.005), fontsize=15)
+  }
+}
+
+b5 <- b4
+for (i in 1:8) {
+  b5 <- b5 + WColorBarH(as.character(PRADclin[substr(colnames(matHyperTc[[i]]),1,15), 'Clinical_Gleason_category']), TopOf(paste0('PurityC',i)), 
+                      cmp=CMPar(label2color = c('3+3'='white','3+4'='yellow','3+5'='Orange', '4+3'='red', '>=8'='black')), name=paste0('GleasonC', i))
+  if (i==1) {
+    b5 <- b5 + WLabel('Gleason category', BottomLeftOf(just=c('right','bottom'), h.pad=-0.1, v.pad=0.005), fontsize=15)
+  }
+}
+
+b6 <- b5
+prevbarname <- 'GleasonC'
+for (barname in c('KMT2A_mut', 'KMT2C_mut','KMT2D_mut', 'KDM6A_mut', 'IDH1_mut', 'FOXA1_mut', 'SPOP_mut')) {
+  cbarname <- paste0(barname,'C')
+  for (i in 1:8) {
+    b6 <- b6 + WColorBarH(as.character(PRADclin[substr(colnames(matHyperTc[[i]]),1,15), barname]), 
+                          TopOf(paste0(prevbarname,i)), cmp=CMPar(label2color = c('0'='LightGray','1'='DarkGreen')), name=paste0(cbarname, i))
+    if (i==1) {
+      b6 <- b6 + WLabel(gsub('_mut',' mutation', barname), BottomLeftOf(just=c('right','bottom'), h.pad=-0.1, v.pad=0.005), fontsize=15)
+    }
+  }
+  prevbarname <- cbarname
+}
+
+b7 <- b6
+prevbarname <- 'SPOP_mutC'
+for (barname in c('SPOPL_CNA', 'CHD1_CNA')) {
+  cbarname <- paste0(barname,'C')
+  for (i in 1:8) {
+    b7 <- b7 + WColorBarH(as.character(PRADclin[substr(colnames(matHyperTc[[i]]),1,15), barname]), TopOf(paste0(prevbarname,i)),
+                          cmp=CMPar(label2color = c('diploid'='LightGray','hetloss'='SkyBlue','homdel'='SteelBlue')), name=paste0(cbarname, i))
+    if (i==1) {
+      b7 <- b7 + WLabel(gsub('_CNA','  CNA', barname), BottomLeftOf(just=c('right','bottom'), h.pad=-0.1, v.pad=0.005), fontsize=15)
+    }
+  }
+  prevbarname <- cbarname
+}
+
+b8 <- b7
+for (i in 1:8) {
+  b8 <- b8 + WColorBarH(as.character(PRADclin[substr(colnames(matHyperTc[[i]]),1,15), 'SPINK1_high']), 
+                        TopOf(paste0('CHD1_CNAC',i)), cmp=CMPar(label2color = c('0'='LightGray','1'='Orange')), name=paste0('SPINK1C', i))
+  if (i==1) {
+    b8 <- b8 + WLabel('SPINK1 over expression', BottomLeftOf(just=c('right','bottom'), h.pad=-0.1, v.pad=0.005), fontsize=15)
+  }
+}
+
+b9 <- b8
+for (i in 1:8) {
+  b9 <- b9 + WColorBarH(as.character(PRADclinERGstatusAll[substr(colnames(matHyperTc[[i]]),1,15)]), 
+                        TopOf(paste0('SPINK1C',i)), cmp=CMPar(label2color = c('none'='LightGray','fusion'='SlateGray','high'='Orange')), name=paste0('ERG_status', i))
+  if (i==1) {
+    b9 <- b9 + WLabel('fusion/overexpression', BottomLeftOf(just=c('right','bottom'), h.pad=-0.1, v.pad=0.005), fontsize=15)
+  }
+}
+
+b10 <- b9 + WLegendV('MethylClustC1', TopLeftOf('HyperN', just=c('right','top'), h.pad = -0.3), yticklabel.pad=0.2, width=0.2, height=0.05) + 
+  WLegendV('SCNAClustC1', TopLeftOf(just=c('right','top'), h.pad=-0.8), yticklabel.pad=0.2, width=0.2, height=0.05) + 
+  WLegendV('iClustC2', Beneath(pad=0.02), yticklabel.pad=0.2, width=0.2, height=0.05) +
+  WLegendV('PurityC1', BottomLeftOf(v.pad=-0.02, just=c('left','top')), yticklabel.pad=0.2, width=0.2, height=0.01)
+
+b10
+
+```
+

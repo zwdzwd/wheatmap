@@ -36,7 +36,7 @@ One can override by telling WHeatmap the data is color name using the `cmp=CMPar
 a + WColorBarV(rep(c('black','red','blue'),3),name='a',RightOf(),cmp=CMPar(use.data=T)) + WLegendV(NULL, BottomRightOf(h.pad=0.05), height=0.1)
 ```
 
-One can also specify a color mapping manually:
+One can also specify a color mapping manually using the option `cmp=CMPar(label2color=`:
 ```{r}
 a + WColorBarV(rep(c('Fred','Frank','Froy'),3),RightOf(),cmp=CMPar(label2color=c(Fred='green',Frank='red',Froy='yellow'))) + WLegendV(NULL, BottomRightOf(h.pad=0.05), height=0.1)
 ```

@@ -1,0 +1,28 @@
+---
+title: "Text Guide"
+author: "Wanding Zhou"
+date: "May 25, 2016"
+output: html_document
+---
+
+This document describe how to produce text labels.
+
+This document illustrate how to use color in WHeatmap.
+
+```{r setup, include=FALSE}
+## library(devtools)
+## load_all('~/tools/wheatmap/wheatmap')
+```
+
+```{r prepare}
+library(wheatmap)
+```
+
+
+```{r}
+a <- WHeatmap(matrix(1:16,nrow=4), name='a', cmp=CMPar(dmin=1, dmax=32)) + WHeatmap(matrix(17:32, nrow=4), LeftOf(), name='b', cmp=CMPar(dmin=1,dmax=32))
+```
+
+```{r}
+a + WLabel('Dinosaur', TopOf('a', pad=0.02), fontsize = 30)
+```
