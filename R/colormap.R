@@ -85,7 +85,7 @@ MapToContinuousColors <- function(data, cmp=CMPar(), given.cm=NULL) {
     if (is.null(cmp$cmap) &&
         is.null(cmp$brewer.name) &&
         is.null(cmp$colorspace.name)) {
-      cmp$cmap <- 'jet'
+      cmp$cmap <- 'darkjet'
     }
     if (!is.null(cmp$cmap)) {
       ## get(cmp$cmap)
