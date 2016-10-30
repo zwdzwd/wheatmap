@@ -12,14 +12,15 @@ getdim <- function(x) {
 
 #' format WDim
 #'
-#' @param dm dimension
+#' @param object dimension
+#' @param ... additional parameters
 #' @return NULL, output WDim representation
 #' @export
-str.WDim <- function(dm) {
+str.WDim <- function(object, ...) {
   message("WDim object")
   message(sprintf(" - l: %1.2f | b: %1.2f | w: %1.2f | h: %1.2f",
-                  dm$left, dm$bottom, dm$width, dm$height))
-  message(sprintf(' - nr: %d | nc: %d', dm$nr, dm$nc))
+                  object$left, object$bottom, object$width, object$height))
+  message(sprintf(' - nr: %d | nc: %d', object$nr, object$nc))
   invisible(NULL)
 }
 
