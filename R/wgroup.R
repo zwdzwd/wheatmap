@@ -51,7 +51,9 @@ YFromAffine <- function(y, dm.sys) {
 #'
 #' @param ... plotting objects to be grouped
 #' @param name name of the group
-#' @param group.dm group dimension
+#' @param group.dm group dimension, by default use the dm of the merge of members
+#' @param group.from.member group merged from member coordinates (require affine == FALSE),
+#' the supplied group.dm is ignored
 #' @param affine whether the group members are on affine coordinates already
 #' @param nr number of rows
 #' @param nc number of columns
@@ -59,51 +61,61 @@ YFromAffine <- function(y, dm.sys) {
 #' @return a WGroup object
 #' 
 #' @export
-WGroup <- function(..., name='', group.dm=WDim(), mar=WMar(), affine=FALSE, nr=NULL, nc=NULL) {
+WGroup <- function(..., name='', group.dm=WDim(), group.from.member=FALSE, mar=WMar(), affine=FALSE, nr=NULL, nc=NULL) {
   ## row and column.split must be a set separately ??
   objs <- list(...)
 
+  dms <- lapply(objs, function(o) o$dm)
+  ## the grouped coordinates in the source system
+  ## the bounding box coordinates before scaling
+  group.dm.source <- do.call(.DimGroup, dms)
+  if (is.null(nc))
+    group.dm.source$nc <- max(sapply(objs, function(o) o$dm$nc))
+  else
+    group.dm.source$nc <- nc
+    
+  if (is.null(nr))
+    group.dm.source$nr <- max(sapply(objs, function(o) o$dm$nr))
+  else
+    group.dm.source$nr <- nr
+  
   ## convert to affine coordinates if not
   ## the group dm is the merge of the member
   ## dm before affine conversion
   if (!affine) {
-    dms <- lapply(objs, function(o) o$dm)
-    dm <- do.call(.DimGroup, dms) ## bounding box coordinates before scaling
-
-    if (is.null(nc))
-      dm$nc <- max(sapply(objs, function(o) o$dm$nc))
-    else
-      dm$nc <- nc
-    if (is.null(nr))
-      dm$nr <- max(sapply(objs, function(o) o$dm$nr))
-    else
-      dm$nr <- nr
-
     objs <- lapply(objs, function(obj) {
-      obj$dm <- ToAffine(obj$dm, dm)
+      obj$dm <- ToAffine(obj$dm, group.dm.source)
       obj
     })
 
-    group.dm <- dm
+    ## ignore supplied group.dm, set from the grouped members
+    if (group.from.member)
+      group.dm <- group.dm.source
   }
 
-  group.obj <- structure(list(
-    children=objs,
-    name=name,
-    mar=mar,
-    dm=group.dm), class=c('WGroup', 'WObject'))
+  force(name)
+  force(group.dm)
+  force(group.dm.source)
+  force(mar)
+  structure(function(group) {
+    group.dm <- Resolve(group.dm, group, nr=group.dm.source$nr, nc=group.dm.source$nc)
+    group.obj <- structure(list(
+      children=objs,
+      name=name,
+      mar=mar,
+      dm=group.dm), class=c('WGroup', 'WObject'))
 
-  ## assign names if missing
-  missing.inds <- which(sapply(objs, function(obj) obj$name==''))
-  assigned.names <- GroupAssignNames(group.obj, length(missing.inds))
-  lapply(seq_along(missing.inds), function(i) {
-    group.obj$children[[missing.inds[i]]]$name <<- assigned.names[i]
-  })
+    ## assign names if missing
+    missing.inds <- which(sapply(objs, function(obj) obj$name==''))
+    assigned.names <- GroupAssignNames(group.obj, length(missing.inds))
+    lapply(seq_along(missing.inds), function(i) {
+      group.obj$children[[missing.inds[i]]]$name <<- assigned.names[i]
+    })
 
-  stopifnot(GroupCheckNameUnique(group.obj))
-  stopifnot(GroupCheckNameValid(group.obj))
-
-  group.obj
+    stopifnot(GroupCheckNameUnique(group.obj))
+    stopifnot(GroupCheckNameValid(group.obj))
+    group.obj
+  }, class=c('WGenerator', 'WObject'))
 }
 
 ## calculate bounding box including texts
@@ -127,8 +139,10 @@ AddWGroup <- function(group.obj, new.obj) {
 
   if ('WAnnotate' %in% class(new.obj)) # WLabel does not contribute to dimensions
     dm <- group.obj$dm
-  else
+  else {
+    new.obj$dm <- Resolve(new.obj$dm, group.obj)
     dm <- .DimGroup(group.obj$dm, new.obj$dm)
+  }
   dm$nc <- max(group.obj$dm$nc, new.obj$dm$nc)
   dm$nr <- max(group.obj$dm$nr, new.obj$dm$nr)
 

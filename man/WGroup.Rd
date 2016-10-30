@@ -4,15 +4,18 @@
 \alias{WGroup}
 \title{Construct a WGroup}
 \usage{
-WGroup(..., name = "", group.dm = WDim(), mar = WMar(), affine = FALSE,
-  nr = NULL, nc = NULL)
+WGroup(..., name = "", group.dm = WDim(), group.from.member = FALSE,
+  mar = WMar(), affine = FALSE, nr = NULL, nc = NULL)
 }
 \arguments{
 \item{...}{plotting objects to be grouped}
 
 \item{name}{name of the group}
 
-\item{group.dm}{group dimension}
+\item{group.dm}{group dimension, by default use the dm of the merge of members}
+
+\item{group.from.member}{group merged from member coordinates (require affine == FALSE),
+the supplied group.dm is ignored}
 
 \item{mar}{a WMar object}
 

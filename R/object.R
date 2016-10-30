@@ -17,10 +17,10 @@ WObject <- function(dm=NULL, name='') {
 #' @export
 `+.WObject` <- function(group, p) {
 
-  ## first plotting object
+  ## if first plotting object, create a WGroup to enclose it
   if (!('WGroup' %in% class(group))) {
     group <- Resolve(group, NULL)
-    group <- WGroup(group)
+    group <- Resolve(WGroup(group, group.from.member=TRUE), NULL)
   }
 
   if ('WCustomize' %in% class(p)) {
