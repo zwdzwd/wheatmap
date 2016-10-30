@@ -10,6 +10,19 @@ getdim <- function(x) {
   cat(dm$left, ' ', dm$bottom, ' ', dm$width, ' ', dm$height,'\n')
 }
 
+#' format WDim
+#'
+#' @param dm dimension
+#' @return NULL, output WDim representation
+#' @export
+str.WDim <- function(dm) {
+  message("WDim object")
+  message(sprintf(" - l: %1.2f | b: %1.2f | w: %1.2f | h: %1.2f",
+                  dm$left, dm$bottom, dm$width, dm$height))
+  message(sprintf(' - nr: %d | nc: %d', dm$nr, dm$nc))
+  invisible(NULL)
+}
+
 Resolve.WGenerator <- function(x, group) {
   x(group)
 }
