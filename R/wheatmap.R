@@ -19,6 +19,7 @@
 #' @param yticklabel.side yticklabel side (l or r)
 #' @param yticklabel.fontsize yticklabel font size
 #' @param yticklabel.pad padding between yticklabel and y-axis
+#' @param yticklabel.rotat yticklabel rotation
 #' @param gp a list of graphical parameters
 #' @param sub.name subclass name
 #' @return one or a list of heatmaps (depends on whether dimension is split)
