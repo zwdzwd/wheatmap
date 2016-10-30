@@ -10,19 +10,20 @@ getdim <- function(x) {
   cat(dm$left, ' ', dm$bottom, ' ', dm$width, ' ', dm$height,'\n')
 }
 
-#' format WDim
-#'
-#' @param object dimension
-#' @param ... additional parameters
-#' @return NULL, output WDim representation
-#' @export
-str.WDim <- function(object, ...) {
-  message("WDim object")
-  message(sprintf(" - l: %1.2f | b: %1.2f | w: %1.2f | h: %1.2f",
-                  object$left, object$bottom, object$width, object$height))
-  message(sprintf(' - nr: %d | nc: %d', object$nr, object$nc))
-  invisible(NULL)
-}
+## #' format WDim
+## #'
+## #' @param object dimension
+## #' @param ... additional parameters
+## #' @return NULL, output WDim representation
+## #' @export
+## str.WDim <- function(object, ...) {
+##   browser()
+##   message("WDim object")
+##   message(sprintf(" - l: %1.2f | b: %1.2f | w: %1.2f | h: %1.2f",
+##                   object$left, object$bottom, object$width, object$height))
+##   message(sprintf(' - nr: %d | nc: %d', object$nr, object$nc))
+##   invisible(NULL)
+## }
 
 Resolve.WGenerator <- function(x, group) {
   x(group)
