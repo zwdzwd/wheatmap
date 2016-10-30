@@ -20,7 +20,7 @@ WObject <- function(dm=NULL, name='') {
   ## if first plotting object, create a WGroup to enclose it
   if (!('WGroup' %in% class(group))) {
     group <- Resolve(group, NULL)
-    group <- Resolve(WGroup(group, group.from.member=TRUE), NULL)
+    group <- ResolvedWGroup(group)
   }
 
   if ('WCustomize' %in% class(p)) {

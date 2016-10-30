@@ -60,7 +60,7 @@ WRect <- function(obj=NULL, x.span=NULL, y.span=NULL, color='black', lwd=3, fill
 print.WRect <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE, ...) {
 
   if (stand.alone) {
-    group <- WGroup(x)
+    group <- ResolvedWGroup(x)
     print(group)
     return(group)
   }

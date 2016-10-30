@@ -27,7 +27,7 @@ WMatrix <- function(objs, ncols=1) {
     bottom <- 1.0 / nrows * (nrows-ceiling(i / ncols))
     left <- ((i-1) %% ncols) * width
     objs[[i]]$dm <- WDim(left, bottom, width, height, nr=1, nc=1)
-    if (i==1) mtx <- WGroup(objs[[i]])
+    if (i==1) mtx <- ResolvedWGroup(objs[[i]])
     else mtx <- mtx + objs[[i]]
   }
   mtx

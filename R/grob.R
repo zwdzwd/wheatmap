@@ -33,7 +33,7 @@ WGrob <- function(glist, dm=NULL, name='') {
 print.WGrob <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE, ...) {
 
   if (stand.alone) {
-    group <- WGroup(x)
+    group <- ResolvedWGroup(x)
     print(group)
     return(group)
   }

@@ -9,7 +9,7 @@
 #' @export
 print.WGenerator <- function(x, ...) {
   x <- x(NULL)
-  group <- Resolve(WGroup(x, group.from.member=TRUE), NULL)
+  group <- ResolvedWGroup(x)
   print(group)
   return(group)
 }

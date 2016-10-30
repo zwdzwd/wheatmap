@@ -36,7 +36,7 @@ WLabel <- function(x=NULL, dm=WDim(), name='', fontsize=12, rot=0, color='black'
 print.WLabel <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE, ...) {
 
   if (stand.alone) {
-    group <- WGroup(x)
+    group <- ResolvedWGroup(x)
     print(group)
     return(group)
   }

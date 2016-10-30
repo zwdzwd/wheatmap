@@ -150,7 +150,7 @@ SplitWHeatmap <- function(hm, dm, cm, group) {
   k$name <- hm$name
   k$group.dm <- dm
   k$affine <- TRUE
-  w.group <- do.call(WGroup, k)
+  w.group <- do.call(ResolvedWGroup, k)
   # w.group$dm$row.split <- sub.dms.row
   # w.group$dm$column.split <- sub.dms.col
 
@@ -244,7 +244,7 @@ CalcTextBounding.WHeatmap <- function(hm, group) {
 print.WHeatmap <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE, ...) {
 
   if (stand.alone) {
-    group <- WGroup(x)
+    group <- ResolvedWGroup(x)
     print(group)
     return(group)
   }

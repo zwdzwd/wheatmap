@@ -118,6 +118,11 @@ WGroup <- function(..., name='', group.dm=WDim(), group.from.member=FALSE, mar=W
   }, class=c('WGenerator', 'WObject'))
 }
 
+## a convenient wrapper for resolved WGroup
+ResolvedWGroup <- function(...) {
+  Resolve(WGroup(..., group.from.member=TRUE), NULL)
+}
+
 ## calculate bounding box including texts
 CalcTextBounding.WGroup <- function(group.obj, top.group=NULL) {
   if (is.null(top.group)) top.group <- group.obj
