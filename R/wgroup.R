@@ -61,7 +61,7 @@ YFromAffine <- function(y, dm.sys) {
 #' @return a WGroup object
 #' 
 #' @export
-WGroup <- function(..., name='', group.dm=WDim(), group.from.member=FALSE, mar=WMar(), affine=FALSE, nr=NULL, nc=NULL) {
+WGroup <- function(..., name='', group.dm=NULL, group.from.member=FALSE, mar=WMar(), affine=FALSE, nr=NULL, nc=NULL) {
   ## row and column.split must be a set separately ??
   objs <- list(...)
 
@@ -78,6 +78,11 @@ WGroup <- function(..., name='', group.dm=WDim(), group.from.member=FALSE, mar=W
     group.dm.source$nr <- max(sapply(objs, function(o) o$dm$nr))
   else
     group.dm.source$nr <- nr
+
+  ## by default, group.dm inherits nr and nc from group.dm.source
+  if (is.null(group.dm)) {
+    group.dm <- WDim(nr=group.dm.source$nr,nc=group.dm.source$nc)
+  }
   
   ## convert to affine coordinates if not
   ## the group dm is the merge of the member
