@@ -20,12 +20,11 @@
     if (hm$xticklabel.side == 'b') {
       .text.just = 'right'
       .text.y = - hm$xticklabel.pad
-      .text.rot = 90
     } else {
       .text.just = 'left'
       .text.y = 1 + hm$xticklabel.pad
-      .text.rot = 90
     }
+    .text.rot = hm$xticklabel.rotat
     if (!is.logical(hm$xticklabels))
       sample.inds <- which(labels %in% hm$xticklabels)
     else
@@ -48,12 +47,13 @@
       .text.just = 'left'
       .text.x = 1 + hm$yticklabel.pad
     }
+    .text.rot = hm$yticklabel.rotat
     if (!is.logical(hm$yticklabels))
       sample.inds <- which(labels %in% hm$yticklabels)
     else
       sample.inds <- .TickLabelResample(labels, hm$yticklabels.n)
     grid.text(labels[sample.inds],
-              x=unit(.text.x,'npc'), y=y.mid[sample.inds],
+              x=unit(.text.x,'npc'), y=y.mid[sample.inds], rot=.text.rot,
               just=c(.text.just,'center'), gp=gpar(fontsize=hm$yticklabel.fontsize*min(cex)))
   }
 }
