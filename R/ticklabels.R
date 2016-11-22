@@ -12,8 +12,11 @@
   sample.inds <- round(seq(1, n.labels, length.out=n.texts))
 }
 
-.WPrintXTickLabels <- function(hm, cex=1) {
-  labels <- colnames(hm$data)
+.WPrintXTickLabels <- function(hm, labels=NULL, cex=1) {
+
+  if (is.null(labels) || is.logical(labels))
+    labels <- colnames(hm$data)
+  
   if (!is.null(labels)) {
     nc = ncol(hm$data)
     x.mid <- (seq_len(nc)-0.5)/nc
@@ -35,8 +38,11 @@
   }
 }
 
-.WPrintYTickLabels <- function(hm, cex=1) {
-  labels <- rownames(hm$data)
+.WPrintYTickLabels <- function(hm, labels=NULL, cex=1) {
+
+  if (is.null(labels) || is.logical(labels))
+    labels <- rownames(hm$data)
+  
   if (!is.null(labels)) {
     nr = nrow(hm$data)
     y.mid <- (rev(seq_len(nr))-0.5)/nr
