@@ -64,14 +64,6 @@ WHeatmap <- function(data=NULL, dm=NULL, name='', continuous=NULL,
     hm[[nm]] <<- get(nm)
   }))
 
-  if (length(hm$xticklabels)==1 && is.logical(hm$xticklabels) && !hm$xticklabels) {
-    hm$xticklabels <- NULL
-  }
-
-  if (length(hm$yticklabels)==1 && is.logical(hm$yticklabels) && !hm$yticklabels) {
-    hm$yticklabels <- NULL
-  }
-
   if (is.null(hm$dm))
     hm$dm <- WDim(0,0,1,1,nr=nrow(data), nc=ncol(data))
 
@@ -182,7 +174,9 @@ CalcTextBounding.WHeatmap <- function(hm, group) {
   top <- bottom + NPCToPoints(dm$height)
   right <- left + NPCToPoints(dm$width)
 
-  if (!is.null(hm$yticklabels)) {
+  if (!(is.null(hm[['yticklabels']]) ||
+          (length(hm[['yticklabels']])==1 &&
+             hm[['yticklabels']] == FALSE))) {
     if (hm$yticklabel.side=='l') {
       if (is.null(rownames(hm$data))) {
         .text.margin <- 0
@@ -212,7 +206,9 @@ CalcTextBounding.WHeatmap <- function(hm, group) {
   #    }
   #  }
 
-  if (!is.null(hm$xticklabels)) {
+  if (!(is.null(hm[['xticklabels']]) ||
+          (length(hm[['xticklabels']])==1 &&
+             hm[['xticklabels']] == FALSE))) {
     if (hm$xticklabel.side=='b') {
       if (is.null(colnames(hm$data))) {
         .text.margin <- 0
@@ -275,13 +271,13 @@ print.WHeatmap <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE, ...) {
             gp=do.call('gpar', c(list(fill=x$cm$colors), x$gp)), just=c('left','bottom'))
 
   ## x tick labels
-  if (!is.null(x$xticklabels)) {
-    .WPrintXTickLabels(x, x$xticklabels, cex=cex)
+  if (!is.null(x[['xticklabels']])) {
+    .WPrintXTickLabels(x, x[['xticklabels']], cex=cex)
   }
 
   ## y tick labels
-  if (!is.null(x$yticklabels)) {
-    .WPrintYTickLabels(x, x$yticklabels, cex=cex)
+  if (!is.null(x[['yticklabels']])) {
+    .WPrintYTickLabels(x, x[['yticklabels']], cex=cex)
   }
 
   upViewport()
