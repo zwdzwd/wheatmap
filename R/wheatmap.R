@@ -58,7 +58,12 @@ WHeatmap <- function(data=NULL, dm=NULL, name='', continuous=NULL,
       stop()
     })
   }
-    
+
+  if (is.logical(xticklabels) && !xticklabels)
+    xticklabels <- NULL;
+
+  if (is.logical(yticklabels) && !yticklabels)
+    yticklabels <- NULL;
 
   hm <- lapply(formals(), eval)
   invisible(lapply(names(as.list(match.call()))[-1], function (nm) {
