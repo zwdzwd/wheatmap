@@ -59,16 +59,16 @@ WHeatmap <- function(data=NULL, dm=NULL, name='', continuous=NULL,
     })
   }
 
-  if (is.logical(xticklabels) && !xticklabels)
-    xticklabels <- NULL;
-
-  if (is.logical(yticklabels) && !yticklabels)
-    yticklabels <- NULL;
-
   hm <- lapply(formals(), eval)
   invisible(lapply(names(as.list(match.call()))[-1], function (nm) {
     hm[[nm]] <<- get(nm)
   }))
+
+  if (is.logical(hm$xticklabels) && !hm$xticklabels)
+    hm$xticklabels <- NULL;
+
+  if (is.logical(hm$yticklabels) && !hm$yticklabels)
+    hm$yticklabels <- NULL;
 
   if (is.null(hm$dm))
     hm$dm <- WDim(0,0,1,1,nr=nrow(data), nc=ncol(data))
