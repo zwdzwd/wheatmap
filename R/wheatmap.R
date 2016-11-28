@@ -64,11 +64,13 @@ WHeatmap <- function(data=NULL, dm=NULL, name='', continuous=NULL,
     hm[[nm]] <<- get(nm)
   }))
 
-  if (is.logical(hm$xticklabels) && !hm$xticklabels)
-    hm$xticklabels <- NULL;
+  if (length(hm$xticklabels)==1 && is.logical(hm$xticklabels) && !hm$xticklabels) {
+    hm$xticklabels <- NULL
+  }
 
-  if (is.logical(hm$yticklabels) && !hm$yticklabels)
-    hm$yticklabels <- NULL;
+  if (length(hm$yticklabels)==1 && is.logical(hm$yticklabels) && !hm$yticklabels) {
+    hm$yticklabels <- NULL
+  }
 
   if (is.null(hm$dm))
     hm$dm <- WDim(0,0,1,1,nr=nrow(data), nc=ncol(data))

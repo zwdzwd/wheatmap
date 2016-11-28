@@ -14,10 +14,13 @@
 
 .WPrintXTickLabels <- function(hm, labels=NULL, cex=1) {
 
-  if (is.null(labels) || (is.logical(labels) && labels))
-    labels <- colnames(hm$data)
-  else
-    labels <- NULL
+  if (length(labels)==1 && is.logical(labels)) {
+    if (labels) {
+      labels <- rownames(hm$data)
+    } else {
+      labels <- NULL
+    }
+  }
 
   if (!is.null(labels)) {
     nc = ncol(hm$data)
@@ -42,11 +45,14 @@
 
 .WPrintYTickLabels <- function(hm, labels=NULL, cex=1) {
 
-  if (is.null(labels) || (is.logical(labels) && labels))
-    labels <- rownames(hm$data)
-  else
-    labels <- NULL
-  
+  if (length(labels)==1 && is.logical(labels)) {
+    if (labels) {
+      labels <- rownames(hm$data)
+    } else {
+      labels <- NULL
+    }
+  }
+
   if (!is.null(labels)) {
     nr = nrow(hm$data)
     y.mid <- (rev(seq_len(nr))-0.5)/nr
