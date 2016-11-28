@@ -14,7 +14,7 @@
 
 .WPrintXTickLabels <- function(hm, labels=NULL, cex=1) {
 
-  if (is.null(labels) || is.logical(labels))
+  if (is.null(labels) || (is.logical(labels) && labels))
     labels <- colnames(hm$data)
   
   if (!is.null(labels)) {
@@ -40,7 +40,7 @@
 
 .WPrintYTickLabels <- function(hm, labels=NULL, cex=1) {
 
-  if (is.null(labels) || is.logical(labels))
+  if (is.null(labels) || (is.logical(labels) && labels))
     labels <- rownames(hm$data)
   
   if (!is.null(labels)) {
