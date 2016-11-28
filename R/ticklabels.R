@@ -16,7 +16,7 @@
 
   if (length(labels)==1 && is.logical(labels)) {
     if (labels) {
-      labels <- rownames(hm$data)
+      labels <- colnames(hm$data)
     } else {
       labels <- NULL
     }

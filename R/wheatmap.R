@@ -272,12 +272,12 @@ print.WHeatmap <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE, ...) {
 
   ## x tick labels
   if (!is.null(x[['xticklabels']])) {
-    .WPrintXTickLabels(x, x[['xticklabels']], cex=cex)
+    .WPrintXTickLabels(x, x[['xticklabels']], cex=max(cex))
   }
 
   ## y tick labels
   if (!is.null(x[['yticklabels']])) {
-    .WPrintYTickLabels(x, x[['yticklabels']], cex=cex)
+    .WPrintYTickLabels(x, x[['yticklabels']], cex=max(cex))
   }
 
   upViewport()
