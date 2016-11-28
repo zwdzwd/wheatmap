@@ -16,7 +16,9 @@
 
   if (is.null(labels) || (is.logical(labels) && labels))
     labels <- colnames(hm$data)
-  
+  else
+    labels <- NULL
+
   if (!is.null(labels)) {
     nc = ncol(hm$data)
     x.mid <- (seq_len(nc)-0.5)/nc
@@ -42,6 +44,8 @@
 
   if (is.null(labels) || (is.logical(labels) && labels))
     labels <- rownames(hm$data)
+  else
+    labels <- NULL
   
   if (!is.null(labels)) {
     nr = nrow(hm$data)
