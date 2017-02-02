@@ -11,6 +11,8 @@ DimNPCToPoints <- function(dm) {
   dm
 }
 
+## TODO: the following doesn't work for polymath calls
+
 ## text width and scale to specified font size
 ##
 ## @param txt text string

@@ -44,7 +44,7 @@ print.WLabel <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE, ...) {
   if (!layout.only) {
     text.just <- rotate.just(x$dm$text.just, x$rot)
     grid.text(
-      x, x=unit(x$dm$text.x,'npc'), y=unit(x$dm$text.y, 'npc'),
+      x$x, x=unit(x$dm$text.x,'npc'), y=unit(x$dm$text.y, 'npc'),
       just=text.just, rot=x$rot, gp=gpar(fontsize=x$fontsize*cex, col=x$color))
   }
 }
@@ -54,8 +54,13 @@ CalcTextBounding.WLabel <- function(label, group) {
   dm <- DimToTop(label, group)
   dm$left <- NPCToPoints(dm$text.x)
   dm$bottom <- NPCToPoints(dm$text.y)
-  width <- text.width(label$x, label$fontsize)
-  height <- text.height(label$x, label$fontsize)
+  if ("call" %in% class(label$x)) { # TODO: fix call language object, text.width/stringHeight doesn't work
+    width <- 0
+    height <- 0
+  } else {
+    width <- text.width(label$x, label$fontsize)
+    height <- text.height(label$x, label$fontsize)
+  }
   if (label$dm$text.just[1]=='right') {
     dm$left <- dm$left - width
     dm$width <- width
