@@ -5,7 +5,7 @@
 \title{Customize an existing plot}
 \usage{
 WCustomize(mar.left = NULL, mar.right = NULL, mar.top = NULL,
-  mar.bottom = NULL)
+  mar.bottom = NULL, mar = NULL)
 }
 \arguments{
 \item{mar.left}{left margin [0.03]}
@@ -15,6 +15,8 @@ WCustomize(mar.left = NULL, mar.right = NULL, mar.top = NULL,
 \item{mar.top}{top margin [0.03]}
 
 \item{mar.bottom}{bottom margin [0.03]}
+
+\item{mar}{margin in all directions [0.03]}
 }
 \value{
 an object of class WCustomize
