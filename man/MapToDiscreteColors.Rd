@@ -19,4 +19,3 @@ an object of ColorMap
 \description{
 map data to discrete color
 }
-

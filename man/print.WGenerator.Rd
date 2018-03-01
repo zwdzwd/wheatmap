@@ -17,4 +17,3 @@ the WGroup containing the plotting object
 \description{
 This calls WGenerator and creates a WGroup to enclose the produced object.
 }
-

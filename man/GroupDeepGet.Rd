@@ -19,4 +19,3 @@ if `force.unique==FALSE` return a list. Otherwise, one plotting object.
 \description{
 Get an plotting object from a group's descendants
 }
-

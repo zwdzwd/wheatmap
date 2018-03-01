@@ -15,4 +15,3 @@ scaled group obj
 \description{
 Scale group to incorporate text on margins
 }
-

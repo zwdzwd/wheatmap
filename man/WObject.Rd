@@ -17,4 +17,3 @@ a WObject
 \description{
 Construct a WObject
 }
-

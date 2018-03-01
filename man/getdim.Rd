@@ -12,4 +12,3 @@ getdim(x)
 \description{
 Get dimensions
 }
-

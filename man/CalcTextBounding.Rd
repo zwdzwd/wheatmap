@@ -17,4 +17,3 @@ Calculate bounding box including texts.
 \details{
 W.R.T lower left corner of the view port in the unit of points
 }
-

@@ -24,4 +24,3 @@ a WDimGenerator object
 \description{
 place an arbitrary position w.r.t a subplot
 }
-

@@ -26,4 +26,3 @@ an object of class WColorBarV
 \description{
 a vertical color bar
 }
-

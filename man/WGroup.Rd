@@ -31,4 +31,3 @@ a WGroup object
 \description{
 Construct a WGroup
 }
-

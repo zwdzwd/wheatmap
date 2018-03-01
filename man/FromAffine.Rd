@@ -17,4 +17,3 @@ dimension on the same coordinate system
 \description{
 Convert from affine coordinates to absolute coordinates
 }
-

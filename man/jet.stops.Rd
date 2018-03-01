@@ -12,4 +12,3 @@ jet.stops
 jet color stops
 }
 \keyword{datasets}
-

@@ -21,4 +21,3 @@ WGrob object
 WGrob object
 plot from a gList of grob objects
 }
-

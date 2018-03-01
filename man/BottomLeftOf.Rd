@@ -22,4 +22,3 @@ a WDimGenerator
 \description{
 Place a new object to the bottom left corner of another.
 }
-

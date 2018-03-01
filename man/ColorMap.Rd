@@ -26,4 +26,3 @@ an object of class ColorMap
 \description{
 Create color maps
 }
-

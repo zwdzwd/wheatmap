@@ -18,4 +18,3 @@ dimension on affine coordinates (relative coordinates)
 \description{
 Convert from absolute coordinates to affine coordinates
 }
-

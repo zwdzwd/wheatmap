@@ -28,4 +28,3 @@ a dimension to the right of x
 \description{
 Generate dimension to the right of another object
 }
-

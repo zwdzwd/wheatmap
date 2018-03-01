@@ -21,4 +21,3 @@
 \description{
 print a dendrogram
 }
-

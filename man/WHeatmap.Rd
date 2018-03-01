@@ -58,4 +58,3 @@ one or a list of heatmaps (depends on whether dimension is split)
 \description{
 Create a heatmap
 }
-

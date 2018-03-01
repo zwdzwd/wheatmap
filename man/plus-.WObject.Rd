@@ -17,4 +17,3 @@ a WGroup
 \description{
 merge plotting objects
 }
-

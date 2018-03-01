@@ -21,4 +21,3 @@ WGG object
 WGG object
 form ggplot with coordinates
 }
-

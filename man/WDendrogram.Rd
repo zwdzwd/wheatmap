@@ -22,4 +22,3 @@ an object of class WDendrogram
 \description{
 WDendrogram class
 }
-

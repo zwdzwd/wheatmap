@@ -1,0 +1,15 @@
+---
+title: "WHeatmap User Guide"
+shorttitle: "WHeatmap guide"
+author: "Wanding Zhou"
+package: wheatmap
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{WHeatmap User Guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepage[utf8]{inputenc}
+---
+
+# Introduction
+
+Under construction

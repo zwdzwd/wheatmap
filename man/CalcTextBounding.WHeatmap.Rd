@@ -17,4 +17,3 @@ an object of class WDim in coordinate points
 \description{
 Calculate Texting Bounding for WHeatmap
 }
-

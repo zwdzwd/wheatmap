@@ -21,4 +21,3 @@
 \description{
 Draw WGroup
 }
-

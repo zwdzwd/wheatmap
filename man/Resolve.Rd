@@ -14,4 +14,3 @@ Resolve(x, ...)
 \description{
 Resolve name to object
 }
-

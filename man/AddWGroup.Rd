@@ -17,4 +17,3 @@ a WGroup object where new.obj is added.
 \description{
 The object to be added are in the same coordinate system as the group.
 }
-

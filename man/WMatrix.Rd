@@ -18,4 +18,3 @@ WGroup
 This function can take WObject, or gg (from ggplot)
 since the coordinates are not set, gg can be converted to WGG
 }
-

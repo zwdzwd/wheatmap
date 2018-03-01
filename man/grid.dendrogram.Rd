@@ -31,4 +31,3 @@ The dendrogram can be renderred. A viewport is created which contains the dendro
 This function only plots the dendrogram without adding labels. The leaves of the dendrogram
 locates at unit(c(0.5, 1.5, ...(n-0.5))/n, "npc").
 }
-

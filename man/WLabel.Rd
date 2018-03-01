@@ -26,4 +26,3 @@ a WLabel object
 \description{
 construct a WLabel
 }
-

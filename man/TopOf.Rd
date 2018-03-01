@@ -28,4 +28,3 @@ a dimension generator on top of x
 \description{
 Generate dimension top of another object
 }
-

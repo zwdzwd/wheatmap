@@ -30,4 +30,3 @@ WHeatmap(matrix(c('fred','frank','brad',
   WLegendV(NULL, RightOf(), label.fontsize = 20) +
   WCustomize(mar.right=0.1)
 }
-

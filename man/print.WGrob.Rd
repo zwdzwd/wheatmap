@@ -21,4 +21,3 @@
 \description{
 plot WGrob object
 }
-

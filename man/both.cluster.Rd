@@ -24,4 +24,3 @@ a list of clustered row, column and matrix
 \description{
 row- and column-cluster a matrix
 }
-

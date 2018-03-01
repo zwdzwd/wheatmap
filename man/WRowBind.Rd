@@ -19,4 +19,3 @@ an object of class WDim
 \description{
 row bind non-overlapping objects
 }
-

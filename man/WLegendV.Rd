@@ -35,4 +35,3 @@ a vertical legend
 \examples{
 WHeatmap(matrix(1:4,nrow=2))+WLegendV(NULL, RightOf())
 }
-

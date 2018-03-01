@@ -40,4 +40,3 @@ an object of class CMPar
 \description{
 Create color map parameters
 }
-

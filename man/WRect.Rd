@@ -28,4 +28,3 @@ a WRect object
 \description{
 construct a WRect
 }
-

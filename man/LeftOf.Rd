@@ -28,4 +28,3 @@ a dimension to the left of x
 \description{
 Generate dimension to the left of another object
 }
-

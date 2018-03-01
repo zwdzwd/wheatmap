@@ -15,4 +15,3 @@ TRUE or FALSE
 \description{
 Check whether group names are unique
 }
-

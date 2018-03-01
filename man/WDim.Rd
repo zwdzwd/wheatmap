@@ -34,4 +34,3 @@ WDim(left = 0, bottom = 0, width = 1, height = 1, nr = 1, nc = 1,
 \description{
 class WDim
 }
-

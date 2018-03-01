@@ -12,4 +12,3 @@ darkjet.stops
 darker jet color stops
 }
 \keyword{datasets}
-

@@ -26,4 +26,3 @@ an object of class WColorBarH
 \description{
 a horizontal color bar
 }
-
