@@ -4,3 +4,4 @@
 ^\.travis\.yml$
 ^\.git.*
 ^\..Rcheck$
+^README.md$
