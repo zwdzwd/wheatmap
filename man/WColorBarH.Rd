@@ -26,3 +26,6 @@ an object of class WColorBarH
 \description{
 a horizontal color bar
 }
+\examples{
+WColorBarH(matrix(1:50))
+}

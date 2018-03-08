@@ -8,6 +8,10 @@
 #' @param facing direction of the dendrogram plot
 #' @param name name of the dendrogram plot
 #' @return an object of class WDendrogram
+#' @examples
+#'
+#' WDendrogram(column.cluster(matrix(1:24,nrow=4))$column.clust)
+#' 
 #' @export
 WDendrogram <- function(clust=NULL, dm=WDim(0,0,1,1), name='', facing=c("bottom", "top", "left", "right")) {
 
@@ -32,6 +36,10 @@ WDendrogram <- function(clust=NULL, dm=WDim(0,0,1,1), name='', facing=c("bottom"
 #' @param cex factor to scaling texts
 #' @param ... additional options (ignored)
 #' @return NULL
+#' @examples
+#'
+#' WDendrogram(column.cluster(matrix(1:24,nrow=4))$column.clust)
+#' 
 #' @export
 print.WDendrogram <- function(x, stand.alone=TRUE, layout.only=FALSE, cex=1, ...) {
     if (layout.only)
@@ -70,8 +78,9 @@ CalcTextBounding.WDendrogram <- function(dd, group) {
 #' @import grid
 #' @source adapted from the ComplexHeatmap package authored by Zuguang Gu <z.gu@dkfz.de>
 #' @export
-grid.dendrogram = function(dend, facing = c("bottom", "top", "left", "right"),
-                           max_height = NULL, order = c("normal", "reverse"), ...) {
+grid.dendrogram <- function(
+    dend, facing = c("bottom", "top", "left", "right"),
+    max_height = NULL, order = c("normal", "reverse"), ...) {
 
     facing = match.arg(facing)[1]
 

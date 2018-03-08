@@ -33,6 +33,12 @@ WHeatmap(matrix(1:12,nrow=2), cmp=CMPar(brewer.name='Greens'), name='a') +
   WColorBarH(matrix(1:8), TopOf(), cmp=CMPar(brewer.name = 'YlOrRd'))
 ```
 
+One who is really obssessed with `%>%` can do something like
+```R
+library(magrittr)
+WHeatmap(cc$mat, name='h1') %>% add(WColorBarV(row.data, LeftOf('h1'), 'c1'))
+```
+
 The layout looks like
 
 ![this](inst/README.plot2.png)

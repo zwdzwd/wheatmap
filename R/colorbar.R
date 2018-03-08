@@ -9,10 +9,13 @@
 #' @param label.fontsize label font size
 #' @param label.pad label padding
 #' @return an object of class WColorBarV
+#' @examples
+#' WColorBarV(matrix(50:1))
 #' @export
-WColorBarV <- function(data, ...,
-                       label=NULL, label.side='t',
-                       label.fontsize = 12, label.pad = 0.005) {
+WColorBarV <- function(
+    data, ...,
+    label=NULL, label.side='t',
+    label.fontsize = 12, label.pad = 0.005) {
 
     cb.data <- matrix(data)
     if (!is.null(label)) {
@@ -43,10 +46,13 @@ WColorBarV <- function(data, ...,
 #' @param label.fontsize label font size
 #' @param label.pad label padding
 #' @return an object of class WColorBarH
+#' @examples
+#' WColorBarH(matrix(1:50))
 #' @export
-WColorBarH <- function(data, ...,
-                       label=NULL, label.side='r',
-                       label.fontsize = 12, label.pad = 0.005) {
+WColorBarH <- function(
+    data, ...,
+    label=NULL, label.side='r',
+    label.fontsize = 12, label.pad = 0.005) {
     
     cb.data <- matrix(data, nrow=1)
     if (!is.null(label)) {

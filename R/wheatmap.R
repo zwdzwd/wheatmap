@@ -23,32 +23,55 @@
 #' @param gp a list of graphical parameters
 #' @param sub.name subclass name
 #' @return one or a list of heatmaps (depends on whether dimension is split)
+#' @examples
+#' WHeatmap(matrix(1:10, nrow=2), cmp=CMPar(brewer.name='Greens'))
+#'
+#' WHeatmap(matrix(1:12,nrow=2), cmp=CMPar(brewer.name='Greens'), name='a') + 
+#'     WHeatmap(matrix(1:6,nrow=1), Beneath(pad=0.05), cmp=CMPar(brewer.name='Set2'), name='b') +
+#'     WHeatmap(matrix(c(1:30,30:1),nrow=5), Beneath(pad=0.05), 'c', cmp=CMPar(cmap='jet')) +
+#'     WHeatmap(matrix(1:24,nrow=4), RightOf('c'), 'd', cmp=CMPar(brewer.name='Set1')) +
+#'     WLegendV('c', LeftOf('c', pad=0.01), yticklabel.side='l') +
+#'     WLegendV('b', RightOf('b', width=0.1)) + 
+#'     WLegendV('a', RightOf('a')) + 
+#'     WHeatmap(matrix(1:100, nrow=10), RightOf('d'), cmp=CMPar(brewer.name='RdYlGn')) +
+#'     WColorBarH(matrix(5:1), TopOf(), cmp=CMPar(colorspace.name = 'diverge_hcl')) +
+#'     WColorBarH(matrix(50:1), TopOf(), cmp=CMPar(colorspace.name = 'terrain_hcl')) +
+#'     WColorBarH(matrix(1:8), TopOf(), cmp=CMPar(colorspace.name = 'sequential_hcl')) +
+#'     WColorBarH(matrix(1:8), TopOf(), cmp=CMPar(brewer.name = 'YlOrRd'))
+#'
+#' ## One could use %>% too, in combination with magrittr's add function
+#' \dontrun{
+#' library(magrittr)
+#' WColorBarH(1:10) %>% add(WColorBarV(rep(c('black','red','blue'),3), RightOf()))
+#' }
+#' 
 #' @export
-WHeatmap <- function(data=NULL, dm=NULL, name='', continuous=NULL,
-                     cmp = CMPar(), # colormapping parameters
-                     cm = NULL,
+WHeatmap <- function(
+    data=NULL, dm=NULL, name='', continuous=NULL,
+    cmp = CMPar(), # colormapping parameters
+    cm = NULL,
 
-                     ## tick label on x-axis
-                     xticklabels = NULL,
-                     xticklabels.n = NULL,
-                     xticklabel.side = 'b',
-                     xticklabel.fontsize = 12,
-                     xticklabel.rotat = 90,
-                     xticklabel.pad = 0.005,
+    ## tick label on x-axis
+    xticklabels = NULL,
+    xticklabels.n = NULL,
+    xticklabel.side = 'b',
+    xticklabel.fontsize = 12,
+    xticklabel.rotat = 90,
+    xticklabel.pad = 0.005,
 
-                     ## tick label on y-axis
-                     yticklabels = NULL,
-                     yticklabels.n = NULL,
-                     yticklabel.side = 'l',
-                     yticklabel.fontsize = 12,
-                     yticklabel.rotat = 0,
-                     yticklabel.pad = 0.005,
+    ## tick label on y-axis
+    yticklabels = NULL,
+    yticklabels.n = NULL,
+    yticklabel.side = 'l',
+    yticklabel.fontsize = 12,
+    yticklabel.rotat = 0,
+    yticklabel.pad = 0.005,
 
-                     ## subclass name
-                     sub.name = NULL,
+    ## subclass name
+    sub.name = NULL,
 
-                     ## graph parameters
-                     gp = NULL) {
+    ## graph parameters
+    gp = NULL) {
 
     if(!('matrix' %in% class(data))) {
         data <- tryCatch({
@@ -163,7 +186,6 @@ SplitWHeatmap <- function(hm, dm, cm, group) {
 #' @param hm an object of class WHeatmap
 #' @param group an object of class WGroup
 #' @return an object of class WDim in coordinate points
-#' @export
 CalcTextBounding.WHeatmap <- function(hm, group) {
 
     ## this needs be called at the ROOT view port
@@ -237,6 +259,9 @@ CalcTextBounding.WHeatmap <- function(hm, group) {
 #' @param ... additional options
 #' @return \code{NULL}
 #' @import grid
+#' @examples
+#' print(WHeatmap(matrix(1:12, nrow=2)))
+#' 
 #' @export
 print.WHeatmap <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE, ...) {
 

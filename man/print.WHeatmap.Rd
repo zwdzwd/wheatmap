@@ -24,3 +24,7 @@
 \description{
 plot WHeatmap
 }
+\examples{
+print(WHeatmap(matrix(1:12, nrow=2)))
+
+}

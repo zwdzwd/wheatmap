@@ -73,6 +73,7 @@ WHeatmap(cc$mat, name='h1') +
   WRect('h1',c(5,6),c(2,3),col='yellow')
 ```
 
+
 ## Step by step construction
 
 We plot one heatmap first

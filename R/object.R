@@ -5,7 +5,7 @@
 #' @return a WObject
 #' @export
 WObject <- function(dm=NULL, name='') {
-  structure(list(dm=dm, name=name), class='WObject')
+    structure(list(dm=dm, name=name), class='WObject')
 }
 
 
@@ -17,19 +17,18 @@ WObject <- function(dm=NULL, name='') {
 #' @export
 `+.WObject` <- function(group, p) {
 
-  ## if first plotting object, create a WGroup to enclose it
-  if (!('WGroup' %in% class(group))) {
-    group <- Resolve(group, NULL)
-    group <- ResolvedWGroup(group)
-  }
+    ## if first plotting object, create a WGroup to enclose it
+    if (!('WGroup' %in% class(group))) {
+        group <- Resolve(group, NULL)
+        group <- ResolvedWGroup(group)
+    }
 
-  if ('WCustomize' %in% class(p)) {
-    group <- p(group)
-    return (group)
-  }
+    if ('WCustomize' %in% class(p)) {
+        group <- p(group)
+        return (group)
+    }
 
-  p <- Resolve(p, group)
-  group <- AddWGroup(group, p)
-  group
+    p <- Resolve(p, group)
+    group <- AddWGroup(group, p)
+    group
 }
-

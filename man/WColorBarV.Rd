@@ -26,3 +26,6 @@ an object of class WColorBarV
 \description{
 a vertical color bar
 }
+\examples{
+WColorBarV(matrix(50:1))
+}

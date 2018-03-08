@@ -4,7 +4,7 @@
 #' @param ... extra options
 #' @export
 Resolve <- function(x, ...) {
-  UseMethod('Resolve')
+    UseMethod('Resolve')
 }
 
 #' Calculate Text Bounding
@@ -15,5 +15,5 @@ Resolve <- function(x, ...) {
 #' @param x object
 #' @param ... extra options
 CalcTextBounding <- function(x, ...) {
-  UseMethod('CalcTextBounding', x)
+    UseMethod('CalcTextBounding', x)
 }

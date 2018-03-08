@@ -21,3 +21,8 @@
 \description{
 print a dendrogram
 }
+\examples{
+
+WDendrogram(column.cluster(matrix(1:24,nrow=4))$column.clust)
+
+}
