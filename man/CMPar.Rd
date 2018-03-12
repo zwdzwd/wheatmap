@@ -40,3 +40,7 @@ an object of class CMPar
 \description{
 Create color map parameters
 }
+\examples{
+WHeatmap(matrix(rnorm(2000),nrow=40)) +
+  WColorBarV(1:20, cmp=CMPar(brewer.name = 'RdBu'), RightOf())
+}

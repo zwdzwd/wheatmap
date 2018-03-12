@@ -28,3 +28,8 @@ a dimension generator beneath x
 \description{
 Generate dimension beneath another object
 }
+\examples{
+WHeatmap(matrix(rnorm(2000),nrow=40)) +
+  WColorBarH(1:20, cmp=CMPar(), continuous=FALSE, Beneath())
+
+}

@@ -6,6 +6,10 @@
 #' @param nr number of rows
 #' @param nc number of columns
 #' @return an object of class WDim
+#' @examples
+#' WHeatmap(matrix(rnorm(2000),nrow=40),name='a') +
+#'   WHeatmap(matrix(rnorm(30), nrow=3), RightOf(),name='b') +
+#'   WColorBarH(1:10, TopOf(WColumnBind('a','b')))
 #' @export
 WColumnBind <- function(..., nr=NULL, nc=NULL) {
 
@@ -41,6 +45,10 @@ WColumnBind <- function(..., nr=NULL, nc=NULL) {
 #' @param nr number of rows
 #' @param nc number of columns
 #' @return an object of class WDim
+#' @examples
+#' WHeatmap(matrix(rnorm(2000),nrow=40),name='a') +
+#'   WHeatmap(matrix(rnorm(30), nrow=3), Beneath(),name='b') +
+#'   WColorBarV(1:10, LeftOf(WRowBind('a','b')))
 #' @export
 WRowBind <- function(..., nr=NULL, nc=NULL) {
 

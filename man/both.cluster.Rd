@@ -24,3 +24,6 @@ a list of clustered row, column and matrix
 \description{
 row- and column-cluster a matrix
 }
+\examples{
+WHeatmap(both.cluster(matrix(rnorm(100),nrow=10))$mat)
+}

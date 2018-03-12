@@ -23,6 +23,9 @@
 #' @param stop.points custome stop points
 #' @param grey.scale whether to use grey scale
 #' @return an object of class CMPar
+#' @examples
+#' WHeatmap(matrix(rnorm(2000),nrow=40)) +
+#'   WColorBarV(1:20, cmp=CMPar(brewer.name = 'RdBu'), RightOf())
 #' @export
 CMPar <- function(
     dmin = NULL, dmax = NULL, # color scale max and min

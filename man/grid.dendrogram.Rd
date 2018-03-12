@@ -3,9 +3,6 @@
 \name{grid.dendrogram}
 \alias{grid.dendrogram}
 \title{Draw dendrogram under grid system}
-\source{
-adapted from the ComplexHeatmap package authored by Zuguang Gu <z.gu@dkfz.de>
-}
 \usage{
 grid.dendrogram(dend, facing = c("bottom", "top", "left", "right"),
   max_height = NULL, order = c("normal", "reverse"), ...)

@@ -8,6 +8,8 @@
 #' @param hc.method method to use in hclust
 #' @param dist.method method to use in dist
 #' @return a list of clustered row, column and matrix
+#' @examples
+#' WHeatmap(row.cluster(matrix(rnorm(100),nrow=10))$mat)
 #' @export
 row.cluster <- function(mat, ..., hc.method='ward.D2', dist.method='euclidean') {
     d.row <- dist(mat, method=dist.method)
@@ -34,6 +36,8 @@ row.cluster <- function(mat, ..., hc.method='ward.D2', dist.method='euclidean') 
 #' @param hc.method method to use in hclust
 #' @param dist.method method to use in dist
 #' @return a list of clustered row, column and matrix
+#' @examples
+#' WHeatmap(column.cluster(matrix(rnorm(100),nrow=10))$mat)
 #' @export
 column.cluster <- function(mat, ..., hc.method='ward.D2', dist.method='euclidean') {
     d.column <- dist(t(mat), method=dist.method)
@@ -62,6 +66,8 @@ column.cluster <- function(mat, ..., hc.method='ward.D2', dist.method='euclidean
 #' @param extra.column extra column reordering
 #' @return a list of clustered row, column and matrix
 #' @import stats
+#' @examples
+#' WHeatmap(both.cluster(matrix(rnorm(100),nrow=10))$mat)
 #' @export
 both.cluster <- function(mat, extra.row=NULL, extra.column=NULL,
                          hc.method='ward.D2', dist.method='euclidean') {

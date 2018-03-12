@@ -19,3 +19,8 @@ an object of class WDim
 \description{
 column bind non-overlapping objects
 }
+\examples{
+WHeatmap(matrix(rnorm(2000),nrow=40),name='a') +
+  WHeatmap(matrix(rnorm(30), nrow=3), RightOf(),name='b') +
+  WColorBarH(1:10, TopOf(WColumnBind('a','b')))
+}

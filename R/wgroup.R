@@ -64,8 +64,6 @@ WMar <- function(bottom=0.03, left=0.03, top=0.03, right=0.03) {
 #' @param nc number of columns
 #' @param mar a WMar object
 #' @return a WGroup object
-#' 
-#' @export
 WGroup <- function(
     ..., name='',
     group.dm=NULL, group.from.member=FALSE,
@@ -331,6 +329,11 @@ WFlatten <- function(.obs) {
 #' show layout
 #'
 #' @param x plot
+#' @examples
+#' ly(
+#'   WHeatmap(matrix(rnorm(2000),nrow=40)) +
+#'   WHeatmap(matrix(rnorm(2000),nrow=40), cmp=CMPar(brewer.name = 'RdBu'),
+#'     BottomRightOf(just=c('left','top'))))
 #' @export
 ly <- function(x) print(x, layout.only=TRUE)
 

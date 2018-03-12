@@ -28,3 +28,8 @@ a dimension to the left of x
 \description{
 Generate dimension to the left of another object
 }
+\examples{
+WHeatmap(matrix(rnorm(2000),nrow=40)) +
+  WColorBarV(1:20, cmp=CMPar(), continuous=FALSE, LeftOf())
+
+}

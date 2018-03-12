@@ -7,6 +7,8 @@
 #' @param rot rotation
 #' @param color color of the label
 #' @return a WLabel object
+#' @examples
+#' WHeatmap(matrix(rnorm(2000),nrow=40)) + WLabel("This is a label.", RightOf(), rot=-90)
 #' 
 #' @export
 WLabel <- function(x=NULL, dm=WDim(), name='', fontsize=12, rot=0, color='black') {
@@ -32,6 +34,9 @@ WLabel <- function(x=NULL, dm=WDim(), name='', fontsize=12, rot=0, color='black'
 #' @param ... additional options
 #' @import grid
 #' @return NULL
+#' @examples
+#'
+#' print(WLabel("This is a label."))
 #' @export
 print.WLabel <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE, ...) {
 

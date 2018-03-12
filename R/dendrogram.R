@@ -76,8 +76,6 @@ CalcTextBounding.WDendrogram <- function(dd, group) {
 #' @param order order
 #' @param ... additional options
 #' @import grid
-#' @source adapted from the ComplexHeatmap package authored by Zuguang Gu <z.gu@dkfz.de>
-#' @export
 grid.dendrogram <- function(
     dend, facing = c("bottom", "top", "left", "right"),
     max_height = NULL, order = c("normal", "reverse"), ...) {

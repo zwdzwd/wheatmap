@@ -21,3 +21,7 @@
 \description{
 print WLabel
 }
+\examples{
+
+print(WLabel("This is a label."))
+}
