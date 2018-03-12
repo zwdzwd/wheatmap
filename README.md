@@ -50,6 +50,6 @@ More User guides:
  + [Tutorial](http://zwdzwd.github.io/wheatmap/tutorial.html)
  + [Legend Guide](http://zwdzwd.github.io/wheatmap/legend.html)
 
-Acknowledgement
+## Acknowledgement
 
 - The internal `grid.dendrogram()` function is adapted from `ComplexHeatmap` package.
