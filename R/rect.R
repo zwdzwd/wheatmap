@@ -56,6 +56,7 @@ WRect <- function(obj=NULL, x.span=NULL, y.span=NULL, color='black', lwd=3, fill
 #' @param stand.alone plot WRect standalone
 #' @param ... additional options
 #' @import grid
+#' @return the WRect object
 #' @export
 print.WRect <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE, ...) {
 

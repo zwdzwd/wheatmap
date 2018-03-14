@@ -18,6 +18,9 @@ grid.dendrogram(dend, facing = c("bottom", "top", "left", "right"),
 
 \item{...}{additional options}
 }
+\value{
+view port that plots dendrogram
+}
 \description{
 The dendrogram can be renderred. A viewport is created which contains the dendrogram.
 }

@@ -35,7 +35,7 @@ WDendrogram <- function(clust=NULL, dm=WDim(0,0,1,1), name='', facing=c("bottom"
 #' @param layout.only plot layout only
 #' @param cex factor to scaling texts
 #' @param ... additional options (ignored)
-#' @return NULL
+#' @return view port that contains the plotted dendrogram
 #' @examples
 #'
 #' WDendrogram(column.cluster(matrix(1:24,nrow=4))$column.clust)
@@ -75,6 +75,7 @@ CalcTextBounding.WDendrogram <- function(dd, group) {
 #' @param max_height maximum height of the dendrogram.
 #' @param order order
 #' @param ... additional options
+#' @return view port that plots dendrogram
 #' @import grid
 grid.dendrogram <- function(
     dend, facing = c("bottom", "top", "left", "right"),

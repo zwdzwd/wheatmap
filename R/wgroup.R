@@ -239,6 +239,7 @@ GroupAssignNames <- function(group.obj, n=1) {
 #'
 #' @param x a WGroup object
 #' @param i integer indexing element
+#' @return a subset of WGroup or NULL
 #' @export
 `[.WGroup` <- function(x, i) {
     if(is.numeric(i))

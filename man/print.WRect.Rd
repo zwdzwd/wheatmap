@@ -18,6 +18,9 @@
 
 \item{...}{additional options}
 }
+\value{
+the WRect object
+}
 \description{
 print WRect
 }

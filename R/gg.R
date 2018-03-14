@@ -27,6 +27,7 @@ WGG <- function(ggobj, dm=NULL, name='') {
 #' @param layout.only plot layout
 #' @param stand.alone produce a stand.alone plot
 #' @param ... extra options
+#' @return printed ggobj object
 #' @export
 print.WGG <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE, ...) {
 

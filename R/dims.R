@@ -101,6 +101,7 @@ DimInPoints <- function(dm) {
 #' @param text.just just for text
 #' @param column.split a list of WDim objects for column split
 #' @param row.split a list of WDim objects for row split
+#' @return a WDim object
 #' @export
 WDim <- function(
     left=0, bottom=0, width=1, height=1, nr=1, nc=1,
