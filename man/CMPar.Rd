@@ -6,7 +6,7 @@
 \usage{
 CMPar(dmin = NULL, dmax = NULL, brewer.name = NULL, brewer.n = 3,
   colorspace.name = NULL, colorspace.n = 2, cmap = NULL,
-  label2color = NULL, use.data = FALSE, stop.points = NULL,
+  label2color = NULL, use.data = FALSE, stop.points = NULL, rev = FALSE,
   grey.scale = FALSE)
 }
 \arguments{
@@ -31,6 +31,8 @@ explicitly for discrete color mapping}
 or hexdecimal color names}
 
 \item{stop.points}{custome stop points}
+
+\item{rev}{reverse stop points}
 
 \item{grey.scale}{whether to use grey scale}
 }

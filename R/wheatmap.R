@@ -48,8 +48,7 @@
 #' @export
 WHeatmap <- function(
     data=NULL, dm=NULL, name='', continuous=NULL,
-    cmp = CMPar(), # colormapping parameters
-    cm = NULL,
+    cmp = NULL, cm = NULL,
 
     ## tick label on x-axis
     xticklabels = NULL,
@@ -105,6 +104,9 @@ WHeatmap <- function(
     hm$gp$col <- 'white'
     hm$gp$lty <- 'blank'
     lapply(names(gp), function(x) {hm$gp[[x]] <<- gp[[x]]})
+
+    if (is.null(hm$cmp))                # colormapping parameters
+        hm$cmp = CMPar()
 
     ## map to colors
     if (hm$continuous)

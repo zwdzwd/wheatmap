@@ -21,6 +21,7 @@
 #' @param colorspace.n number of stops in colorspace palettes
 #' @param cmap customized colormap name
 #' @param stop.points custome stop points
+#' @param rev reverse stop points
 #' @param grey.scale whether to use grey scale
 #' @return an object of class CMPar
 #' @examples
@@ -33,6 +34,7 @@ CMPar <- function(
     colorspace.name=NULL, colorspace.n=2,
     cmap=NULL, label2color=NULL, use.data=FALSE,
     stop.points=NULL, # color names at stop points
+    rev = FALSE,
     grey.scale=FALSE) {
     
     cmp <- lapply(formals(), eval)
@@ -106,6 +108,8 @@ MapToContinuousColors <- function(data, cmp=CMPar(), given.cm=NULL) {
             if (cmp$brewer.n < 3)
                 cmp$brewer.n <- 3
             cmp$stop.points <- brewer.pal(cmp$brewer.n, cmp$brewer.name)
+            if (cmp$rev)
+                cmp$stop.points <- rev(cmp$stop.points)
         } else {
             ## colorspace.name can be
             ## diverge_hcl, diverge_hsv, terrain_hcl, heat_hcl, sequential_hcl and rainbow_hcl
