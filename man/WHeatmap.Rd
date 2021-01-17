@@ -4,12 +4,30 @@
 \alias{WHeatmap}
 \title{WHeatmap object}
 \usage{
-WHeatmap(data = NULL, dm = NULL, name = "", continuous = NULL,
-  cmp = NULL, cm = NULL, xticklabels = NULL, xticklabels.n = NULL,
-  xticklabel.side = "b", xticklabel.fontsize = 12, xticklabel.rotat = 90,
-  xticklabel.pad = 0.005, yticklabels = NULL, yticklabels.n = NULL,
-  yticklabel.side = "l", yticklabel.fontsize = 12, yticklabel.rotat = 0,
-  yticklabel.pad = 0.005, sub.name = NULL, gp = NULL)
+WHeatmap(
+  data = NULL,
+  dm = NULL,
+  name = "",
+  continuous = NULL,
+  cmp = NULL,
+  cm = NULL,
+  xticklabels = NULL,
+  xticklabels.n = NULL,
+  xticklabel.side = "b",
+  xticklabel.fontsize = 12,
+  xticklabel.rotat = 90,
+  xticklabel.pad = 0.005,
+  yticklabels = NULL,
+  yticklabels.n = NULL,
+  yticklabel.side = "l",
+  yticklabel.fontsize = 12,
+  yticklabel.rotat = 0,
+  yticklabel.pad = 0.005,
+  sub.name = NULL,
+  linecolor = "white",
+  linetype = "blank",
+  gp = NULL
+)
 }
 \arguments{
 \item{data}{data matrix}

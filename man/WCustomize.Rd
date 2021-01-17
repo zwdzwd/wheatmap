@@ -4,8 +4,13 @@
 \alias{WCustomize}
 \title{Customize an existing plot}
 \usage{
-WCustomize(mar.left = NULL, mar.right = NULL, mar.top = NULL,
-  mar.bottom = NULL, mar = NULL)
+WCustomize(
+  mar.left = NULL,
+  mar.right = NULL,
+  mar.top = NULL,
+  mar.bottom = NULL,
+  mar = NULL
+)
 }
 \arguments{
 \item{mar.left}{left margin [0.03]}

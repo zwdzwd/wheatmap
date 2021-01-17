@@ -4,8 +4,14 @@
 \alias{ColorMap}
 \title{Constructor for ColoMap object}
 \usage{
-ColorMap(continuous = TRUE, colors = NULL, dmin = NULL, dmax = NULL,
-  scaler = NULL, mapper = NULL)
+ColorMap(
+  continuous = TRUE,
+  colors = NULL,
+  dmin = NULL,
+  dmax = NULL,
+  scaler = NULL,
+  mapper = NULL
+)
 }
 \arguments{
 \item{continuous}{whether colormap is continuous}

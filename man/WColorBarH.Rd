@@ -4,8 +4,14 @@
 \alias{WColorBarH}
 \title{WColorBarH}
 \usage{
-WColorBarH(data, ..., label = NULL, label.side = "r", label.fontsize = 12,
-  label.pad = 0.005)
+WColorBarH(
+  data,
+  ...,
+  label = NULL,
+  label.side = "r",
+  label.fontsize = 12,
+  label.pad = 0.005
+)
 }
 \arguments{
 \item{data}{numeric vector}

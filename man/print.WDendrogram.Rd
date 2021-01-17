@@ -4,8 +4,7 @@
 \alias{print.WDendrogram}
 \title{print a dendrogram}
 \usage{
-\method{print}{WDendrogram}(x, stand.alone = TRUE, layout.only = FALSE,
-  cex = 1, ...)
+\method{print}{WDendrogram}(x, stand.alone = TRUE, layout.only = FALSE, cex = 1, ...)
 }
 \arguments{
 \item{x}{a dendrogram}

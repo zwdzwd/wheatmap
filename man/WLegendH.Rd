@@ -4,8 +4,17 @@
 \alias{WLegendH}
 \title{WLegendH}
 \usage{
-WLegendH(x = NULL, dm = NULL, name = "", n.stops = 20, n.text = 5,
-  label.fontsize = 12, width = 0.02, height = 0.05, ...)
+WLegendH(
+  x = NULL,
+  dm = NULL,
+  name = "",
+  n.stops = 20,
+  n.text = 5,
+  label.fontsize = 12,
+  width = 0.02,
+  height = 0.05,
+  ...
+)
 }
 \arguments{
 \item{x}{a name or a plotting object, if NULL use the last plotting object}

@@ -4,8 +4,15 @@
 \alias{TopOf}
 \title{Top of}
 \usage{
-TopOf(x = NULL, height = NULL, pad = 0.01, min.ratio = 0.02,
-  h.aln = NULL, v.scale = NULL, v.scale.proportional = FALSE)
+TopOf(
+  x = NULL,
+  height = NULL,
+  pad = 0.01,
+  min.ratio = 0.02,
+  h.aln = NULL,
+  v.scale = NULL,
+  v.scale.proportional = FALSE
+)
 }
 \arguments{
 \item{x}{an object with dimension}

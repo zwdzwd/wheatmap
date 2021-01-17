@@ -4,8 +4,13 @@
 \alias{grid.dendrogram}
 \title{Draw dendrogram under grid system}
 \usage{
-grid.dendrogram(dend, facing = c("bottom", "top", "left", "right"),
-  max_height = NULL, order = c("normal", "reverse"), ...)
+grid.dendrogram(
+  dend,
+  facing = c("bottom", "top", "left", "right"),
+  max_height = NULL,
+  order = c("normal", "reverse"),
+  ...
+)
 }
 \arguments{
 \item{dend}{a stats::dendrogram object.}
@@ -27,6 +32,7 @@ The dendrogram can be renderred. A viewport is created which contains the dendro
 \details{
 -order should leaves of dendrogram be put in the normal order (1, ..., n) or reverse order (n, ..., 1)?
 -... pass to `grid::viewport` which contains the dendrogram.
+
 
 This function only plots the dendrogram without adding labels. The leaves of the dendrogram
 locates at unit(c(0.5, 1.5, ...(n-0.5))/n, "npc").

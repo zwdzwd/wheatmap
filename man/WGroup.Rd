@@ -4,8 +4,16 @@
 \alias{WGroup}
 \title{Construct a WGroup}
 \usage{
-WGroup(..., name = "", group.dm = NULL, group.from.member = FALSE,
-  mar = WMar(), affine = FALSE, nr = NULL, nc = NULL)
+WGroup(
+  ...,
+  name = "",
+  group.dm = NULL,
+  group.from.member = FALSE,
+  mar = WMar(),
+  affine = FALSE,
+  nr = NULL,
+  nc = NULL
+)
 }
 \arguments{
 \item{...}{plotting objects to be grouped}

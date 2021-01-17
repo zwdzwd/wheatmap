@@ -4,8 +4,7 @@
 \alias{print.WLabel}
 \title{print WLabel}
 \usage{
-\method{print}{WLabel}(x, cex = 1, layout.only = FALSE,
-  stand.alone = TRUE, ...)
+\method{print}{WLabel}(x, cex = 1, layout.only = FALSE, stand.alone = TRUE, ...)
 }
 \arguments{
 \item{x}{a WLabel object}

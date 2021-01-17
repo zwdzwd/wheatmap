@@ -4,8 +4,15 @@
 \alias{LeftOf}
 \title{LeftOf}
 \usage{
-LeftOf(x = NULL, width = NULL, pad = 0.01, min.ratio = 0.02,
-  v.aln = NULL, h.scale = NULL, h.scale.proportional = FALSE)
+LeftOf(
+  x = NULL,
+  width = NULL,
+  pad = 0.01,
+  min.ratio = 0.02,
+  v.aln = NULL,
+  h.scale = NULL,
+  h.scale.proportional = FALSE
+)
 }
 \arguments{
 \item{x}{an object with dimension}

@@ -4,8 +4,7 @@
 \alias{print.WRect}
 \title{print WRect}
 \usage{
-\method{print}{WRect}(x, cex = 1, layout.only = FALSE, stand.alone = TRUE,
-  ...)
+\method{print}{WRect}(x, cex = 1, layout.only = FALSE, stand.alone = TRUE, ...)
 }
 \arguments{
 \item{x}{a WRect object}

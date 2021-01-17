@@ -4,8 +4,14 @@
 \alias{WLabel}
 \title{construct a WLabel}
 \usage{
-WLabel(x = NULL, dm = WDim(), name = "", fontsize = 12, rot = 0,
-  color = "black")
+WLabel(
+  x = NULL,
+  dm = WDim(),
+  name = "",
+  fontsize = 12,
+  rot = 0,
+  color = "black"
+)
 }
 \arguments{
 \item{x}{text to be labeled}

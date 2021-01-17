@@ -4,8 +4,12 @@
 \alias{WDendrogram}
 \title{WDendrogram class}
 \usage{
-WDendrogram(clust = NULL, dm = WDim(0, 0, 1, 1), name = "",
-  facing = c("bottom", "top", "left", "right"))
+WDendrogram(
+  clust = NULL,
+  dm = WDim(0, 0, 1, 1),
+  name = "",
+  facing = c("bottom", "top", "left", "right")
+)
 }
 \arguments{
 \item{clust}{hclust object}

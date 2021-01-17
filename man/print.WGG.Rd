@@ -4,8 +4,7 @@
 \alias{print.WGG}
 \title{plot WGG object}
 \usage{
-\method{print}{WGG}(x, cex = 1, layout.only = FALSE, stand.alone = TRUE,
-  ...)
+\method{print}{WGG}(x, cex = 1, layout.only = FALSE, stand.alone = TRUE, ...)
 }
 \arguments{
 \item{x}{WGG}

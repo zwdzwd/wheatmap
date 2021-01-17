@@ -4,8 +4,7 @@
 \alias{print.WGroup}
 \title{Draw WGroup}
 \usage{
-\method{print}{WGroup}(x, stand.alone = TRUE, cex = 1,
-  layout.only = FALSE, ...)
+\method{print}{WGroup}(x, stand.alone = TRUE, cex = 1, layout.only = FALSE, ...)
 }
 \arguments{
 \item{x}{a WGroup}

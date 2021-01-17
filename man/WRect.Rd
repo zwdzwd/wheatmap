@@ -4,8 +4,15 @@
 \alias{WRect}
 \title{construct a WRect}
 \usage{
-WRect(obj = NULL, x.span = NULL, y.span = NULL, color = "black",
-  lwd = 3, fill = NA, name = "")
+WRect(
+  obj = NULL,
+  x.span = NULL,
+  y.span = NULL,
+  color = "black",
+  lwd = 3,
+  fill = NA,
+  name = ""
+)
 }
 \arguments{
 \item{obj}{a plotting object or its name}

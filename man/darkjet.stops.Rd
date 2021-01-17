@@ -4,7 +4,9 @@
 \name{darkjet.stops}
 \alias{darkjet.stops}
 \title{darker jet color stops}
-\format{An object of class \code{character} of length 6.}
+\format{
+An object of class \code{character} of length 6.
+}
 \usage{
 darkjet.stops
 }

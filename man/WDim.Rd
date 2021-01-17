@@ -4,9 +4,19 @@
 \alias{WDim}
 \title{class WDim}
 \usage{
-WDim(left = 0, bottom = 0, width = 1, height = 1, nr = 1, nc = 1,
-  text.x = 0, text.y = 0, text.just = c("center", "center"),
-  column.split = NULL, row.split = NULL)
+WDim(
+  left = 0,
+  bottom = 0,
+  width = 1,
+  height = 1,
+  nr = 1,
+  nc = 1,
+  text.x = 0,
+  text.y = 0,
+  text.just = c("center", "center"),
+  column.split = NULL,
+  row.split = NULL
+)
 }
 \arguments{
 \item{left}{left coordinate}

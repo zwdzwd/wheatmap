@@ -4,8 +4,7 @@
 \alias{print.WGrob}
 \title{plot WGrob object}
 \usage{
-\method{print}{WGrob}(x, cex = 1, layout.only = FALSE, stand.alone = TRUE,
-  ...)
+\method{print}{WGrob}(x, cex = 1, layout.only = FALSE, stand.alone = TRUE, ...)
 }
 \arguments{
 \item{x}{WGrob}

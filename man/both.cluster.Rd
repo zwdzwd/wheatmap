@@ -4,8 +4,13 @@
 \alias{both.cluster}
 \title{row- and column-cluster a matrix}
 \usage{
-both.cluster(mat, extra.row = NULL, extra.column = NULL,
-  hc.method = "ward.D2", dist.method = "euclidean")
+both.cluster(
+  mat,
+  extra.row = NULL,
+  extra.column = NULL,
+  hc.method = "ward.D2",
+  dist.method = "euclidean"
+)
 }
 \arguments{
 \item{mat}{input matrix}

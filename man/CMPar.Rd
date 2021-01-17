@@ -4,10 +4,20 @@
 \alias{CMPar}
 \title{Color Map Parameters}
 \usage{
-CMPar(dmin = NULL, dmax = NULL, brewer.name = NULL, brewer.n = 3,
-  colorspace.name = NULL, colorspace.n = 2, cmap = NULL,
-  label2color = NULL, use.data = FALSE, stop.points = NULL, rev = FALSE,
-  grey.scale = FALSE)
+CMPar(
+  dmin = NULL,
+  dmax = NULL,
+  brewer.name = NULL,
+  brewer.n = 3,
+  colorspace.name = NULL,
+  colorspace.n = 2,
+  cmap = NULL,
+  label2color = NULL,
+  use.data = FALSE,
+  stop.points = NULL,
+  rev = FALSE,
+  grey.scale = FALSE
+)
 }
 \arguments{
 \item{dmin}{minimum for continuous color map}

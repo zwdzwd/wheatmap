@@ -4,8 +4,13 @@
 \alias{WPosition}
 \title{place an arbitrary position w.r.t a subplot}
 \usage{
-WPosition(anchor.x, anchor.y, x = NULL, just = c("left", "bottom"),
-  data.coord = FALSE)
+WPosition(
+  anchor.x,
+  anchor.y,
+  x = NULL,
+  just = c("left", "bottom"),
+  data.coord = FALSE
+)
 }
 \arguments{
 \item{anchor.x}{x coordinates}

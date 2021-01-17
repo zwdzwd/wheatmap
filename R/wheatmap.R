@@ -69,6 +69,9 @@ WHeatmap <- function(
     ## subclass name
     sub.name = NULL,
 
+    linecolor = 'white',
+    linetype = 'blank',
+    
     ## graph parameters
     gp = NULL) {
 
@@ -101,8 +104,8 @@ WHeatmap <- function(
 
     ## graph parameters
     hm$gp <- list()
-    hm$gp$col <- 'white'
-    hm$gp$lty <- 'blank'
+    hm$gp$col <- linecolor
+    hm$gp$lty <- linetype
     lapply(names(gp), function(x) {hm$gp[[x]] <<- gp[[x]]})
 
     if (is.null(hm$cmp))                # colormapping parameters
@@ -285,9 +288,9 @@ print.WHeatmap <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE, ...) {
     xc = (seq_len(nc)-1)/nc
     yc = (rev(seq_len(nr))-1)/nr
     expand.index <- expand.grid(seq_len(nr), seq_len(nc))
-    grid.rect(xc[expand.index[[2]]], yc[expand.index[[1]]],
-              width=unit(1/nc, 'npc'), height=unit(1/nr, 'npc'),
-              gp=do.call('gpar', c(list(fill=x$cm$colors), x$gp)), just=c('left','bottom'))
+    grid.rect(xc[expand.index[[2]]], yc[expand.index[[1]]], width=unit(1/nc, 'npc'),
+        height=unit(1/nr, 'npc'),
+        gp=do.call('gpar', c(list(fill=x$cm$colors), x$gp)), just=c('left','bottom'))
 
     ## x tick labels
     if (!is.null(x[['xticklabels']])) {

@@ -4,7 +4,9 @@
 \name{jet.stops}
 \alias{jet.stops}
 \title{jet color stops}
-\format{An object of class \code{character} of length 75.}
+\format{
+An object of class \code{character} of length 75.
+}
 \usage{
 jet.stops
 }

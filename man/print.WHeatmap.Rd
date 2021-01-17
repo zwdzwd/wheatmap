@@ -4,8 +4,7 @@
 \alias{print.WHeatmap}
 \title{plot WHeatmap}
 \usage{
-\method{print}{WHeatmap}(x, cex = 1, layout.only = FALSE,
-  stand.alone = TRUE, ...)
+\method{print}{WHeatmap}(x, cex = 1, layout.only = FALSE, stand.alone = TRUE, ...)
 }
 \arguments{
 \item{x}{a WHeatmap}
