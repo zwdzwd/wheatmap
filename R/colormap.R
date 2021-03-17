@@ -21,6 +21,7 @@
 #' @param colorspace.n number of stops in colorspace palettes
 #' @param cmap customized colormap name
 #' @param stop.points custome stop points
+#' @param na.color color for NA
 #' @param rev reverse stop points
 #' @param grey.scale whether to use grey scale
 #' @return an object of class CMPar

@@ -15,6 +15,7 @@ CMPar(
   label2color = NULL,
   use.data = FALSE,
   stop.points = NULL,
+  na.color = "#C0C0C0",
   rev = FALSE,
   grey.scale = FALSE
 )
@@ -41,6 +42,8 @@ explicitly for discrete color mapping}
 or hexdecimal color names}
 
 \item{stop.points}{custome stop points}
+
+\item{na.color}{color for NA}
 
 \item{rev}{reverse stop points}
 
