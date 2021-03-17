@@ -34,6 +34,7 @@ CMPar <- function(
     colorspace.name=NULL, colorspace.n=2,
     cmap=NULL, label2color=NULL, use.data=FALSE,
     stop.points=NULL, # color names at stop points
+    na.color = '#C0C0C0',
     rev = FALSE,
     grey.scale=FALSE) {
     
@@ -194,6 +195,8 @@ MapToDiscreteColors <- function(data, cmp=CMPar(), given.cm=NULL) {
     cm <- ColorMap(
         continuous=FALSE,
         mapper=setNames(mapped.colors, alphabet))
+    
     cm$colors=cm$mapper[as.character(data)]
+    cm$colors[is.na(data)] = cmp$na.color
     cm
 }
