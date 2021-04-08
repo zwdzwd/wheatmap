@@ -45,6 +45,8 @@ WColorBarV <- function(
 #' @param label.side l (for left) or r (for right)
 #' @param label.fontsize label font size
 #' @param label.pad label padding
+#' @param label.space when label.use.data, the space between labels
+#' @param label.use.data use data to show legend in situ
 #' @return an object of class WColorBarH
 #' @examples
 #' WColorBarH(matrix(1:50))
@@ -52,7 +54,8 @@ WColorBarV <- function(
 WColorBarH <- function(
     data, ...,
     label=NULL, label.side='r',
-    label.fontsize = 12, label.pad = 0.005) {
+    label.fontsize = 12, label.pad = 0.005,
+    label.space=0.05, label.use.data = FALSE) {
     
     cb.data <- matrix(data, nrow=1)
     if (!is.null(label)) {
@@ -63,7 +66,7 @@ WColorBarH <- function(
     }
     heat.gen <- WHeatmap(cb.data, sub.name='WColorBarH', yticklabels=yticklabels,
                          yticklabel.side=label.side, yticklabel.fontsize=label.fontsize,
-                         xticklabel.pad=label.pad, ...)
+                         xticklabel.pad=label.pad, xticklabel.use.data=label.use.data, ...)
     structure(function(group) {
         cb <- heat.gen(group)
         cb$orientation <- 'h'

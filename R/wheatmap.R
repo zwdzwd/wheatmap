@@ -14,12 +14,16 @@
 #' @param xticklabel.fontsize xticklabel font size
 #' @param xticklabel.pad padding between xticklabel and x-axis
 #' @param xticklabel.rotat xticklabel rotation
+#' @param xticklabel.space xticklabel space
+#' @param xticklabel.use.data use data to label x-axis (most likely used by colorbar)
 #' @param yticklabels to plot ytick labels, one may supply characters to plot just a subset of ytick labels
 #' @param yticklabels.n number of ytick labels to plot (resample for aethetics by default)
 #' @param yticklabel.side yticklabel side (l or r)
 #' @param yticklabel.fontsize yticklabel font size
 #' @param yticklabel.pad padding between yticklabel and y-axis
 #' @param yticklabel.rotat yticklabel rotation
+#' @param yticklabel.space yticklabel space
+#' @param yticklabel.use.data use data to label y-axis (most likely used by colorbar)
 #' @param gp a list of graphical parameters
 #' @param sub.name subclass name
 #' @return one or a list of heatmaps (depends on whether dimension is split)
@@ -57,6 +61,8 @@ WHeatmap <- function(
     xticklabel.fontsize = 12,
     xticklabel.rotat = 90,
     xticklabel.pad = 0.005,
+    xticklabel.space = 0.05,
+    xticklabel.use.data = FALSE,
 
     ## tick label on y-axis
     yticklabels = NULL,
@@ -65,6 +71,8 @@ WHeatmap <- function(
     yticklabel.fontsize = 12,
     yticklabel.rotat = 0,
     yticklabel.pad = 0.005,
+    yticklabel.space = 0.05,
+    yticklabel.use.data = FALSE,
 
     ## subclass name
     sub.name = NULL,
@@ -294,12 +302,12 @@ print.WHeatmap <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE, ...) {
 
     ## x tick labels
     if (!is.null(x[['xticklabels']])) {
-        .WPrintXTickLabels(x, x[['xticklabels']], cex=max(cex))
+        .WPrintXTickLabels(x, x[['xticklabels']], use.data=x[['xticklabel.use.data']], cex=max(cex))
     }
 
     ## y tick labels
     if (!is.null(x[['yticklabels']])) {
-        .WPrintYTickLabels(x, x[['yticklabels']], cex=max(cex))
+        .WPrintYTickLabels(x, x[['yticklabels']], use.data=x[['yticklabel.use.data']], cex=max(cex))
     }
 
     upViewport()
