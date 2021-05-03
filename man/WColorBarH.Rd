@@ -10,7 +10,9 @@ WColorBarH(
   label = NULL,
   label.side = "r",
   label.fontsize = 12,
-  label.pad = 0.005
+  label.pad = 0.005,
+  label.space = 0.05,
+  label.use.data = FALSE
 )
 }
 \arguments{
@@ -25,6 +27,10 @@ WColorBarH(
 \item{label.fontsize}{label font size}
 
 \item{label.pad}{label padding}
+
+\item{label.space}{when label.use.data, the space between labels}
+
+\item{label.use.data}{use data to show legend in situ}
 }
 \value{
 an object of class WColorBarH

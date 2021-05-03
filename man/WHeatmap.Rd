@@ -17,12 +17,16 @@ WHeatmap(
   xticklabel.fontsize = 12,
   xticklabel.rotat = 90,
   xticklabel.pad = 0.005,
+  xticklabel.space = 0.05,
+  xticklabel.use.data = FALSE,
   yticklabels = NULL,
   yticklabels.n = NULL,
   yticklabel.side = "l",
   yticklabel.fontsize = 12,
   yticklabel.rotat = 0,
   yticklabel.pad = 0.005,
+  yticklabel.space = 0.05,
+  yticklabel.use.data = FALSE,
   sub.name = NULL,
   linecolor = "white",
   linetype = "blank",
@@ -54,6 +58,10 @@ WHeatmap(
 
 \item{xticklabel.pad}{padding between xticklabel and x-axis}
 
+\item{xticklabel.space}{xticklabel space}
+
+\item{xticklabel.use.data}{use data to label x-axis (most likely used by colorbar)}
+
 \item{yticklabels}{to plot ytick labels, one may supply characters to plot just a subset of ytick labels}
 
 \item{yticklabels.n}{number of ytick labels to plot (resample for aethetics by default)}
@@ -65,6 +73,10 @@ WHeatmap(
 \item{yticklabel.rotat}{yticklabel rotation}
 
 \item{yticklabel.pad}{padding between yticklabel and y-axis}
+
+\item{yticklabel.space}{yticklabel space}
+
+\item{yticklabel.use.data}{use data to label y-axis (most likely used by colorbar)}
 
 \item{sub.name}{subclass name}
 

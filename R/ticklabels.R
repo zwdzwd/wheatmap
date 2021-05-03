@@ -84,7 +84,7 @@ XTickLabelUseData = function(hm, cex=1) {
 
 .WPrintXTickLabels <- function(hm, labels=NULL, use.data=FALSE, cex=1) {
 
-    if (use.data) {
+    if (!is.null(use.data) && use.data) {
         return (XTickLabelUseData(hm, cex=cex))
     }
 
