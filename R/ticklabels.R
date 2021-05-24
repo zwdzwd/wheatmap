@@ -117,10 +117,43 @@ XTickLabelUseData = function(hm, cex=1) {
     }
 }
 
+YTickLabelUseData = function(hm, cex=1) {
+
+    nr = nrow(hm$data)
+    labels = hm$data[,1]
+    labels_rle = rle(labels)
+    y0 = (c(0,head(cumsum(labels_rle$length),-1)) + labels_rle$length/2) / length(labels)
+    y1 = 1 - move_labels(y0, length(labels), space=hm[["yticklabel.space"]])
+    y0 = 1 - y0
+
+    if (hm$yticklabel.side == 'r') {
+        .text.just = 'right'
+        .text.x = - hm$yticklabel.pad
+    } else {
+        .text.just = 'left'
+        .text.x = 1 + hm$yticklabel.pad
+    }
+
+    for (i in seq_along(y1)) {
+        grid.bezier(
+            c(1, 1, .text.x, .text.x),
+            c(y0[i],(y0[i]+y1[i])/2,(y0[i]+y1[i])/2,y1[i]),
+            gp=gpar(col=hm$cm$mapper[labels_rle$values[i]]))
+    }
+
+    .text.rot = hm$yticklabel.rotat
+    grid.text(labels_rle$values, y=y1, x=unit(.text.x,'npc'), rot=.text.rot,
+        just=c(.text.just, 'center'),
+        gp=gpar(col=hm$cm$mapper[labels_rle$values],
+            fontsize=hm$yticklabel.fontsize*cex))
+}
+
 .WPrintYTickLabels <- function(hm, labels=NULL, use.data=FALSE, cex=1) {
-    ## if (use.data) {
-    ##         return (XTickLabelUseData(hm, cex=cex))
-    ##     }
+
+    if (!is.null(use.data) && use.data) {
+        return (YTickLabelUseData(hm, cex=cex))
+    }
+
     if (length(labels)==1 && is.logical(labels)) {
         if (labels) {
             labels <- rownames(hm$data)
@@ -140,7 +173,7 @@ XTickLabelUseData = function(hm, cex=1) {
             .text.x = 1 + hm$yticklabel.pad
         }
         .text.rot = hm$yticklabel.rotat
-        
+
         if (!is.logical(hm$yticklabels))
             sample.inds <- which(labels %in% hm$yticklabels)
         else

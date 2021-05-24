@@ -301,12 +301,12 @@ print.WHeatmap <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE, ...) {
         gp=do.call('gpar', c(list(fill=x$cm$colors), x$gp)), just=c('left','bottom'))
 
     ## x tick labels
-    if (!is.null(x[['xticklabels']])) {
+    if (!is.null(x[['xticklabels']]) || x[['xticklabel.use.data']]) {
         .WPrintXTickLabels(x, x[['xticklabels']], use.data=x[['xticklabel.use.data']], cex=max(cex))
     }
 
     ## y tick labels
-    if (!is.null(x[['yticklabels']])) {
+    if (!is.null(x[['yticklabels']]) || x[['yticklabel.use.data']]) {
         .WPrintYTickLabels(x, x[['yticklabels']], use.data=x[['yticklabel.use.data']], cex=max(cex))
     }
 
