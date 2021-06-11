@@ -138,7 +138,7 @@ MapToContinuousColors <- function(data, cmp=CMPar(), given.cm=NULL) {
         mapper = colorRamp(cmp$stop.points, alpha=TRUE))
     cm$colors = apply(cm$mapper(data), 1, function(x) {
         if (any(is.na(x)))
-            x <- col2rgb('#C0C0C0', alpha=TRUE)
+            x <- col2rgb(cmp$na.color, alpha=TRUE)
         do.call(rgb, c(as.list(x), maxColorValue=255))
     })
     cm

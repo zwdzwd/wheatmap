@@ -59,26 +59,32 @@ XTickLabelUseData = function(hm, cex=1) {
     labels = hm$data[1,]
     labels_rle = rle(labels)
     x0 = (c(0,head(cumsum(labels_rle$length),-1)) + labels_rle$length/2) / length(labels)
+
+    x0 = x0[!is.na(labels_rle$values)]
     x1 = move_labels(x0, length(labels), space=hm[["xticklabel.space"]])
+    labels = labels_rle$values[!is.na(labels_rle$values)]
 
     if (hm$xticklabel.side == 'b') {
         .text.just = 'right'
         .text.y = - hm$xticklabel.pad
+        .text.y0 = 0
     } else {
         .text.just = 'left'
         .text.y = 1 + hm$xticklabel.pad
+        .text.y0 = 1
     }
 
     for (i in seq_along(x1)) {
         grid.bezier(
             c(x0[i],(x0[i]+x1[i])/2,(x0[i]+x1[i])/2,x1[i]),
-            c(1, 1, .text.y, .text.y), gp=gpar(col=hm$cm$mapper[labels_rle$values[i]]))
+            c(.text.y0, .text.y0, .text.y, .text.y),
+            gp=gpar(col=hm$cm$mapper[labels[i]]))
     }
 
     .text.rot = hm$xticklabel.rotat
-    grid.text(labels_rle$values, x=x1, y=unit(.text.y,'npc'), rot=.text.rot,
+    grid.text(labels, x=x1, y=unit(.text.y,'npc'), rot=.text.rot,
         just=c(.text.just, 'center'),
-        gp=gpar(col=hm$cm$mapper[labels_rle$values],
+        gp=gpar(col=hm$cm$mapper[labels],
             fontsize=hm$xticklabel.fontsize*cex))
 }
 
@@ -123,28 +129,32 @@ YTickLabelUseData = function(hm, cex=1) {
     labels = hm$data[,1]
     labels_rle = rle(labels)
     y0 = (c(0,head(cumsum(labels_rle$length),-1)) + labels_rle$length/2) / length(labels)
+    y0 = y0[!is.na(labels_rle$values)]
     y1 = 1 - move_labels(y0, length(labels), space=hm[["yticklabel.space"]])
     y0 = 1 - y0
+    labels = labels_rle$values[!is.na(labels_rle$values)]
 
     if (hm$yticklabel.side == 'r') {
         .text.just = 'right'
         .text.x = - hm$yticklabel.pad
+        .text.x0 = 1
     } else {
         .text.just = 'left'
         .text.x = 1 + hm$yticklabel.pad
+        .text.x0 = 0
     }
 
     for (i in seq_along(y1)) {
         grid.bezier(
-            c(1, 1, .text.x, .text.x),
+            c(.text.x0, .text.x0, .text.x, .text.x),
             c(y0[i],(y0[i]+y1[i])/2,(y0[i]+y1[i])/2,y1[i]),
-            gp=gpar(col=hm$cm$mapper[labels_rle$values[i]]))
+            gp=gpar(col=hm$cm$mapper[labels[i]]))
     }
 
     .text.rot = hm$yticklabel.rotat
-    grid.text(labels_rle$values, y=y1, x=unit(.text.x,'npc'), rot=.text.rot,
+    grid.text(labels, y=y1, x=unit(.text.x,'npc'), rot=.text.rot,
         just=c(.text.just, 'center'),
-        gp=gpar(col=hm$cm$mapper[labels_rle$values],
+        gp=gpar(col=hm$cm$mapper[labels],
             fontsize=hm$yticklabel.fontsize*cex))
 }
 
