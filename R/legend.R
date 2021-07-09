@@ -11,6 +11,7 @@
 #' @param n.text number of text labels in continuous legend
 #' @param width width of each unit in plotted legend
 #' @param height height of each unit in plotted legend
+#' @param decreasing reversed color map
 #' @param ... additional options to WHeatmap
 #' @return an object of class WLegendV
 #' @examples
@@ -19,7 +20,7 @@
 WLegendV <- function(
     x=NULL, dm=NULL, name='',
     n.stops=20, n.text=5, label.fontsize=12,
-    width=0.05, height=0.02, ...) {
+    width=0.05, height=0.02, decreasing=FALSE, ...) {
 
     kargs <- list(...)
     kargs$dm <- dm
@@ -33,6 +34,9 @@ WLegendV <- function(
         x <- Resolve(x, group)
         if (x$continuous) {
             d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)
+            if (decreasing) {
+                d = rev(d)
+            }
             kargs$data <- matrix(
                 d, dimnames=list(format(d, digits=2, trim=TRUE)))
         } else {
@@ -77,6 +81,7 @@ WLegendV <- function(
 #' @param n.text number of text labels in continuous legend
 #' @param width width of each unit in plotted legend
 #' @param height height of each unit in plotted legend
+#' @param decreasing reversed color map
 #' @param ... additional options to WHeatmap
 #' @return an object of class WLegendH
 #' @examples
@@ -85,7 +90,7 @@ WLegendV <- function(
 WLegendH <- function(
     x=NULL, dm=NULL, name='',
     n.stops=20, n.text=5, label.fontsize=12,
-    width=0.02, height=0.05, ...) {
+    width=0.02, height=0.05, decreasing=TRUE, ...) {
 
     kargs <- list(...)
     kargs$dm <- dm
@@ -98,6 +103,9 @@ WLegendH <- function(
         x <- Resolve(x, group)
         if (x$continuous) {
             d <- seq(from=x$cm$dmin, to=x$cm$dmax, length.out=n.stops)
+            if (decreasing) {
+                d = rev(d)
+            }
             kargs$data <- matrix(
                 d, nrow=1, dimnames=list(NULL, format(d, digits=2, trim=TRUE)))
         } else {

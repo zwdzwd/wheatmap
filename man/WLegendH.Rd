@@ -13,6 +13,7 @@ WLegendH(
   label.fontsize = 12,
   width = 0.02,
   height = 0.05,
+  decreasing = TRUE,
   ...
 )
 }
@@ -32,6 +33,8 @@ WLegendH(
 \item{width}{width of each unit in plotted legend}
 
 \item{height}{height of each unit in plotted legend}
+
+\item{decreasing}{reversed color map}
 
 \item{...}{additional options to WHeatmap}
 }
