@@ -28,6 +28,7 @@ WHeatmap(
   yticklabel.space = 0.05,
   yticklabel.use.data = FALSE,
   sub.name = NULL,
+  bbox = FALSE,
   linecolor = "white",
   linetype = "blank",
   gp = NULL
@@ -79,6 +80,8 @@ WHeatmap(
 \item{yticklabel.use.data}{use data to label y-axis (most likely used by colorbar)}
 
 \item{sub.name}{subclass name}
+
+\item{bbox}{whether to plot the boundary box (useful with white matrix elements)}
 
 \item{gp}{a list of graphical parameters}
 }
