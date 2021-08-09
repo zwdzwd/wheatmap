@@ -26,6 +26,8 @@
 #' @param yticklabel.use.data use data to label y-axis (most likely used by colorbar)
 #' @param gp a list of graphical parameters
 #' @param sub.name subclass name
+#' @param bbox whether to plot the boundary box (useful with white matrix elements)
+#'
 #' @return one or a list of heatmaps (depends on whether dimension is split)
 #' @examples
 #' WHeatmap(matrix(1:10, nrow=2), cmp=CMPar(brewer.name='Greens'))
@@ -76,6 +78,7 @@ WHeatmap <- function(
 
     ## subclass name
     sub.name = NULL,
+    bbox = FALSE,
 
     linecolor = 'white',
     linetype = 'blank',
@@ -299,6 +302,14 @@ print.WHeatmap <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE, ...) {
     grid.rect(xc[expand.index[[2]]], yc[expand.index[[1]]], width=unit(1/nc, 'npc'),
         height=unit(1/nr, 'npc'),
         gp=do.call('gpar', c(list(fill=x$cm$colors), x$gp)), just=c('left','bottom'))
+
+    if (x[["bbox"]]) {
+        grid.rect(
+            min(xc), min(yc),
+            width = unit(max(xc)+1/nc-min(xc),"npc"),
+            height = unit(max(yc)+1/nr-min(yc),"npc"),
+            just = c("left","bottom"))
+    }
 
     ## x tick labels
     if (!is.null(x[['xticklabels']]) || x[['xticklabel.use.data']]) {

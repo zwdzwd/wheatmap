@@ -67,9 +67,11 @@ WColorBarH <- function(
     } else {
         yticklabels <- FALSE
     }
-    heat.gen <- WHeatmap(cb.data, sub.name='WColorBarH', yticklabels=yticklabels,
-                         yticklabel.side=label.side, yticklabel.fontsize=label.fontsize,
-                         xticklabel.pad=label.pad, xticklabel.use.data=label.use.data, ...)
+    heat.gen <- WHeatmap(
+        cb.data, sub.name='WColorBarH', yticklabels=yticklabels,
+        yticklabel.side=label.side, yticklabel.fontsize=label.fontsize,
+        xticklabel.pad=label.pad, xticklabel.use.data=label.use.data, ...)
+    
     structure(function(group) {
         cb <- heat.gen(group)
         cb$orientation <- 'h'
