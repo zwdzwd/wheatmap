@@ -20,7 +20,7 @@ move_labels = function(x0, n, space = 0.03, max_try = 100000, x_min = 0.02, x_ma
     xm = x
     Em = sum(abs(x0-xm))
     E = Em
-    
+
     which_one = sample(1:nlabels, max_try, replace=T)
     direction = sample(0:1, max_try, replace=T)
     lapply(seq_along(which_one), function(i) {
@@ -137,11 +137,11 @@ YTickLabelUseData = function(hm, cex=1) {
     if (hm$yticklabel.side == 'r') {
         .text.just = 'right'
         .text.x = - hm$yticklabel.pad
-        .text.x0 = 1
+        .text.x0 = 0
     } else {
         .text.just = 'left'
         .text.x = 1 + hm$yticklabel.pad
-        .text.x0 = 0
+        .text.x0 = 1
     }
 
     for (i in seq_along(y1)) {
