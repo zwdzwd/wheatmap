@@ -1,7 +1,7 @@
 Package: wheatmap
 Type: Package
 Title: Incrementally Build Complex Plots using Natural Semantics
-Version: 0.1.3
+Version: 0.2.0
 Authors@R: person("Wanding", "Zhou", email="zhouwanding@gmail.com", role=c("aut","cre"))
 URL: https://github.com/zwdzwd/wheatmap
 BugReports: https://github.com/zwdzwd/wheatmap/issues
