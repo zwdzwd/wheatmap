@@ -80,9 +80,6 @@ WHeatmap <- function(
     sub.name = NULL,
     bbox = FALSE,
 
-    linecolor = 'white',
-    linetype = 'blank',
-    
     ## graph parameters
     gp = NULL) {
 
@@ -114,9 +111,11 @@ WHeatmap <- function(
     }
 
     ## graph parameters
-    hm$gp <- list()
-    hm$gp$col <- linecolor
-    hm$gp$lty <- linetype
+    if (is.null(gp)) {
+        hm$gp <- list(col = "white", lty = "blank")
+    } else {
+        hm$gp <- list()
+    }
     lapply(names(gp), function(x) {hm$gp[[x]] <<- gp[[x]]})
 
     if (is.null(hm$cmp))                # colormapping parameters

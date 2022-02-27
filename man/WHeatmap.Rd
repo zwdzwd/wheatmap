@@ -29,8 +29,6 @@ WHeatmap(
   yticklabel.use.data = FALSE,
   sub.name = NULL,
   bbox = FALSE,
-  linecolor = "white",
-  linetype = "blank",
   gp = NULL
 )
 }

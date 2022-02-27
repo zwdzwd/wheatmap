@@ -58,7 +58,8 @@ XTickLabelUseData = function(hm, cex=1) {
     nc = ncol(hm$data)
     labels = hm$data[1,]
     labels_rle = rle(labels)
-    x0 = (c(0,head(cumsum(labels_rle$length),-1)) + labels_rle$length/2) / length(labels)
+    labels_rle_sum = cumsum(labels_rle$length)
+    x0 = (c(0,labels_rle_sum[-length(labels_rle_sum)]) + labels_rle$length/2) / length(labels)
 
     x0 = x0[!is.na(labels_rle$values)]
     x1 = move_labels(x0, length(labels), space=hm[["xticklabel.space"]])
@@ -128,7 +129,8 @@ YTickLabelUseData = function(hm, cex=1) {
     nr = nrow(hm$data)
     labels = hm$data[,1]
     labels_rle = rle(labels)
-    y0 = (c(0,head(cumsum(labels_rle$length),-1)) + labels_rle$length/2) / length(labels)
+    labels_rle_sum = cumsum(labels_rle$length)
+    y0 = (c(0, labels_rle_sum[-length(labels_rle_sum)]) + labels_rle$length/2) / length(labels)
     y0 = y0[!is.na(labels_rle$values)]
     y1 = 1 - move_labels(y0, length(labels), space=hm[["yticklabel.space"]])
     y0 = 1 - y0
