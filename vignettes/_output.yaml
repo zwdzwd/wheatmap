@@ -1,0 +1,10 @@
+html_document:
+  self_contained: true
+  number_sections: no
+  theme: flatly
+  highlight: zenburn
+  toc: true
+  toc_float:
+    collapsed: false
+  toc_depth: 3
+  df_print: paged

@@ -6,3 +6,4 @@
 ^\..Rcheck$
 ^doc$
 ^Meta$
+^cran-comments.md$
